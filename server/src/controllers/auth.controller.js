@@ -34,4 +34,14 @@ const login_user = async (req, res) => {
     res.status(401).json({ message: "Authentication failed", error: error.message });
 } }
 
-export default { register_user, login_user };
+const get_current_user = async (req, res) => {
+  try {
+    const token = req.header("Authorization").split(" ")[1];
+    const user = await user_service.get_user_by_id(token);
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export default { register_user, login_user, get_current_user };

@@ -20,4 +20,8 @@ const verify_token = (token) => {
   );
 };
 
-export default { generate_token, verify_token };
+const decode_token = (token) => {
+  return jwt.decode(token);
+}
+
+export default { generate_token, verify_token, decode_token };

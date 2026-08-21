@@ -51,5 +51,10 @@ const authenticate_user = async (email, password) => {
   return token;
 };
 
+const get_user_by_id = async (token) => {
+  const decoded = jwt_utils.decode_token(token);
+  const user = await User.findById(decoded.userId); 
+  return user;
+};
 
-export default { validate_user_input, add_user, authenticate_user };
+export default { validate_user_input, add_user, authenticate_user, get_user_by_id };
