@@ -33,7 +33,10 @@ const validate_user_input = async (name, email, password, imageUrl) => {
 
 const add_user = async (name, email, password, imageUrl) => {
   const newUser = new User({ name, email, password, imageUrl });
+  newUser.createdBy = newUser._id;
+  newUser.updatedBy = newUser._id;
   await newUser.save();
+
   return newUser;
 };
 
@@ -73,12 +76,6 @@ const refresh_token = async (token) => {
   const access_token = jwt_utils.generate_access_token(user);
   return access_token;
 };
-
-// const get_user_by_id = async (token) => {
-//   const decoded = jwt_utils.decode_token(token);
-//   const user = await User.findById(decoded.userId);
-//   return user;
-// };
 
 const delete_token = async (token)=>{
   const decoded = jwt_utils.verify_refresh_token(token);

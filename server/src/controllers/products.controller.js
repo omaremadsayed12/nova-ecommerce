@@ -9,7 +9,6 @@ const get_all_products = async (req, res) => {
       data: products
     });
   } catch (error) {
-    console.error("Error fetching products:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error"
@@ -46,6 +45,15 @@ const add_product = async (req, res) => {
 const update_product = async (req, res) => {
   try {
     const product_id = req.params.id;
+    const product_exist = await product_service.check_product(product_id)
+    if (!product_exist){
+      return res.status(404).json(
+        {
+          success: false,
+          message: "Product not found"
+        }
+      )
+    }
     const product_data = req.body;
     const {error, isValid} = await product_service.validate_product_update_input(product_data);
     if (!isValid) {
@@ -59,7 +67,7 @@ const update_product = async (req, res) => {
     if (!updatedProduct) {
       return res.status(404).json({
         success: false,
-        message: "Product not found"
+        message: "Product not updated"
       });
     }
     res.status(200).json({

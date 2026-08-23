@@ -5,7 +5,7 @@ import image_middleware from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
-router.post("/register", image_middleware.uploadImage, auth_controller.register_user);
+router.post("/register", image_middleware.upload_image, auth_controller.register_user);
 router.post("/login", auth_controller.login_user);
 router.post("/refresh", auth_controller.refresh_token)
 router.post("/logout", auth_controller.logout_user);

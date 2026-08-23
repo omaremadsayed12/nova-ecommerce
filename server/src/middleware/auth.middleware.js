@@ -16,7 +16,7 @@ const verify_token = (role) => {
       req.user = user;
       next();
     } catch (error) {
-      return res.status(401).json({ message: "Authentication failed" });
+      return res.status(401).json({ message: "Authentication failed", error: error.message});
     }
   };
 };

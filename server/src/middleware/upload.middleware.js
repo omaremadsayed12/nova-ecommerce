@@ -1,6 +1,6 @@
 import cloudinary from "../utils/cloudinary.js";
 
-const uploadImage = async (req, res, next) => {
+const upload_image = async (req, res, next) => {
     const imageFile = req.files?.image;
     if (!imageFile) {
         req.body.imageUrl = null; 
@@ -8,9 +8,10 @@ const uploadImage = async (req, res, next) => {
     }
     else {
         const result = await cloudinary.uploadImage(imageFile.tempFilePath);
+        req.body = req.body || {};
         req.body.imageUrl = result.secure_url;
         next(); 
     }
 }
 
-export default {uploadImage};
+export default {upload_image};
