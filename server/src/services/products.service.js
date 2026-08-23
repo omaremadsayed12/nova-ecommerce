@@ -1,12 +1,13 @@
-import Product from "../models/Product.js";
 import Products from "../models/Product.js";
 
 const get_all_products = async () => {
   return await Products.find();
 };
 
-const add_product = async (productData) => {
+const add_product = async (productData, creator) => {
   const newProduct = new Products(productData);
+  newProduct.createdBy = creator._id;
+  newProduct.updatedBy = creator._id;
   return await newProduct.save();
 };
 
@@ -15,13 +16,17 @@ const check_product = async (productId) => {
   return !!product;
 };
 
-const update_product = async (productId, productData) => {
+const update_product = async (productId, productData, updater) => {
   const updateData = Object.fromEntries(
     Object.entries(productData).filter(([_, value]) => value !== null),
   );
-  return await Products.findByIdAndUpdate(productId, updateData, {
-    returnDocument: "after",
-  });
+  return await Products.findByIdAndUpdate(
+    productId,
+    { ...updateData, updatedBy: updater._id },
+    {
+      returnDocument: "after",
+    },
+  );
 };
 
 const delete_product = async (productId) => {
@@ -33,23 +38,22 @@ const validate_product_input = async (productData) => {
   let error = {};
   let isValid = true;
 
-  if (!name) {
-    error.name = "Product name is required";
+  if (!name || name.length < 2) {
+    error.name = "Product name must be at least 2 characters long";
     isValid = false;
   }
 
+  if (!category || category.length < 2) {
+    error.category = "Product category must be at least 2 characters long";
+    isValid = false;
+  }
   if (!currency) {
     error.currency = "Product currency is required";
     isValid = false;
   }
 
   if (!price || price <= 0) {
-    error.price = "Product price is required and must be a positive number";
-    isValid = false;
-  }
-
-  if (!category) {
-    error.category = "Product category is required";
+    error.price = "Product price must be a positive number";
     isValid = false;
   }
 

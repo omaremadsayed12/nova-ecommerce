@@ -19,6 +19,7 @@ const get_all_products = async (req, res) => {
 const add_product = async (req, res) => {
   try {
     const product_data = req.body;
+    const creator = req.user;
     const {error, isValid} = await product_service.validate_product_input(product_data);
     if (!isValid) {
       return res.status(400).json({
@@ -27,7 +28,7 @@ const add_product = async (req, res) => {
         error: error
       });
     }
-    const newProduct = await product_service.add_product(product_data);
+    const newProduct = await product_service.add_product(product_data, creator);
     res.status(201).json({
       success: true,
       message: "Product added successfully",
@@ -55,6 +56,7 @@ const update_product = async (req, res) => {
       )
     }
     const product_data = req.body;
+    const updater = req.user;
     const {error, isValid} = await product_service.validate_product_update_input(product_data);
     if (!isValid) {
       return res.status(400).json({
@@ -63,7 +65,7 @@ const update_product = async (req, res) => {
         error: error
       });
     }
-    const updatedProduct = await product_service.update_product(product_id, product_data);
+    const updatedProduct = await product_service.update_product(product_id, product_data, updater);
     if (!updatedProduct) {
       return res.status(404).json({
         success: false,

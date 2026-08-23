@@ -15,15 +15,11 @@ const add_user = async (req, res) => {
   try {
     const body = req.body;
     const creator = req.user;
-    const { errors, isValid } = await users_service.validate_user_input(
-      body
-    );
+    const { errors, isValid } = await users_service.validate_user_input(body);
     if (!isValid) {
       res.status(400).json({ message: "Invalid input", error: errors });
     } else {
-      const newUser = await users_service.add_user(
-        body, creator
-      );
+      const newUser = await users_service.add_user(body, creator);
       res
         .status(201)
         .json({ message: "User registered successfully", user: newUser });
@@ -49,7 +45,11 @@ const update_user = async (req, res) => {
     if (!isValid) {
       res.status(400).json({ message: "Invalid input", error: errors });
     } else {
-      const newUser = await users_service.update_user(user_id, user_data, updater);
+      const newUser = await users_service.update_user(
+        user_id,
+        user_data,
+        updater,
+      );
       res
         .status(201)
         .json({ message: "User added successfully", user: newUser });
@@ -62,15 +62,16 @@ const update_user = async (req, res) => {
 const delete_user = async (req, res) => {
   try {
     const user_id = req.params.id;
-    const found = users_service.check_user(user_id);
-    if (!found) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
-    }
-    const deleted = users_service.delete_user(user_id);
-    if (deleted) {
-      res.status(204).json({ message: "User deleted successfully" });
+    const deleted_user = await users_service.delete_user(user_id);
+    if (!deleted_user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    } else {
+      res
+        .status(200)
+        .json({ message: "User deleted successfully", data: deleted_user });
     }
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
