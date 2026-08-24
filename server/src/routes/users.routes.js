@@ -16,7 +16,7 @@ router.post(
   upload_middleware.upload_image,
   users_controller.add_user,
 );
-router.put(
+router.patch(
   "/:id",
   auth_middleware.verify_token("ADMIN"),
   upload_middleware.upload_image,
