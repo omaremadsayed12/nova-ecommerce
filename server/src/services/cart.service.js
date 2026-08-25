@@ -7,6 +7,9 @@ const get_all_items = async (user) => {
 
 const add_items = async (user, items) => {
   const cart = await Cart.getOrCreate(user._id);
+  for (const item of cart.items) {
+    
+  }
   cart.items = items;
   return await cart.save();
 };
