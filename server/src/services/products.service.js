@@ -4,6 +4,10 @@ const get_all_products = async () => {
   return await Products.find();
 };
 
+const get_product_details = async (productId) => {
+  return await Products.findById(productId);
+};
+
 const add_product = async (productData, creator) => {
   const newProduct = new Products(productData);
   newProduct.createdBy = creator._id;
@@ -85,6 +89,7 @@ const validate_product_update_input = async (productData) => {
 
 export default {
   get_all_products,
+  get_product_details,
   add_product,
   check_product,
   update_product,

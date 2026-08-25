@@ -5,21 +5,20 @@ const cartSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      unique: true
     },
     items: [
       {
         product: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
-          unique: true
+          unique: true,
         },
         quantity: {
           type: Number,
-          default: 1
-        }
-      }
-    ]
+          default: 1,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
@@ -31,7 +30,7 @@ cartSchema.statics.getOrCreate = async function (userId) {
   if (!cart) {
     cart = await this.create({
       user: userId,
-      items: []
+      items: [],
     });
   }
   return cart;

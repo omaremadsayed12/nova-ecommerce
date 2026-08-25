@@ -11,7 +11,26 @@ const get_all_products = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Internal server error"
+      message: "Internal server error",
+      error: error.message
+    });
+  }
+};
+
+const get_product_details = async (req, res) => {
+  try {
+    const product_id = req.params.id;
+    const product = await product_service.get_product_details(product_id);
+    res.status(200).json({
+      success: true,
+      message: "Product details fetched successfully",
+      data: product
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message
     });
   }
 };
@@ -103,4 +122,4 @@ const delete_product = async (req, res) => {
   }
 };
 
-export default { get_all_products, add_product, update_product, delete_product };
+export default { get_all_products, get_product_details, add_product, update_product, delete_product };
