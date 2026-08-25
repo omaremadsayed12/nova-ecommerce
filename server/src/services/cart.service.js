@@ -19,7 +19,7 @@ const add_items = async (user, items) => {
     if (product.stock < item.quantity) {
       throw new Error("Not enough items in stock");
     } else {
-      product.stock -= item.quantity;
+      // product.stock -= item.quantity;
       await product.save();
     }
   }
@@ -32,10 +32,13 @@ const update_item = async (user, product_id, quantity) => {
   if (!product) {
     throw new Error("Product not found");
   }
-  if (product.stock < quantity) {
+  const currentQuantity =
+    Cart.findOne({ user: user._id, "items.product": product_id }).quantity +
+    quantity;
+  if (product.stock < currentQuantity) {
     throw new Error("Not enough items in stock");
   } else {
-    product.stock -= item.quantity;
+    // product.stock -= item.quantity;
     return await Cart.findOneAndUpdate(
       { user: user._id, "items.product": product_id },
       { $inc: { "items.$.quantity": quantity } },
