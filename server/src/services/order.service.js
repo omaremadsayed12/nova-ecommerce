@@ -1,6 +1,7 @@
 import Cart from "../models/Cart.js";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
+import StoreSettings from "../models/StoreSettings.js";
 
 const initiate_order = async (user, shippingAddress) => {
   const cart = await Cart.getOrCreate(user._id);
@@ -14,7 +15,10 @@ const initiate_order = async (user, shippingAddress) => {
   for (const item of cart.items) {
     const product = await Product.findById(item.product);
     if (!product) {
-      throw new Error(`Product ${item.product} not found`);
+      throw new Error(`Product not found`);
+    }
+    if (item.quantity > product.stock) {
+      throw new Error(`Not enough items in stock`);
     }
     newOrder.items.push({
       product: product._id,
@@ -23,14 +27,20 @@ const initiate_order = async (user, shippingAddress) => {
       price: product.price,
       subtotal: product.price * item.quantity,
     });
+    product.stock -= item.quantity;
   }
+  const storeSettings = await StoreSettings.findOne();
   newOrder.subtotal = newOrder.items.reduce(
     (total, item) => total + item.subtotal,
     0,
   );
+  newOrder.tax = newOrder.subtotal * storeSettings.taxRate;
+  newOrder.shippingFee = storeSettings.shippingFee;
+  newOrder.total = newOrder.subtotal + newOrder.tax + newOrder.shippingFee;
+  newOrder.currency = storeSettings.currency;
   cart.items = [];
   await cart.save();
-  return newOrder.save();
+  return await newOrder.save();
 };
 
 const get_all_orders = async (user) => {
@@ -49,4 +59,21 @@ const get_order_details = async (user, orderId) => {
   }
 };
 
-export default { initiate_order, get_all_orders, get_order_details };
+const cancel_order = async (user, orderId) => {
+  const order = await Order.findById(orderId);
+  if (user.role == "ADMIN" || order.user == user._id) {
+    for (const item of order.items) {
+      const product = await Product.findById(item.product);
+      product.stock += item.quantity;
+    }
+    order.status = "CANCELLED";
+    return await order.save();
+  } 
+};
+
+export default {
+  initiate_order,
+  get_all_orders,
+  get_order_details,
+  cancel_order,
+};

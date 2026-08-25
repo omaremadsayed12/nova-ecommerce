@@ -16,6 +16,14 @@ const storeSettingsSchema = new mongoose.Schema(
             type: String,
             default: "USD"
         },
+        updatedBy:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
+        updatedAt:{
+            type: Date,
+            default: Date.now()
+        }
     }
 );
 

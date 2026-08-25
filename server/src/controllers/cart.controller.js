@@ -73,7 +73,8 @@ const remove_item = async (req,res)=> {
   try {
     const user = req.user;
     const product_id = req.params.id;
-    const deletedProduct = await cart_service.remove_item(user, product_id)
+    const quantity = req.body.quantity;
+    const deletedProduct = await cart_service.remove_item(user, product_id, quantity)
     if (!deletedProduct){
       res.status(404).json({
       success: false,

@@ -47,12 +47,24 @@ const update_item = async (user, product_id, quantity) => {
   }
 };
 
-const remove_item = async (user, product_id) => {
-  return await Cart.findOneAndUpdate(
-    { user: user._id },
-    { $pull: { items: { product: product_id } } },
-    { returnDocument: "after" },
-  );
+const remove_item = async (user, product_id, quantity) => {
+  const currentQuantity = await Cart.findOne({
+    user: user._id,
+    product: product_id,
+  }).items.quantity;
+  if (!quantity || quantity == currentQuantity) {
+    return await Cart.findOneAndUpdate(
+      { user: user._id },
+      { $pull: { items: { product: product_id } } },
+      { returnDocument: "after" },
+    );
+  } else {
+    return await Cart.findOneAndUpdate(
+      { user: user._id, "items.product": product_id },
+      { $dec: { "items.$.quantity": quantity } },
+      { returnDocument: "after" },
+    );
+  }
 };
 
 export default { get_all_items, add_items, update_item, remove_item };
