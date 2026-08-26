@@ -13,7 +13,6 @@ const paymentSchema = new mongoose.Schema(
     },
     providerPaymentId: {
       type: String,
-      required: [true, "Provider payment ID is required"],
     },
     amount: {
       type: Number,
@@ -23,21 +22,16 @@ const paymentSchema = new mongoose.Schema(
       type: String,
       default: "USD",
     },
-    merchantReference: {
-      type: String,
-      required: [true, "Merchant reference is required"],
-    },
     status: {
       type: String,
       enum: ["INITIATED", "PENDING", "AUTHORIZED", "PAID", "FAILED", "CANCELLED", "REFUNDED"],
-      default: "PAID",
+      default: "INITIATED",
     },
     rawResponse: {
       type: mongoose.Schema.Types.Mixed,
     },
     paidAt: {
-      type: Date,
-      default: Date.now,    
+      type: Date 
   }},
   {
     timestamps: true,
