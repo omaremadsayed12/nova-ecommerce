@@ -1,4 +1,4 @@
-import StoreSettings from "../models/StoreSettings";
+import StoreSettings from "../models/StoreSettings.js";
 
 const get_settings = async () => {
   return await StoreSettings.findOne();

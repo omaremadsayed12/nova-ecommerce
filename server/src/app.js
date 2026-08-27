@@ -9,6 +9,7 @@ import products_routes from "./routes/products.routes.js";
 import cart_routes from "./routes/cart.routes.js";
 import order_routes from "./routes/order.routes.js";
 import payment_routes from "./routes/payment.routes.js";
+import webhook_routes from "./routes/webhook.routes.js";
 import settings_routes from "./routes/settings.routes.js";
 
 import fileUpload from "express-fileupload";
@@ -18,6 +19,9 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(cookieParser());
+
+app.use("/api/webhook", webhook_routes);
+
 app.use(express.json());
 
 app.use(
