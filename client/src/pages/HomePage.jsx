@@ -2,9 +2,11 @@ import { ArrowRight, ShoppingBag, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProducts } from "../services/product.service";
+import { getStats } from "../services/stats.service";
 
 function HomePage() {
   const [products, setProducts] = useState([]);
+  const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -21,6 +23,21 @@ function HomePage() {
     };
 
     loadProducts();
+  }, []);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const data = await getStats();
+        setStats(data);
+      } catch (error) {
+        setError("Failed to load stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStats();
   }, []);
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -57,10 +74,10 @@ function HomePage() {
   return (
     <div className="pb-20">
       <section className="mx-auto w-full max-w-[1440px] px-6 pt-8 md:px-20 md:pt-12">
-        <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-[#edf3fb] shadow-[0_28px_60px_rgba(15,23,42,0.08)]">
+        <div className="hero-shell">
           <div className="grid items-center gap-10 px-6 py-10 md:grid-cols-2 md:px-12 md:py-16">
             <div>
-              <span className="inline-flex items-center rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+              <span className="eyebrow">
                 New Collection 2026
               </span>
               <h1 className="mt-6 max-w-xl text-5xl font-black tracking-[-0.08em] text-slate-900 md:text-7xl">
@@ -71,22 +88,19 @@ function HomePage() {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Link to="/shop" className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-bold text-white transition hover:opacity-95">
+                <Link to="/shop" className="btn-primary">
                   Shop Collection
                 </Link>
-                <Link to="/design-system" className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-900 transition hover:border-slate-300">
-                  Explore Design
-                </Link>
               </div>
-
+              
               <div className="mt-9 flex items-center gap-10 text-sm text-slate-500">
+              <div>
+                <div className="text-2xl font-black text-slate-900">{stats.totalOrders}</div>
+                <div>Orders Placed</div>
+              </div>
                 <div>
-                  <div className="text-2xl font-black text-slate-900">4.9/5</div>
-                  <div>Client Rating</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-slate-900">12k+</div>
-                  <div>Happy Shoppers</div>
+                  <div className="text-2xl font-black text-slate-900">{stats.totalProducts}</div>
+                  <div>Product Available</div>
                 </div>
               </div>
             </div>
@@ -96,8 +110,8 @@ function HomePage() {
                 <div className="overflow-hidden rounded-[28px]">
                   <div
                     className={`flex ${isTransitioning
-                        ? "transition-transform duration-700 ease-in-out"
-                        : ""
+                      ? "transition-transform duration-700 ease-in-out"
+                      : ""
                       }`}
                     style={{
                       transform: `translateX(-${currentSlide * 100}%)`,
@@ -149,7 +163,7 @@ function HomePage() {
       <section className="mx-auto mt-16 w-full max-w-[1440px] px-6 md:px-20">
         <div className="flex items-end justify-between gap-6">
           <div>
-            <span className="inline-flex items-center rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+            <span className="eyebrow">
               Curated Picks
             </span>
             <h2 className="mt-4 text-4xl font-black tracking-[-0.07em] text-slate-900 md:text-5xl">
@@ -163,7 +177,7 @@ function HomePage() {
 
         <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {products.map((product) => (
-            <div key={product.id} className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
+            <div key={product.id} className="card-surface overflow-hidden">
               <Link to={`/product/${product._id}`}>
                 <img src={product.imageUrl} alt={product.name} className="h-72 w-full object-cover" />
               </Link>

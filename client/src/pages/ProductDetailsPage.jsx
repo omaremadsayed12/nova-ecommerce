@@ -178,7 +178,7 @@ function ProductDetailsPage() {
                   ✓
                 </span>
 
-                {product.stock} available in stock
+                {product.stock} left in stock
               </div>
             ) : (
               <div className="text-red-600">
