@@ -1,51 +1,59 @@
-import { ArrowRight, Star, ShoppingBag, Truck } from "lucide-react";
+import { ArrowRight, ShoppingBag, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const featuredProducts = [
-  {
-    id: 1,
-    name: "Chrono Series",
-    price: "$249",
-    tag: "Accessories",
-    image:
-      "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    id: 2,
-    name: "Aero Leather Tote",
-    price: "$189",
-    tag: "Travel",
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    id: 3,
-    name: "Canvas Low Top",
-    price: "$145",
-    tag: "Footwear",
-    image:
-      "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    id: 4,
-    name: "Luna Lamp",
-    price: "$98",
-    tag: "Home",
-    image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
-  },
-];
-
-const categories = [
-  "Accessories",
-  "Apparel",
-  "Wellness",
-  "Home",
-  "Travel",
-  "Tech",
-];
+import { useEffect, useState } from "react";
+import { getProducts } from "../services/product.service";
 
 function HomePage() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data.data);
+      } catch (error) {
+        setError("Failed to load products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(true);
+
+  const carouselProducts =
+    products.length > 0
+      ? [...products, products[0]]
+      : [];
+
+  useEffect(() => {
+    if (carouselProducts.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide((current) => current + 1);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [carouselProducts.length]);
+
+  const categories = [
+    ...new Set(products.map((product) => product.category))
+  ];
+
+  if (loading) {
+    return <p>Loading products...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
+
   return (
     <div className="pb-20">
       <section className="mx-auto w-full max-w-[1440px] px-6 pt-8 md:px-20 md:pt-12">
@@ -53,7 +61,7 @@ function HomePage() {
           <div className="grid items-center gap-10 px-6 py-10 md:grid-cols-2 md:px-12 md:py-16">
             <div>
               <span className="inline-flex items-center rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
-                New Collection 2024
+                New Collection 2026
               </span>
               <h1 className="mt-6 max-w-xl text-5xl font-black tracking-[-0.08em] text-slate-900 md:text-7xl">
                 Refined essentials for everyday luxury.
@@ -85,11 +93,42 @@ function HomePage() {
 
             <div className="relative">
               <div className="rounded-[32px] bg-white p-4 shadow-[0_30px_80px_rgba(15,23,42,0.12)]">
-                <img
-                  src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80"
-                  alt="Featured product"
-                  className="h-[560px] w-full rounded-[28px] object-cover"
-                />
+                <div className="overflow-hidden rounded-[28px]">
+                  <div
+                    className={`flex ${isTransitioning
+                        ? "transition-transform duration-700 ease-in-out"
+                        : ""
+                      }`}
+                    style={{
+                      transform: `translateX(-${currentSlide * 100}%)`,
+                    }}
+                    onTransitionEnd={() => {
+                      if (currentSlide === products.length) {
+                        setIsTransitioning(false);
+                        setCurrentSlide(0);
+
+                        requestAnimationFrame(() => {
+                          requestAnimationFrame(() => {
+                            setIsTransitioning(true);
+                          });
+                        });
+                      }
+                    }}
+                  >
+                    {carouselProducts.map((product, index) => (
+                      <div
+                        key={`${product._id}-${index}`}
+                        className="w-full shrink-0"
+                      >
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="h-[560px] w-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
               <div className="absolute -bottom-6 left-6 rounded-2xl bg-white p-4 shadow-lg">
                 <div className="flex items-center gap-3">
@@ -123,10 +162,10 @@ function HomePage() {
         </div>
 
         <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {featuredProducts.map((product) => (
+          {products.map((product) => (
             <div key={product.id} className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
-              <Link to={`/product/${product.id}`}>
-                <img src={product.image} alt={product.name} className="h-72 w-full object-cover" />
+              <Link to={`/product/${product._id}`}>
+                <img src={product.imageUrl} alt={product.name} className="h-72 w-full object-cover" />
               </Link>
               <div className="p-5">
                 <div className="flex items-center justify-between gap-3">
@@ -137,11 +176,14 @@ function HomePage() {
                 </div>
                 <h3 className="mt-4 text-xl font-bold tracking-[-0.04em] text-slate-900">{product.name}</h3>
                 <div className="mt-3 flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-amber-500">
+                  {/* <div className="flex items-center gap-1 text-amber-500">
                     <Star className="h-4 w-4 fill-current" />
                     <span className="text-sm font-semibold text-slate-700">4.9</span>
-                  </div>
-                  <div className="text-lg font-black text-slate-900">{product.price}</div>
+                  </div> */}
+                  <div className="text-lg font-black text-slate-900"> {new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: product.currency,
+                  }).format(product.price)}</div>
                 </div>
               </div>
             </div>
@@ -149,7 +191,7 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto mt-20 w-full max-w-[1440px] px-6 md:px-20">
+      {/* <section className="mx-auto mt-20 w-full max-w-[1440px] px-6 md:px-20">
         <div className="rounded-[32px] bg-[#0d1d32] p-8 text-white md:p-12">
           <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-end">
             <div>
@@ -163,7 +205,7 @@ function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="mx-auto mt-20 w-full max-w-[1440px] px-6 md:px-20">
         <div className="flex items-center justify-between">

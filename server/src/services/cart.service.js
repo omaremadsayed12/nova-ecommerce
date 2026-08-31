@@ -9,7 +9,15 @@ const get_all_items = async (user) => {
 const add_items = async (user, items) => {
   const cart = await Cart.getOrCreate(user._id);
   for (const item of items) {
-    if (cart.items.contains({ product: item.product })) {
+    if (!item.product) {
+      throw new Error("Product ID is required");
+    }
+    const exists = cart.items.some(
+      (cartItem) =>
+        cartItem.product &&
+        cartItem.product.toString() === item.product.toString(),
+    );
+    if (exists) {
       throw new Error("Product already in cart");
     }
     const product = await Product.findById(item.product);
