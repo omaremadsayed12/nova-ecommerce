@@ -1,19 +1,43 @@
-@import "./tokens.css";
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans+Text:wght@400;500;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  color: #0b1c30;
+  background-color: #f5f7fb;
+  font-family: "Google Sans Text", "Segoe UI", sans-serif;
+  --bg: #f5f7fb;
+  --panel: #eef3f8;
+  --panel-strong: #edf3fb;
+  --card: #ffffff;
+  --ink: #0b1c30;
+  --muted: #5a6475;
+  --line: #dfe6f1;
+  --shadow: rgba(11, 28, 48, 0.07);
+  --brand: #0b1c30;
+  --brand-soft: #eaf0f8;
+  --brand-ghost: #f7f9fc;
+}
 
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html {
-  font-family: var(--font-primary);
+  scroll-behavior: smooth;
 }
 
 body {
+  margin: 0;
   min-width: 320px;
-  background: var(--color-background);
-  color: var(--color-text);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Google Sans Text", "Segoe UI", sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  display: block;
+  max-width: 100%;
 }
 
 button,
@@ -24,15 +48,30 @@ select {
 }
 
 button {
-  border: none;
+  cursor: pointer;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--ink);
+  letter-spacing: -0.08em;
+  font-family: "Google Sans Text", "Segoe UI", sans-serif;
 }
 
-img {
-  display: block;
-  max-width: 100%;
+p {
+  color: var(--muted);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }
