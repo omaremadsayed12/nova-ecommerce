@@ -1,0 +1,72 @@
+/* @reference "../../../styles/global.css"; */
+
+@layer components {
+    .navbar {
+        @apply fixed inset-x-0 top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-xl;
+    }
+
+    .navbar .navbar-container {
+        @apply relative flex h-20 items-center justify-between;
+    }
+
+    .navbar .navbar-container .nav-items {
+        @apply hidden items-center gap-8 md:flex;
+    }
+
+    .navbar .navbar-container .nav-items .nav-item {
+        @apply text-[12px] font-bold tracking-[0.08em];
+    }
+
+    .navbar .navbar-container .nav-items .nav-item.active {
+        @apply border-b border-[var(--nav-btn-line)] pb-1 text-[var(--nav-btn-txt)];
+    }
+
+    .navbar .navbar-container .nav-items .nav-item.inactive {
+        @apply text-slate-500 transition-colors;
+
+    }
+
+    .navbar .navbar-container .nav-items .nav-item.inactive:hover {
+        @apply text-[var(--nav-btn-txt)];
+    }
+
+    .navbar .mobile-menu-button {
+        @apply flex items-center justify-center rounded-full border border-slate-200 p-2 text-slate-700 md:hidden;
+    }
+
+    .navbar .logo {
+        @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+    }
+
+    .navbar .logo .logo-link{
+        @apply text-[2rem] font-black tracking-[-0.08em] text-slate-900;
+    }
+
+    .navbar .nav-icons{
+        @apply ml-auto flex items-center gap-4 text-slate-600 md:gap-5;
+    }
+    
+    .navbar .nav-icons .nav-icon{
+        @apply transition hover:text-slate-900;
+    }
+
+    .navbar .nav-icons .nav-icon .nav-span{
+        @apply absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-slate-900 text-[9px] font-bold text-white;
+    }
+
+    .mobile-menu {
+        @apply fixed inset-x-0 top-20 z-40 border-b border-slate-200 bg-white md:hidden;
+    }
+
+    .mobile-menu nav {
+        @apply flex flex-col gap-2;
+    }
+
+    .mobile-menu nav a{
+        @apply rounded-xl px-3 py-3 text-sm font-semibold;
+    }
+
+    .mobile-menu nav a.active{
+        @apply bg-[var(--nav-btn-shadow)] text-[var(--nav-btn-txt)];
+    }
+}

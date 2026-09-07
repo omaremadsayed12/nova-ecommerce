@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 function MainLayout() {
   return (
-    <div className="min-h-screen bg-[#f5f7fb] text-slate-900">
+    <div className="main-layout">
       <Navbar />
       <main className="pt-20">
         <Outlet />
