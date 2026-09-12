@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { login } from "../../services/auth.service";
-import useToast from "../../hooks/useToast";
+import { ToastContext } from "../../context/ToastContext";
+import { useContext } from "react";
 
 function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const {showError, showSuccess} = useToast();
+  const {showError, showSuccess} = useContext(ToastContext);
 
   if (!isOpen) return null;
 
@@ -19,11 +20,10 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
       const data = await login(email, password);
 
-      localStorage.setItem("refresh_token", data.refresh_token);
+      // localStorage.setItem("refresh_token", data.refresh_token);
       localStorage.setItem("access_token", data.access_token);
 
       showSuccess(data.message);
-      // console.log(data);
 
       onClose();
 
@@ -32,7 +32,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       }
     } catch (err) {
       showError(
-        err.response?.error || "Login failed. Please try again."
+        err.response?.data?.error || "Login failed. Please try again."
       );
     } finally {
       setLoading(false);
@@ -40,27 +40,27 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-6">
-      <div className="relative w-full max-w-md rounded-[28px] bg-white p-8 shadow-xl">
+    <div className="login-modal">
+      <div className="container">
 
         <button
           onClick={onClose}
-          className="absolute right-5 top-5 rounded-full p-2 hover:bg-slate-100"
+          className="close-btn"
         >
-          <X className="h-5 w-5" />
+          <X />
         </button>
 
-        <h2 className="text-3xl font-black tracking-[-0.05em] text-slate-900">
+        <h2>
           Welcome back
         </h2>
 
-        <p className="mt-2 text-slate-500">
+        <p>
           Log in to continue shopping.
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+        <form onSubmit={handleSubmit} className="login-form">
           <div>
-            <label className="text-sm font-bold text-slate-700">
+            <label>
               Email
             </label>
 
@@ -70,12 +70,11 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="you@example.com"
-              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-slate-900"
             />
           </div>
 
           <div>
-            <label className="text-sm font-bold text-slate-700">
+            <label>
               Password
             </label>
 
@@ -85,14 +84,13 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Enter your password"
-              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-slate-900"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-full bg-slate-900 px-5 py-3 font-bold text-white disabled:opacity-50"
+            className="btn-primary"
           >
             {loading ? "Logging in..." : "Log In"}
           </button>

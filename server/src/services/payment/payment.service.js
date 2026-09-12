@@ -1,12 +1,10 @@
 import Payment from "../../models/Payment.js";
-import Order from "../../models/Order.js";
 import stripe_service from "./stripe/stripe.service.js";
+import payment_validator from "./payment.validator.js";
+
 
 const initiate_payment = async (user, orderId) => {
-    const order = await Order.findById(orderId);
-    if (user.role != "ADMIN" && !user._id.equals(order.user)){
-        throw new Error ("Access Denied");
-    }
+    const order = await payment_validator.validate_payment_initiate(user, orderId);
     const stripePayment = await stripe_service.initiate_payment(order);
     const payment = new Payment(
         {
@@ -17,15 +15,11 @@ const initiate_payment = async (user, orderId) => {
             rawResponse: stripePayment,
         }
     );
-    return payment;
+    return payment.save();
 };
 
 const get_payment_status = async (user, id) => {
-    const payment = await Payment.findById(id);
-    const order = await Order.findById(payment.Order)
-    if (user.role != "ADMIN" && !user._id.equals(order.user)){
-        throw new Error ("Access Denied");
-    }
+    const payment = await payment_validator.validate_payment(user, id);
     return payment.status;
 };
 

@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { Heart, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import Container from "./Container";
-import { getCart } from "../../services/cart.service";
+import {CartContext} from "../../context/CartContext";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -13,24 +13,7 @@ const navItems = [
 
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [cart, setCart] = useState([]);
-
-  useEffect(() => {
-    const loadCart = async () => {
-      const token = localStorage.getItem("access_token");
-      if (!token) {
-        setCart([]);
-        return;
-      }
-      try {
-        const data = await getCart();
-        setCart(data);
-      } catch (error) {
-        console.error("Error loading cart:", error);
-      }
-    }
-    loadCart();
-  }, []);
+  const {cart} = useContext(CartContext);
 
 
   return (
@@ -78,9 +61,9 @@ function Navbar() {
               </button>
               <NavLink to="/cart" aria-label="Shopping bag" className="relative nav-icon">
                 <ShoppingBag size={18} strokeWidth={2.1} />
-                <span className="nav-span">
+                {cart.length > 0 && <span className="nav-span">
                   {cart.length}
-                </span>
+                </span>}
               </NavLink>
             </div>
           </div>

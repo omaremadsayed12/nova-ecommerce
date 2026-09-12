@@ -11,13 +11,14 @@ export const login = async (email, password) => {
 
 api.interceptors.response.use(
   (response) => response,
-
   async (error) => {
     const originalRequest = error.config;
+    const access_token = localStorage.getItem("access_token");
+    
 
     if (
       error.response?.status === 401 &&
-      !originalRequest._retry
+      !originalRequest._retry && access_token
     ) {
       originalRequest._retry = true;
 

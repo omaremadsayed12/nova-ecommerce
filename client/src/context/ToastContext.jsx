@@ -1,9 +1,10 @@
-import { useState } from "react";
-import ToastContext from "./toast-context";
+import { createContext, useState } from "react";
 import ErrorToast from "../components/common/ErrorToast";
 import SuccessToast from "../components/common/SuccessToast";
 
-function ToastProvider({ children }) {
+export const ToastContext = createContext(null);
+
+export default function ToastProvider({ children }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -39,5 +40,3 @@ function ToastProvider({ children }) {
     </ToastContext.Provider>
   );
 }
-
-export default ToastProvider;

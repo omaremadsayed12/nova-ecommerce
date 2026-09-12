@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   ArrowLeft,
   Minus,
@@ -7,13 +7,14 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { getProductById } from "../services/product.service";
-import { addToCart } from "../services/cart.service";
-import LoginModal from "../components/auth/LoginModal";
-import useToast from "../hooks/useToast";
+import { CartContext } from "../context/CartContext";
+import LoginModal from "../components/common/LoginModal";
+import { ToastContext } from "../context/ToastContext";
 
 function ProductDetailsPage() {
   const { id } = useParams();
-  const { showError } = useToast();
+  const { showError } = useContext(ToastContext);
+  const { addToCart } = useContext(CartContext);
 
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -41,15 +42,9 @@ function ProductDetailsPage() {
   const handleAddToCart = async () => {
     try {
       setAddingToCart(true);
-
       await addToCart(product._id, quantity);
 
-      console.log("Product added to cart");
     } catch (err) {
-      if (err.response?.status === 401 || err.response?.status === 400) {
-        setShowAuthModal(true);
-        return;
-      }
       console.error("Failed to add product:", err);
       showError(
           err.response?.data?.error || "Something went wrong"

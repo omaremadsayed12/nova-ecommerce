@@ -1,92 +1,46 @@
-import User from "../models/User.js";
-import RefreshToken from "../models/RefreshToken.js";
 import jwt_utils from "../utils/jwt.js";
-
-const validate_user_input = async (name, email, password, imageUrl) => {
-  const errors = [];
-  let isValid = true;
-
-  if (!name || name.length < 2 || name.length > 50) {
-    errors.push("Name must be between 2 and 50 characters");
-    isValid = false;
-  }
-
-  User.findOne({ email }).then((user) => {
-    if (user) {
-      errors.push("Email already exists");
-      isValid = false;
-    }
-  });
-
-  if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-    errors.push("Invalid email format");
-    isValid = false;
-  }
-
-  if (!password || password.length < 8) {
-    errors.push("Password must be at least 8 characters long");
-    isValid = false;
-  }
-
-  return { errors, isValid };
-};
+import auth_validator from "./validators/auth.validator.js";
 
 const add_user = async (name, email, password, imageUrl) => {
+  await auth_validator.validate_register_input(name, email, password);
   const newUser = new User({ name, email, password, imageUrl });
   newUser.createdBy = newUser._id;
   newUser.updatedBy = newUser._id;
   await newUser.save();
-
   return newUser;
 };
 
 const authenticate_user = async (email, password) => {
   email = email.toLowerCase();
-  const user = await User.findOne({ email }).select("+password");
-  if (!user) {
-    throw new Error("User not found");
-  }
-  const isMatch = await user.comparePassword(password);
-  if (!isMatch) {
-    throw new Error("Invalid credentials");
-  }
+  const user = await auth_validator.validate_login_input(email, password);
   const jwtid = crypto.randomUUID();
   const refresh_token = jwt_utils.generate_refresh_token(user, jwtid);
-  await RefreshToken.findOneAndUpdate(
-    { user: user._id },
-    {
-      jwtid: jwtid,
-    },
-    {
-      upsert: true,
-      returnDocument: "after",
-    },
-  );
+  const refresh_token_obj = new RefreshToken({
+    user: user._id,
+    jwtid: jwtid,
+  });
+  await refresh_token_obj.save();
   const access_token = jwt_utils.generate_access_token(user);
+  details.access_token = access_token;
+  details.refresh_token = refresh_token;
   return { refresh_token, access_token };
 };
 
 const refresh_token = async (token) => {
-  const decoded = jwt_utils.verify_refresh_token(token);
-  const refresh_token = await RefreshToken.findOne({jwtid: decoded.jti});
-  if (!refresh_token){
-    throw new Error("Invalid refresh token");
-  }
-  const user = await User.findById(decoded.userId);
+  await auth_validator.validate_refresh_token(token);
+  const user = details.user;
   const access_token = jwt_utils.generate_access_token(user);
   return access_token;
 };
 
-const delete_token = async (token)=>{
-  const decoded = jwt_utils.verify_refresh_token(token);
-  const jwtid = decoded.jti;
-  return await RefreshToken.deleteOne({jwtid: jwtid});
-}
+const delete_token = async (token) => {
+  const refresh_token = await auth_validator.validate_delete_token(token);
+  return await refresh_token.deleteOne();
+};
 
 export default {
-  validate_user_input,
   add_user,
   authenticate_user,
   refresh_token,
-  delete_token
+  delete_token,
 };

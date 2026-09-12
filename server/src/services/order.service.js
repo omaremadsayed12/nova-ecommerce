@@ -1,34 +1,20 @@
-import Cart from "../models/Cart.js";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import StoreSettings from "../models/StoreSettings.js";
+import order_validator from "./validators/order.validator.js";
 
-const initiate_order = async (user, shippingAddress) => {
-  const cart = await Cart.getOrCreate(user._id);
+const initiate_order = async (user, cart, shippingAddress) => {
   const newOrder = new Order({
     user: user._id,
     shippingAddress: shippingAddress,
   });
-  if (cart.items.length == 0) {
-    throw new Error(`Cart is empty`);
+  const items = await order_validator.validate_order_initiate(cart);
+  for (const item of items) {
+    const product = Product.findById(item.product);
+    product.quantity -= item.quantity;
+    await product.save();
   }
-  for (const item of cart.items) {
-    const product = await Product.findById(item.product);
-    if (!product) {
-      throw new Error(`Product not found`);
-    }
-    if (item.quantity > product.stock) {
-      throw new Error(`Not enough items in stock`);
-    }
-    newOrder.items.push({
-      product: product._id,
-      quantity: item.quantity,
-      name: product.name,
-      price: product.price,
-      subtotal: product.price * item.quantity,
-    });
-    product.stock -= item.quantity;
-  }
+  newOrder.items = items;
   const storeSettings = await StoreSettings.findOne();
   newOrder.subtotal = newOrder.items.reduce(
     (total, item) => total + item.subtotal,
@@ -38,9 +24,8 @@ const initiate_order = async (user, shippingAddress) => {
   newOrder.shippingFee = storeSettings.shippingFee;
   newOrder.total = newOrder.subtotal + newOrder.tax + newOrder.shippingFee;
   newOrder.currency = storeSettings.currency;
-  cart.items = [];
-  await cart.save();
-  return await newOrder.save();
+  const order = await newOrder.save();
+  return order;
 };
 
 const get_all_orders = async (user) => {
@@ -52,23 +37,25 @@ const get_all_orders = async (user) => {
 };
 
 const get_order_details = async (user, orderId) => {
-  if (user.role == "ADMIN") {
-    return await Order.findById(orderId);
-  } else {
-    return await Order.findOne({ user: user._id, _id: orderId });
-  }
+  const order = await order_validator.validate_order(user, orderId);
+  return order;
 };
 
 const cancel_order = async (user, orderId) => {
-  const order = await Order.findById(orderId);
-  if (user.role == "ADMIN" || order.user == user._id) {
+  const order = await order_validator.validate_order(
+    user,
+    orderId,
+  );
     for (const item of order.items) {
       const product = await Product.findById(item.product);
+      if (!product){
+        continue;
+      }
       product.stock += item.quantity;
+      await product.save();
     }
     order.status = "CANCELLED";
     return await order.save();
-  } 
 };
 
 export default {

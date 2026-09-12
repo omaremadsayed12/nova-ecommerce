@@ -177,7 +177,7 @@ function HomePage() {
 
         <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {products.map((product) => (
-            <div key={product.id} className="card-surface overflow-hidden">
+            <div key={product._id} className="card-surface overflow-hidden">
               <Link to={`/product/${product._id}`}>
                 <img src={product.imageUrl} alt={product.name} className="h-72 w-full object-cover" />
               </Link>
