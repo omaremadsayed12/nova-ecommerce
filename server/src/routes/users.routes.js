@@ -18,13 +18,13 @@ router.post(
 );
 router.patch(
   "/:id",
-  auth_middleware.verify_token("ADMIN"),
+  auth_middleware.verify_token(),
   upload_middleware.upload_image,
   users_controller.update_user,
 );
 router.delete(
   "/:id",
-  auth_middleware.verify_token("ADMIN"),
+  auth_middleware.verify_token(),
   users_controller.delete_user,
 );
 

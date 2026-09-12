@@ -1,42 +1,11 @@
 import User from "../../models/User.js";
 import RefreshToken from "../../models/RefreshToken.js";
+import jwt_utils from "../../utils/jwt.js";
 import {
   AuthorizationError,
   NotFoundError,
   ValidationError,
 } from "../errors.service.js";
-
-const validate_register_input = async (name, email, password) => {
-  if (!name || name.length < 2 || name.length > 50) {
-    const details = {
-      name: "Name must be between 2 and 50 characters",
-    };
-    throw new ValidationError(details);
-  }
-  if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-    const details = {
-      email: "Invalid email format",
-    };
-    throw new ValidationError(details);
-  } else {
-    email = email.toLowerCase();
-    User.findOne({ email }).then((user) => {
-      if (user) {
-        const details = {
-          email: "Email already exists",
-        };
-        throw new ValidationError(details);
-      }
-    });
-  }
-
-  if (!password || password.length < 8) {
-    const details = {
-      password: "Password must be at least 8 characters long",
-    };
-    throw new ValidationError(details);
-  }
-};
 
 const validate_login_input = async (email, password) => {
   if (!password || password.length < 8) {
@@ -88,7 +57,6 @@ const validate_refresh_token = async (token) => {
       };
       throw new NotFoundError(details);
     } else {
-      details.refresh_token = refresh_token;
       const user = await User.findById(decoded.userId);
       if (!user) {
         const details = {
@@ -132,7 +100,6 @@ const owner_or_admin = (user, obj) => {
 };
 
 export default {
-  validate_register_input,
   validate_login_input,
   validate_refresh_token,
   validate_delete_token,

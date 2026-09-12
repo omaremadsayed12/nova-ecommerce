@@ -1,8 +1,11 @@
+import RefreshToken from "../models/RefreshToken.js";
+import User from "../models/User.js";
 import jwt_utils from "../utils/jwt.js";
+import users_validator from "./validators/users.validator.js";
 import auth_validator from "./validators/auth.validator.js";
 
 const add_user = async (name, email, password, imageUrl) => {
-  await auth_validator.validate_register_input(name, email, password);
+  await users_validator.validate_user_input(name, email, password);
   const newUser = new User({ name, email, password, imageUrl });
   newUser.createdBy = newUser._id;
   newUser.updatedBy = newUser._id;
@@ -21,14 +24,11 @@ const authenticate_user = async (email, password) => {
   });
   await refresh_token_obj.save();
   const access_token = jwt_utils.generate_access_token(user);
-  details.access_token = access_token;
-  details.refresh_token = refresh_token;
   return { refresh_token, access_token };
 };
 
 const refresh_token = async (token) => {
-  await auth_validator.validate_refresh_token(token);
-  const user = details.user;
+  const user = await auth_validator.validate_refresh_token(token);
   const access_token = jwt_utils.generate_access_token(user);
   return access_token;
 };

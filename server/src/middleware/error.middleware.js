@@ -7,7 +7,7 @@ const errorHandler = (err, req, res, next) => {
     error: {
       code: err.code || "INTERNAL_SERVER_ERROR",
       message: err.message || "Internal server error",
-      details: err || null,
+      details: err.details || null,
     },
     meta: null,
   });

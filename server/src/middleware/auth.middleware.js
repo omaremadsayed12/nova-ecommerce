@@ -1,36 +1,39 @@
 import jwt_utils from "../utils/jwt.js";
 import User from "../models/User.js";
+import { AuthenticationError, AuthorizationError } from "../services/errors.service.js";
 
 const verify_token = (role) => {
   return async (req, res, next) => {
-    try {
-      const authHeader = req.headers.authorization;
-      if (!authHeader) {
-        return res.status(401).json({
-          message: "No access token provided",
-        });
-      }
-      const token = authHeader.split(" ")[1];
-      if (!token) {
-        return res.status(401).json({
-          message: "No access token provided",
-        });
-      }
-      const decoded = jwt_utils.verify_token(token);
-      const user = await User.findById(decoded.userId);
-      if (!user) {
-        return res.status(401).json({ message: "Authentication failed" });
-      }
-      if (role && user.role != role) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-      req.user = user;
-      next();
-    } catch (error) {
-      return res
-        .status(401)
-        .json({ message: "Authentication failed", error: error.message });
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      const details = {
+        access_token: "No access token provided",
+      };
+      throw new AuthenticationError(details);
     }
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+      const details = {
+        access_token: "No access token provided",
+      };
+      throw new AuthenticationError(details);
+    }
+    const decoded = jwt_utils.verify_token(token);
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      const details = {
+        user: "User not found",
+      };
+      throw new AuthenticationError(details);
+    }
+    if (role && user.role != role) {
+      const details = {
+        user: "User doesn't have the required access"
+      }
+      throw new AuthorizationError(details);
+    }
+    req.user = user;
+    next();
   };
 };
 

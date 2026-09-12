@@ -7,118 +7,63 @@ const get_all_products = async (req, res) => {
     message: "Products fetched successfully",
     data: products,
     error: null,
-    meta: null
+    meta: null,
   });
 };
 
 const get_product_details = async (req, res) => {
-  try {
-    const product_id = req.params.id;
-    const product = await product_service.get_product_details(product_id);
-    res.status(200).json({
-      success: true,
-      message: "Product details fetched successfully",
-      data: product,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    });
-  }
+  const product_id = req.params.id;
+  const product = await product_service.get_product_details(product_id);
+  res.status(200).json({
+    success: true,
+    message: "Product details fetched successfully",
+    data: product,
+    error: null,
+    meta: null,
+  });
 };
 
 const add_product = async (req, res) => {
-  try {
-    const product_data = req.body;
-    const creator = req.user;
-    const { error, isValid } =
-      await product_service.validate_product_input(product_data);
-    if (!isValid) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid product data",
-        error: error,
-      });
-    }
-    const newProduct = await product_service.add_product(product_data, creator);
-    res.status(201).json({
-      success: true,
-      message: "Product added successfully",
-      data: newProduct,
-    });
-  } catch (error) {
-    console.error("Error adding product:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
+  const product_data = req.body;
+  const creator = req.user;
+  const product = await product_service.add_product(product_data, creator);
+  res.status(201).json({
+    success: true,
+    message: "Product added successfully",
+    data: product,
+    error: null,
+    meta: null,
+  });
 };
 
 const update_product = async (req, res) => {
-  try {
-    const product_id = req.params.id;
-    const product_exist = await product_service.check_product(product_id);
-    if (!product_exist) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-    }
-    const product_data = req.body;
-    const updater = req.user;
-    const { error, isValid } =
-      await product_service.validate_product_update_input(product_data);
-    if (!isValid) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid product data",
-        error: error,
-      });
-    }
-    const updatedProduct = await product_service.update_product(
-      product_id,
-      product_data,
-      updater,
-    );
-    if (!updatedProduct) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not updated",
-      });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Product updated successfully",
-      data: updatedProduct,
-    });
-  } catch (error) {
-    console.error("Error updating product:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
+  const product_id = req.params.id;
+  const product_data = req.body;
+  const updater = req.user;
+  const product = await product_service.update_product(
+    product_id,
+    product_data,
+    updater,
+  );
+  res.status(200).json({
+    success: true,
+    message: "Product updated successfully",
+    data: product,
+    error: null,
+    meta: null,
+  });
 };
 
 const delete_product = async (req, res) => {
-  try {
-    const product_id = req.params.id;
-    const deletedProduct = await product_service.delete_product(product_id);
-    if (!deletedProduct) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Product deleted successfully",
-      data: deletedProduct,
-    });
-  } catch (error) {
-    console.error("Error deleting product:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
+  const product_id = req.params.id;
+  const product = await product_service.delete_product(product_id);
+  res.status(200).json({
+    success: true,
+    message: "Product deleted successfully",
+    data: product,
+    error: null,
+    meta: null
+  });
 };
 
 export default {

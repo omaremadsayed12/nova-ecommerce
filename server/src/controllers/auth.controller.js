@@ -42,10 +42,10 @@ const login_user = async (req, res) => {
 const refresh_token = async (req, res) => {
   const token = req.cookies.refresh_token;
   if (!token) {
-    const detials = {
+    const details = {
       refresh_token: "No token found in browser cookies",
     };
-    throw new AuthenticationError(detials);
+    throw new AuthenticationError(details);
   } else {
     const access_token = await auth_service.refresh_token(token);
     res.status(200).json({
