@@ -27,8 +27,8 @@ function ProductDetailsPage() {
   useEffect(() => {
     const loadProduct = async () => {
       try {
-        const data = await getProductById(id);
-        setProduct(data.data);
+        const productData = await getProductById(id);
+        setProduct(productData.data);
       } catch (err) {
         setError("Failed to load product", err);
       } finally {
@@ -43,9 +43,7 @@ function ProductDetailsPage() {
     try {
       setAddingToCart(true);
       await addToCart(product._id, quantity);
-
     } catch (err) {
-      console.error("Failed to add product:", err);
       showError(
           err.response?.data?.error || "Something went wrong"
         );

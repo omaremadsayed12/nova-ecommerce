@@ -13,8 +13,8 @@ function HomePage() {
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const data = await getProducts();
-        setProducts(data.data);
+        const productData = await getProducts();
+        setProducts(productData.data);
       } catch (error) {
         setError("Failed to load products:", error);
       } finally {
@@ -28,8 +28,8 @@ function HomePage() {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const data = await getStats();
-        setStats(data);
+        const statsData = await getStats();
+        setStats(statsData.data);
       } catch (error) {
         setError("Failed to load stats:", error);
       } finally {

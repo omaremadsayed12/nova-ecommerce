@@ -18,17 +18,19 @@ const add_product = async (productData, creator) => {
 };
 
 const update_product = async (productId, productData, updater) => {
-  const product = products_validator.verify_product(productId);
+  const product = await products_validator.verify_product(productId);
   await products_validator.validate_product_update_input(productData);
   const updateData = Object.fromEntries(
     Object.entries(productData).filter(([_, value]) => value !== null),
   );
-  return await product.updateOne(
+  Object.assign(product, updateData, { updatedBy: updater._id });
+  await product.updateOne(
     { ...updateData, updatedBy: updater._id },
     {
-      returnDocument: "after",
+      new: true,
     },
   );
+  return product;
 };
 
 const delete_product = async (productId) => {

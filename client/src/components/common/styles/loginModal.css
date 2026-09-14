@@ -3,7 +3,8 @@
         @apply fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-6;
     }
     .login-modal .container{
-        @apply relative w-full max-w-md rounded-[28px] bg-white p-8 shadow-xl w-5;
+        @apply relative w-full max-w-md rounded-[28px] bg-white p-8;
+        box-shadow: var(--shadow-xl);
     }
     .login-modal .container .close-btn{
         @apply absolute right-5 top-5 rounded-full p-2 hover:bg-slate-100;

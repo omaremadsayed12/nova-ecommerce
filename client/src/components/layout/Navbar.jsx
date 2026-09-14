@@ -2,7 +2,8 @@ import { useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { Heart, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import Container from "./Container";
-import {CartContext} from "../../context/CartContext";
+import { CartContext } from "../../context/CartContext";
+import SearchBar from "../common/SearchBar";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -13,7 +14,9 @@ const navItems = [
 
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const {cart} = useContext(CartContext);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const { cart } = useContext(CartContext);
+
 
 
   return (
@@ -50,7 +53,7 @@ function Navbar() {
             </div>
 
             <div className="nav-icons">
-              <button type="button" aria-label="Search" className="hidden nav-icon md:flex">
+              <button type="button" aria-label="Search" className="hidden nav-icon md:flex" onClick={() => setSearchOpen(!searchOpen)}>
                 <Search size={18} strokeWidth={2.1} />
               </button>
               <NavLink to="/auth" aria-label="Account" className="nav-icon">
@@ -90,6 +93,8 @@ function Navbar() {
           </Container>
         </div>
       )}
+      {searchOpen && <SearchBar
+        onClose={() => setSearchOpen(false)} />}
     </>
   );
 }

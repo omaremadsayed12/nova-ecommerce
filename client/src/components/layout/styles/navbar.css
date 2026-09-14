@@ -36,19 +36,19 @@
         @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
     }
 
-    .navbar .logo .logo-link{
+    .navbar .logo .logo-link {
         @apply text-[2rem] font-black tracking-[-0.08em] text-slate-900;
     }
 
-    .navbar .nav-icons{
+    .navbar .nav-icons {
         @apply ml-auto flex items-center gap-4 text-slate-600 md:gap-5;
     }
-    
-    .navbar .nav-icons .nav-icon{
+
+    .navbar .nav-icons .nav-icon {
         @apply transition hover:text-slate-900;
     }
 
-    .navbar .nav-icons .nav-icon .nav-span{
+    .navbar .nav-icons .nav-icon .nav-span {
         @apply absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-slate-900 text-[9px] font-bold text-white;
     }
 
@@ -60,11 +60,11 @@
         @apply flex flex-col gap-2;
     }
 
-    .mobile-menu nav a{
+    .mobile-menu nav a {
         @apply rounded-xl px-3 py-3 text-sm font-semibold;
     }
 
-    .mobile-menu nav a.active{
+    .mobile-menu nav a.active {
         @apply bg-[var(--nav-btn-shadow)] text-[var(--nav-btn-txt)];
     }
 }

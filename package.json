@@ -1,6 +1,9 @@
 {
   "dependencies": {
-    "cloudinary": "^2.10.1"
+    "cloudinary": "^2.10.1",
+    "framer-motion": "^13.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "name": "ecommerce",
   "version": "1.0.0",
@@ -10,7 +13,7 @@
     "concurrently": "^10.0.5"
   },
   "scripts": {
-  "dev": "concurrently \"npm run dev --prefix server -- --host\" \"npm run dev --prefix client -- --host\""
+    "dev": "concurrently \"npm run dev --prefix server -- --host\" \"npm run dev --prefix client -- --host\""
   },
   "repository": {
     "type": "git",

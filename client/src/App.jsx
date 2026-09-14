@@ -13,11 +13,16 @@ import AdminProductsPage from "./pages/AdminProductsPage";
 import PaymentStatesPage from "./pages/PaymentStatesPage";
 import DesignSystemPage from "./pages/DesignSystemPage";
 import ToastProvider from "./context/ToastContext";
-import CartProvider  from "./context/CartContext";
+import CartProvider from "./context/CartContext";
+import ScrollTop from "./components/common/ScrollTop";
+import { AnimatePresence } from "framer-motion";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollTop />
+      <AnimatePresence mode="wait
+      ">
       <ToastProvider>
         <CartProvider>
           <Routes>
@@ -38,6 +43,7 @@ function App() {
           </Routes>
         </CartProvider>
       </ToastProvider>
+      </AnimatePresence>
     </BrowserRouter>
   );
 }
