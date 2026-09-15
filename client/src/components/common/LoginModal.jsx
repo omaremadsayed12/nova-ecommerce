@@ -1,38 +1,45 @@
 import { useState } from "react";
 import { X } from "lucide-react";
-import { login } from "../../services/auth.service";
+import { getCurrentUser, login } from "../../services/auth.service";
 import { ToastContext } from "../../context/ToastContext";
 import { useContext } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const {showError, showSuccess} = useContext(ToastContext);
+  const { showError, showSuccess } = useContext(ToastContext);
+  const { setUser } = useAuth();
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
     try {
+
       setLoading(true);
 
       const data = await login(email, password);
 
-      // localStorage.setItem("refresh_token", data.refresh_token);
-      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("access_token", data.data.access_token);
 
-      showSuccess(data.message);
+      const user = await getCurrentUser();
+      setUser(user.data);
+
+      showSuccess(`Login Success: Welcome back, ${user.data.name}`);
+
 
       onClose();
 
       if (onLoginSuccess) {
         onLoginSuccess();
       }
-    } catch (err) {
+    } catch (error) {
       showError(
-        err.response?.data?.error || "Login failed. Please try again."
+        error.response?.data?.error.message || "Login failed. Please try again."
       );
     } finally {
       setLoading(false);

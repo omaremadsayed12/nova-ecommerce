@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProducts } from "../services/product.service";
 import { getStats } from "../services/stats.service";
+import { useAuth } from "../context/AuthContext";
 
 function HomePage() {
   const [products, setProducts] = useState([]);
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const {requireAuth} = useAuth();
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -184,7 +186,7 @@ function HomePage() {
               <div className="p-5">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">{product.tag}</span>
-                  <button className="rounded-full border border-slate-200 p-2 text-slate-600 hover:border-slate-400">
+                  <button className="rounded-full border border-slate-200 p-2 text-slate-600 hover:border-slate-400" onClick={()=> {requireAuth()}}>
                     <ShoppingBag className="h-4 w-4" />
                   </button>
                 </div>

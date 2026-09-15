@@ -8,7 +8,6 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { getProductById } from "../services/product.service";
 import { CartContext } from "../context/CartContext";
-import LoginModal from "../components/common/LoginModal";
 import { ToastContext } from "../context/ToastContext";
 
 function ProductDetailsPage() {
@@ -21,7 +20,6 @@ function ProductDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
 
   useEffect(() => {
@@ -182,10 +180,6 @@ function ProductDetailsPage() {
 
         </div>
       </div>
-      <LoginModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-      />
     </div>
   );
 }

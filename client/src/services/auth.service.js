@@ -5,7 +5,11 @@ export const login = async (email, password) => {
     email,
     password,
   });
+  return response.data;
+};
 
+export const getCurrentUser = async () => {
+  const response = await api.get("/auth/me");
   return response.data;
 };
 
@@ -25,7 +29,7 @@ api.interceptors.response.use(
       try {
         const response = await api.post("/auth/refresh");
 
-        const { access_token } = response.access_token;
+        const { access_token } = response.data.data.access_token;
 
         localStorage.setItem("access_token", access_token);
 
