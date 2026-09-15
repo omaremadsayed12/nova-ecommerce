@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Product from "../../models/Product.js";
 import { NotFoundError, ValidationError } from "../errors.service.js";
+import auth_validator from "./auth.validator.js";
 
 const verify_product = async (productId) => {
   const isValidId = mongoose.Types.ObjectId.isValid(productId);

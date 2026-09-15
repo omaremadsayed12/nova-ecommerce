@@ -15,7 +15,7 @@ const initiate_payment = async (req, res) => {
 
 const get_payment_status = async (req, res) => {
     const user = req.user;
-    const id = req.param.id;
+    const id = req.params.id;
     const status = await payment_service.get_payment_status(user, id);
     res.status(200).json({
       success: true,

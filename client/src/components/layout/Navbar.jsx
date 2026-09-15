@@ -1,9 +1,12 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useCallback } from "react";
 import { NavLink } from "react-router-dom";
 import { Heart, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import Container from "./Container";
 import { CartContext } from "../../context/CartContext";
 import SearchBar from "../common/SearchBar";
+import RouteChangeHandler from "../common/RouteChangeHandler";
+import { AnimatePresence } from "framer-motion";
+
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -19,8 +22,14 @@ function Navbar() {
 
 
 
+  const closeMenus = useCallback(() => {
+    setMobileMenuOpen(false);
+    setSearchOpen(false);
+  }, []);
+
   return (
     <>
+      <RouteChangeHandler closeMenus={closeMenus} />
       <header className="navbar">
         <Container>
           <div className="navbar-container">
@@ -93,8 +102,10 @@ function Navbar() {
           </Container>
         </div>
       )}
-      {searchOpen && <SearchBar
-        onClose={() => setSearchOpen(false)} />}
+      <AnimatePresence mode="wait">
+        {searchOpen && <SearchBar
+          onClose={() => setSearchOpen(false)} />}
+      </AnimatePresence>
     </>
   );
 }

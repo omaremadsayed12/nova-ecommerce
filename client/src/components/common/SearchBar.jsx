@@ -1,13 +1,22 @@
 
 import { useEffect, useState } from "react";
 import { Search, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getProducts } from "../../services/product.service";
+import { motion } from "framer-motion";
+
 
 function SearchBar({ onClose }) {
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event, query) => {
+    event.preventDefault();
+    navigate(`/shop?query=${encodeURIComponent(query)}`);
+    onClose();
+  }
 
 
   useEffect(() => {
@@ -48,49 +57,56 @@ function SearchBar({ onClose }) {
     : [];
 
   return (
-    <div className="search-bar">
-      <div className="search-bar__inner">
-        <form className="search-bar__form" onSubmit={(event) => event.preventDefault()}>
-          <Search className="search-bar__icon" aria-hidden="true" />
-          <input
-            autoFocus
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search products"
-            aria-label="Search products"
-            className="search-bar__input"
-          />
-          <button type="submit" className="search-bar__submit" aria-label="Submit search">
-            <ArrowRight className="h-4 w-4" />
-          </button>
+    <motion.div
+      initial={{ opacity: 0, y: -15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+    >
+      <div className="search-bar">
+        <div className="search-bar__inner">
+          <form className="search-bar__form" onSubmit={(event) => handleSubmit(event, query)}>
+            <Search className="search-bar__icon" aria-hidden="true" />
+            <input
+              autoFocus
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search products"
+              aria-label="Search products"
+              className="search-bar__input"
+            />
+            <button type="submit" className="search-bar__submit" aria-label="Submit search">
+              <ArrowRight className="h-4 w-4" />
+            </button>
 
-        </form>
+          </form>
 
-        {query.trim() && (
-          <div className="search-bar__results">
-            {loading && <p className="search-bar__message">Searching...</p>}
-            {!loading && results.length === 0 && (
-              <p className="search-bar__message">No products found.</p>
-            )}
-            {results.map((product) => (
-              <Link
-                key={product._id}
-                to={`/product/${product._id}`}
-                className="search-bar__result"
-                onClick={onClose}
-              >
-                <img src={product.imageUrl || product.image} alt="" className="search-bar__result-image" />
-                <div>
-                  <div className="search-bar__result-name">{product.name}</div>
-                  <div className="search-bar__result-category">{product.category || "Product"}</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+          {query.trim() && (
+            <div className="search-bar__results">
+              {loading && <p className="search-bar__message">Searching...</p>}
+              {!loading && results.length === 0 && (
+                <p className="search-bar__message">No products found.</p>
+              )}
+              {results.map((product) => (
+                <Link
+                  key={product._id}
+                  to={`/product/${product._id}`}
+                  className="search-bar__result"
+                  onClick={onClose}
+                >
+                  <img src={product.imageUrl || product.image} alt="" className="search-bar__result-image" />
+                  <div>
+                    <div className="search-bar__result-name">{product.name}</div>
+                    <div className="search-bar__result-category">{product.category || "Product"}</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

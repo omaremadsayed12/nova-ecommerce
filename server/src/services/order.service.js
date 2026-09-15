@@ -28,11 +28,36 @@ const initiate_order = async (user, cart, shippingAddress) => {
   return order;
 };
 
-const get_all_orders = async (user) => {
+const get_all_orders = async (user, page, limit) => {
+  const skip = (page - 1) * limit;
   if (user.role == "ADMIN") {
-    return await Order.find();
+    const [orders, total] = await Promise.all([
+      Order.find().skip(skip).limit(limit),
+      Order.countDocuments(),
+    ]);
+    return {
+      orders,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   } else {
-    return await Order.find({ user: user._id });
+    const [orders, total] = await Promise.all([
+      Order.find({ user: user._id }).skip(skip).limit(limit),
+      Order.countDocuments({ user: user._id }),
+    ]);
+    return {
+      orders,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 };
 
@@ -42,20 +67,17 @@ const get_order_details = async (user, orderId) => {
 };
 
 const cancel_order = async (user, orderId) => {
-  const order = await order_validator.validate_order(
-    user,
-    orderId,
-  );
-    for (const item of order.items) {
-      const product = await Product.findById(item.product);
-      if (!product){
-        continue;
-      }
-      product.stock += item.quantity;
-      await product.save();
+  const order = await order_validator.validate_order(user, orderId);
+  for (const item of order.items) {
+    const product = await Product.findById(item.product);
+    if (!product) {
+      continue;
     }
-    order.status = "CANCELLED";
-    return await order.save();
+    product.stock += item.quantity;
+    await product.save();
+  }
+  order.status = "CANCELLED";
+  return await order.save();
 };
 
 export default {

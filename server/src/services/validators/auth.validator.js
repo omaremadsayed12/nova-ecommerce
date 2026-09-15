@@ -99,9 +99,19 @@ const owner_or_admin = (user, obj) => {
   }
 };
 
+const is_owner = (user, obj) => {
+  if (obj.user != user._id) {
+    const details = {
+      user: "Only the object owner can update it",
+    };
+    throw new AuthorizationError(details);
+  }
+};
+
 export default {
   validate_login_input,
   validate_refresh_token,
   validate_delete_token,
   owner_or_admin,
+  is_owner,
 };

@@ -12,6 +12,7 @@ import webhook_routes from "./routes/webhook.routes.js";
 import settings_routes from "./routes/settings.routes.js";
 import stats_routes from "./routes/stats.routes.js";
 import wishlist_routes from "./routes/wishlist.routes.js";
+import reviews_routes from "./routes/reviews.routes.js";
 
 import fileUpload from "express-fileupload";
 import errorHandler from "./middleware/error.middleware.js";
@@ -44,6 +45,7 @@ app.use("/api/payment", payment_routes);
 app.use("/api/settings", settings_routes);
 app.use("/api/stats",stats_routes);
 app.use("/api/wishlist",wishlist_routes);
+app.use("/api/reviews",reviews_routes);
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
