@@ -2,8 +2,9 @@
 import { useEffect, useState } from "react";
 import { Search, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { getProducts } from "../../services/product.service";
-import { motion } from "framer-motion";
+import { getProducts } from "../../../services/product.service";
+import DropdownTransation from "../../common/Transations/DropdownTransation";
+import { AnimatePresence } from "framer-motion";
 
 
 function SearchBar({ onClose }) {
@@ -57,12 +58,7 @@ function SearchBar({ onClose }) {
     : [];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -15 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -15 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
-    >
+    <DropdownTransation>
       <div className="search-bar">
         <div className="search-bar__inner">
           <form className="search-bar__form" onSubmit={(event) => handleSubmit(event, query)}>
@@ -81,33 +77,35 @@ function SearchBar({ onClose }) {
             </button>
 
           </form>
-
+          <AnimatePresence mode="wait">
           {query.trim() && (
-            <div className="search-bar__results">
-              {loading && <p className="search-bar__message">Searching...</p>}
-              {!loading && results.length === 0 && (
-                <p className="search-bar__message">No products found.</p>
-              )}
-              {results.map((product) => (
-                <Link
-                  key={product._id}
-                  to={`/product/${product._id}`}
-                  className="search-bar__result"
-                  onClick={onClose}
-                >
-                  <img src={product.imageUrl || product.image} alt="" className="search-bar__result-image" />
-                  <div>
-                    <div className="search-bar__result-name">{product.name}</div>
-                    <div className="search-bar__result-category">{product.category || "Product"}</div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <DropdownTransation>
+              <div className="search-bar__results">
+                {loading && <p className="search-bar__message">Searching...</p>}
+                {!loading && results.length === 0 && (
+                  <p className="search-bar__message">No products found.</p>
+                )}
+                {results.map((product) => (
+                  <Link
+                    key={product._id}
+                    to={`/product/${product._id}`}
+                    className="search-bar__result"
+                    onClick={onClose}
+                  >
+                    <img src={product.imageUrl || product.image} alt="" className="search-bar__result-image" />
+                    <div>
+                      <div className="search-bar__result-name">{product.name}</div>
+                      <div className="search-bar__result-category">{product.category || "Product"}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </DropdownTransation>
           )}
+          </AnimatePresence>
         </div>
       </div>
-    </motion.div>
-  );
+    </DropdownTransation>);
 }
 
 export default SearchBar

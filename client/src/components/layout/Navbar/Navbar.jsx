@@ -1,30 +1,37 @@
 import { useState, useContext, useCallback } from "react";
 import { NavLink } from "react-router-dom";
-import { Heart, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
-import Container from "./Container";
-import { CartContext } from "../../context/CartContext";
-import SearchBar from "../common/SearchBar";
-import RouteChangeHandler from "../common/RouteChangeHandler";
-import { AnimatePresence } from "framer-motion";
+import { Heart, Menu, Search, ShoppingBag, X, Bolt } from "lucide-react";
+import Container from "../Container";
+import { CartContext } from "../../../context/CartContext";
+import SearchBar from "./SearchBar";
+import RouteChangeHandler from "../../common/RouteChangeHandler";
+// import { useAuth } from "../../context/AuthContext";
+import { AnimatePresence, motion } from "framer-motion";
+import MobileMenu from "./MobileMenu";
+import PrefrencesMenu from "./PrefrencesMenu";
 
 
 const navItems = [
   { label: "Home", to: "/" },
   { label: "Shop", to: "/shop" },
-  { label: "Categories", to: "/design-system" },
-  { label: "About", to: "/orders" },
+  { label: "The Arsenal", to: "https://arsenal.com/" },
+  { label: "About", to: "/about" },
 ];
 
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { cart } = useContext(CartContext);
+  // const { requireAuth } = useAuth();
+
 
 
 
   const closeMenus = useCallback(() => {
     setMobileMenuOpen(false);
     setSearchOpen(false);
+    setSettingsMenuOpen(false);
   }, []);
 
   return (
@@ -50,7 +57,7 @@ function Navbar() {
               type="button"
               className="mobile-menu-button"
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-              onClick={() => setMobileMenuOpen((open) => !open)}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -65,46 +72,50 @@ function Navbar() {
               <button type="button" aria-label="Search" className="hidden nav-icon md:flex" onClick={() => setSearchOpen(!searchOpen)}>
                 <Search size={18} strokeWidth={2.1} />
               </button>
-              <NavLink to="/auth" aria-label="Account" className="nav-icon">
+              {/* <NavLink to="/dashboard" onClick={(event) => {
+                if (!requireAuth()) {
+                  event.preventDefault();
+                }
+              }} aria-label="Account" className="nav-icon">
                 <UserRound size={18} strokeWidth={2.1} />
-              </NavLink>
-              <button type="button" aria-label="Wishlist" className="hidden nav-icon sm:flex">
+              </NavLink> */}
+              <NavLink to="/wishlist" aria-label="Wishlist" className="hidden nav-icon sm:flex">
                 <Heart size={18} strokeWidth={2.1} />
-              </button>
+              </NavLink>
               <NavLink to="/cart" aria-label="Shopping bag" className="relative nav-icon">
                 <ShoppingBag size={18} strokeWidth={2.1} />
                 {cart.length > 0 && <span className="nav-span">
                   {cart.length}
                 </span>}
               </NavLink>
+              <button type="button" aria-label="Preferences" className="hidden nav-icon sm:flex" onClick={() => {
+                setSettingsMenuOpen(!settingsMenuOpen)
+              }}>
+                <motion.div
+                  animate={{ rotate: settingsMenuOpen ? 90 : 0 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Bolt size={18} strokeWidth={2.1} /></motion.div>
+              </button>
             </div>
           </div>
         </Container>
-      </header>
+      </header >
 
       {mobileMenuOpen && (
-        <div className="mobile-menu">
-          <Container className="py-4">
-            <nav>
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `${isActive ? "active" : "text-slate-600"}`
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-            </nav>
-          </Container>
-        </div>
-      )}
+        <MobileMenu
+          navItems={navItems}
+          onClose={() => setMobileMenuOpen(false)}
+        />
+      )
+      }
       <AnimatePresence mode="wait">
         {searchOpen && <SearchBar
           onClose={() => setSearchOpen(false)} />}
+      </AnimatePresence>
+      <AnimatePresence mode="wait">
+        {settingsMenuOpen && <PrefrencesMenu
+          onClose={() => setSettingsMenuOpen(false)} />}
       </AnimatePresence>
     </>
   );

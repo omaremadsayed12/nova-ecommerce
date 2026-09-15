@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
-import ErrorToast from "../components/common/ErrorToast";
-import SuccessToast from "../components/common/SuccessToast";
+import ErrorToast from "../components/common/Toasts/ErrorToast";
+import SuccessToast from "../components/common/Toasts/SuccessToast";
 
 export const ToastContext = createContext(null);
 

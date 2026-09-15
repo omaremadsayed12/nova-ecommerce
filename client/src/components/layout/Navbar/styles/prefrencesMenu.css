@@ -1,0 +1,48 @@
+@layer components {
+    .pref-menu {
+        @apply fixed right-10 top-20 z-40 rounded-md border border-slate-200 bg-white p-2 shadow-lg;
+    }
+
+    .pref-menu .menu {
+        @apply flex flex-col gap-3;
+    }
+
+    .pref-menu .menu a {
+        @apply flex justify-start gap-3  text-left rounded-xl items-center px-2 py-3 text-sm font-medium;
+    }
+
+    .pref-menu .menu a img {
+        @apply h-8 w-8 shrink-0 rounded-xl object-cover;
+    }
+
+    .pref-menu .menu a h5 {
+        @apply m-0 text-sm font-medium;
+    }
+
+
+    .pref-menu .menu a:hover {
+        @apply bg-[var(--nav-btn-shadow)] text-[var(--nav-btn-txt)];
+    }
+
+    .option {
+        @apply flex items-center justify-between px-2 py-2;
+    }
+
+    .option p {
+        @apply m-0 text-sm text-slate-500;
+    }
+
+    .option__actions {
+        @apply flex items-center gap-1;
+    }
+
+    .option__actions button {
+        @apply flex h-7 w-7 items-center justify-center rounded-lg text-slate-700 transition-colors;
+    }
+
+    .option__actions button:hover {
+        @apply bg-slate-100;
+    }
+
+
+}
