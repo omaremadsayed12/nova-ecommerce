@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import User from "../../models/User.js";
+import { NotFoundError, ValidationError } from "../errors.service.js";
 
 const validate_user_input = async (user_data) => {
   const { name, email, password, role } = user_data;
@@ -15,8 +16,8 @@ const validate_user_input = async (user_data) => {
     };
     throw new ValidationError(details);
   } else {
-    email = email.toLowerCase();
-    await User.findOne({ email }).then((user) => {
+    const normalizedEmail = email.toLowerCase();
+    await User.findOne({ email: normalizedEmail }).then((user) => {
       if (user) {
         const details = {
           email: "Email already exists",
@@ -58,7 +59,8 @@ const validate_user_update_input = async (user_data, user_id) => {
     throw new ValidationError(details);
   } else {
     if (email) {
-      User.findOne({ email }).then((user) => {
+      const normalizedEmail = email.toLowerCase();
+      User.findOne({ email: normalizedEmail }).then((user) => {
         if (user._id != user_id) {
           const details = {
             email: "${email} this email is used by other user",

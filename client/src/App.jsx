@@ -14,12 +14,12 @@ import CartProvider from "./context/CartContext";
 import ScrollTop from "./components/common/ScrollTop";
 import { AnimatePresence } from "framer-motion";
 import { useAuth } from "./context/AuthContext";
-import LoginModal from "./components/common/LoginModal";
+import AuthModal from "./components/common/AuthModal";
 import AboutPage from "./pages/AboutPage";
 import WishlistPage from "./pages/WishlistPage";
 
 function App() {
-  const { loginOpen, closeLogin } = useAuth();
+  const { authOpen, closeAuth } = useAuth();
 
   return (
     <BrowserRouter>
@@ -43,9 +43,9 @@ function App() {
                 <Route path="/payment-states" element={<PaymentStatesPage />} />
               </Route>
             </Routes>
-            <LoginModal
-              isOpen={loginOpen}
-              onClose={closeLogin}
+            <AuthModal
+              isOpen={authOpen}
+              onClose={closeAuth}
             />
           </CartProvider>
       </AnimatePresence>

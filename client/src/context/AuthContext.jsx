@@ -7,7 +7,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [authLoading, setAuthLoading] = useState(true);
-    const [loginOpen, setLoginOpen] = useState(false);
+    const [authOpen, setAuthOpen] = useState(false);
     const {showError} = useContext(ToastContext);
 
     const isAuthenticated = Boolean(user);
@@ -37,9 +37,9 @@ export function AuthProvider({ children }) {
 
 
 
-    const requireAuth = (action) => {
+    const requireAuth = (action) => {        
         if (!isAuthenticated) {
-            setLoginOpen(true);
+            setAuthOpen(true);
             return false;
         }
 
@@ -50,8 +50,8 @@ export function AuthProvider({ children }) {
         return true;
     };
 
-    const openLogin = () => setLoginOpen(true);
-    const closeLogin = () => setLoginOpen(false);
+    const openAuth = () => setAuthOpen(true);
+    const closeAuth = () => setAuthOpen(false);
 
     return (
         <AuthContext.Provider
@@ -60,9 +60,9 @@ export function AuthProvider({ children }) {
                 setUser,
                 isAuthenticated,
                 authLoading,
-                loginOpen,
-                openLogin,
-                closeLogin,
+                authOpen,
+                openAuth,
+                closeAuth,
                 requireAuth,
             }}
         >

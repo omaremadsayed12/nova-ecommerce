@@ -2,9 +2,9 @@ import auth_service from "../services/auth.service.js";
 import { AuthenticationError } from "../services/errors.service.js";
 
 const register_user = async (req, res) => {
-  const { name, email, password, imageUrl } = req.body;
+  const userData = req.body;
 
-  const user = await auth_service.add_user(name, email, password, imageUrl);
+  const user = await auth_service.add_user(userData);
   res.status(201).json({
     success: true,
     message: "User registered successfully",

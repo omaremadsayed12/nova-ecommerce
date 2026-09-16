@@ -4,7 +4,7 @@
 @import "../components/layout/Navbar/styles/searchBar.css";
 @import "../components/layout/Navbar/styles/mobileMenu.css";
 @import "../components/layout/Navbar/styles/prefrencesMenu.css";
-@import "../components/common/styles/loginModal.css";
+@import "../components/common/styles/authModal.css";
 :root {
   /* color: #0b1c30;
   background-color: #f5f7fb;

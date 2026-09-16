@@ -38,12 +38,6 @@ function PrefrencesMenu({ onClose }) {
                         </div>
                     </div>
                 </div>
-                {/* <h1>
-                        Hello
-                    </h1>
-                    <button onClick={onClose}>
-                        X
-                    </button> */}
             </div>
         </DropdownTransation>
     )

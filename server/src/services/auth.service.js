@@ -4,8 +4,9 @@ import jwt_utils from "../utils/jwt.js";
 import users_validator from "./validators/users.validator.js";
 import auth_validator from "./validators/auth.validator.js";
 
-const add_user = async (name, email, password, imageUrl) => {
-  await users_validator.validate_user_input(name, email, password);
+const add_user = async (userData) => {
+  const {name, email, password, imageUrl} = userData;
+  await users_validator.validate_user_input(userData);
   const newUser = new User({ name, email, password, imageUrl });
   newUser.createdBy = newUser._id;
   newUser.updatedBy = newUser._id;
