@@ -72,13 +72,6 @@ function Navbar() {
               <button type="button" aria-label="Search" className="hidden nav-icon md:flex" onClick={() => setSearchOpen(!searchOpen)}>
                 <Search size={18} strokeWidth={2.1} />
               </button>
-              {/* <NavLink to="/dashboard" onClick={(event) => {
-                if (!requireAuth()) {
-                  event.preventDefault();
-                }
-              }} aria-label="Account" className="nav-icon">
-                <UserRound size={18} strokeWidth={2.1} />
-              </NavLink> */}
               <NavLink to="/wishlist" aria-label="Wishlist" className="hidden nav-icon sm:flex">
                 <Heart size={18} strokeWidth={2.1} />
               </NavLink>

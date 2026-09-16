@@ -1,6 +1,6 @@
 @layer components {
     .pref-menu {
-        @apply fixed right-10 top-20 z-40 rounded-md border border-slate-200 bg-white p-2 shadow-lg;
+        @apply fixed right-10 top-20 z-40 rounded-xl border border-slate-200 bg-white p-3 shadow-lg;
     }
 
     .pref-menu .menu {
@@ -8,11 +8,11 @@
     }
 
     .pref-menu .menu a {
-        @apply flex justify-start gap-3  text-left rounded-xl items-center px-2 py-3 text-sm font-medium;
+        @apply flex justify-start gap-3  text-left rounded-xl items-center px-2 py-2 text-sm font-medium;
     }
 
     .pref-menu .menu a img {
-        @apply h-8 w-8 shrink-0 rounded-xl object-cover;
+        @apply h-6 w-6 shrink-0 rounded-xl object-cover;
     }
 
     .pref-menu .menu a h5 {
@@ -25,7 +25,7 @@
     }
 
     .option {
-        @apply flex items-center justify-between px-2 py-2;
+        @apply flex items-center justify-between px-3 pb-1 pt-3 border-t border-slate-200;
     }
 
     .option p {

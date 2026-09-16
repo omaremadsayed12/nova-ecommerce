@@ -6,8 +6,7 @@ import { Moon, Sun } from 'lucide-react';
 
 function PrefrencesMenu({ onClose }) {
     const { requireAuth, user } = useAuth();
-    const defaultImage = "https://approachschoolofmotoring.co.uk/wp-content/uploads/2019/01/profile-plain-300x278.png";
-
+    const defaultImage = "https://static.vecteezy.com/system/resources/previews/013/360/247/non_2x/default-avatar-photo-icon-social-media-profile-sign-symbol-vector.jpg";
     return (
         <DropdownTransation>
             <div className='pref-menu'>
