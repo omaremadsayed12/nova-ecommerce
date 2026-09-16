@@ -17,6 +17,7 @@ import { useAuth } from "./context/AuthContext";
 import AuthModal from "./components/common/AuthModal";
 import AboutPage from "./pages/AboutPage";
 import WishlistPage from "./pages/WishlistPage";
+import ThemeProvider from "./context/ThemeContext";
 
 function App() {
   const { authOpen, closeAuth } = useAuth();
@@ -26,28 +27,30 @@ function App() {
       <ScrollTop />
       <AnimatePresence mode="wait
       ">
-          <CartProvider>
-            <Routes>
-              <Route element={<MainLayout />}>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/wishlist" element={<WishlistPage />} />
-                <Route path="/shop" element={<ShopPage />} />
-                <Route path="/product/:id" element={<ProductDetailsPage />} />
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/payment-success" element={<PaymentSuccessPage />} />
-                <Route path="/orders" element={<MyOrdersPage />} />
-                <Route path="/dashboard" element={<AdminDashboardPage />} />
-                <Route path="/admin-products" element={<AdminProductsPage />} />
-                <Route path="/payment-states" element={<PaymentStatesPage />} />
-              </Route>
-            </Routes>
-            <AuthModal
-              isOpen={authOpen}
-              onClose={closeAuth}
-            />
-          </CartProvider>
+        <ThemeProvider>
+        <CartProvider>
+          <Routes>
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/shop" element={<ShopPage />} />
+              <Route path="/product/:id" element={<ProductDetailsPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/payment-success" element={<PaymentSuccessPage />} />
+              <Route path="/orders" element={<MyOrdersPage />} />
+              <Route path="/dashboard" element={<AdminDashboardPage />} />
+              <Route path="/admin-products" element={<AdminProductsPage />} />
+              <Route path="/payment-states" element={<PaymentStatesPage />} />
+            </Route>
+          </Routes>
+          <AuthModal
+            isOpen={authOpen}
+            onClose={closeAuth}
+          />
+        </CartProvider>
+        </ThemeProvider>
       </AnimatePresence>
     </BrowserRouter>
   );

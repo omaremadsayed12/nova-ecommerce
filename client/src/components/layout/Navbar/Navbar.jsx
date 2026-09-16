@@ -5,7 +5,6 @@ import Container from "../Container";
 import { CartContext } from "../../../context/CartContext";
 import SearchBar from "./SearchBar";
 import RouteChangeHandler from "../../common/RouteChangeHandler";
-// import { useAuth } from "../../context/AuthContext";
 import { AnimatePresence, motion } from "framer-motion";
 import MobileMenu from "./MobileMenu";
 import PrefrencesMenu from "./PrefrencesMenu";
@@ -23,10 +22,13 @@ function Navbar() {
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { cart } = useContext(CartContext);
-  // const { requireAuth } = useAuth();
 
-
-
+  const handleNavClick = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   const closeMenus = useCallback(() => {
     setMobileMenuOpen(false);
@@ -45,6 +47,7 @@ function Navbar() {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  onClick={handleNavClick}
                   className={({ isActive }) =>
                     `nav-item ${isActive ? "active" : "inactive"}`
                   }                >
@@ -63,7 +66,7 @@ function Navbar() {
             </button>
 
             <div className="logo">
-              <NavLink to="/" className="logo-link">
+              <NavLink to="/" onClick={handleNavClick} className="logo-link">
                 NOVA
               </NavLink>
             </div>
@@ -72,10 +75,10 @@ function Navbar() {
               <button type="button" aria-label="Search" className="hidden nav-icon md:flex" onClick={() => setSearchOpen(!searchOpen)}>
                 <Search size={18} strokeWidth={2.1} />
               </button>
-              <NavLink to="/wishlist" aria-label="Wishlist" className="hidden nav-icon sm:flex">
+              <NavLink to="/wishlist" aria-label="Wishlist" onClick={handleNavClick} className="hidden nav-icon sm:flex">
                 <Heart size={18} strokeWidth={2.1} />
               </NavLink>
-              <NavLink to="/cart" aria-label="Shopping bag" className="relative nav-icon">
+              <NavLink to="/cart" aria-label="Shopping bag" onClick={handleNavClick} className="relative nav-icon">
                 <ShoppingBag size={18} strokeWidth={2.1} />
                 {cart.length > 0 && <span className="nav-span">
                   {cart.length}

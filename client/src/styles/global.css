@@ -5,14 +5,14 @@
 @import "../components/layout/Navbar/styles/mobileMenu.css";
 @import "../components/layout/Navbar/styles/prefrencesMenu.css";
 @import "../components/common/styles/authModal.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  /* color: #0b1c30;
-  background-color: #f5f7fb;
-  font-family: "Google Sans Text", "Segoe UI", sans-serif; */
   --bg: #f5f7fb;
   --panel: #eef3f8;
   --panel-strong: #edf3fb;
-  --card: #ffffff;
+  --base: #ffffff;
   --ink: #0b1c30;
   --muted: #5a6475;
   --line: #dfe6f1;
@@ -29,6 +29,35 @@
   --nav-btn-line: #4e7ae9;
   --nav-btn-txt: #3e6fe8;
   --nav-btn-shadow: #eaf1ff;
+}
+
+.dark {
+  --bg: #0b1220;
+  --panel: #111a2b;
+  --panel-strong: #172237;
+  --base: #18243a;
+
+  --ink: #edf4ff;
+  --muted: #9aa9bd;
+  --line: #293752;
+
+  --shadow: rgba(0, 0, 0, 0.25);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.30);
+  --shadow-xl: 0 30px 80px rgba(0, 0, 0, 0.36);
+
+  --shadow-button: 0 10px 24px rgba(0, 0, 0, 0.30);
+
+  --brand: #edf4ff;
+  --brand-soft: #1d2a43;
+  --brand-ghost: #111a2b;
+
+  --nav-btn-line: #6f9aff;
+  --nav-btn-txt: #8aadff;
+  --nav-btn-shadow: #1b2b4a;
 }
 
 * {
@@ -103,8 +132,8 @@ p {
 
   .btn-primary {
      @apply inline-flex items-center justify-center rounded-full
-           bg-[#0b1c30] px-5 py-3
-           text-sm font-bold text-white
+           bg-[var(--ink)] px-5 py-3
+           text-sm font-bold text-[var(--base)]
            transition hover:-translate-y-px hover:opacity-95;
      box-shadow: var(--shadow-button);
   }

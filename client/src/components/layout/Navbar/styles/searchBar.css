@@ -8,8 +8,12 @@
     }
 
     .search-bar__form {
-        @apply mx-auto flex max-w-5xl items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2 transition focus-within:border-slate-400;
+        @apply mx-auto flex max-w-5xl items-center gap-3 rounded-2xl border border-slate-200 bg-[var(--base)] px-4 py-2 transition focus-within:border-slate-400;
         box-shadow: var(--shadow-md);
+    }
+
+    .dark .search-bar__form {
+        @apply border-slate-700 focus-within:border-slate-600;
     }
 
     .search-bar__form:focus-within {
@@ -17,19 +21,27 @@
     }
 
     .search-bar__icon {
-        @apply ml-3 h-5 w-5 shrink-0 text-slate-400;
+        @apply ml-3 h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500;
     }
 
     .search-bar__input {
         @apply min-w-0 flex-1 border-0 bg-transparent px-1 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400;
     }
 
+    .dark .search-bar__input {
+        @apply text-slate-100 placeholder:text-slate-500;
+    }
+
     .search-bar__submit {
-        @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white transition hover:-translate-y-px hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900;
+        @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-[var(--base)] transition hover:-translate-y-px hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900;
+    }
+
+    .dark .search-bar__submit {
+        @apply bg-slate-100 hover:bg-slate-200 focus-visible:outline-slate-100;
     }
 
     .search-bar__results {
-        @apply mx-auto mt-1 max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white/70 backdrop-blur-md;
+        @apply mx-auto mt-1 max-w-5xl overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-[var(--base)]/70 backdrop-blur-md;
         box-shadow: var(--shadow-md);
     }
 
@@ -37,20 +49,24 @@
         @apply flex items-center gap-3 border-b border-slate-100 px-4 py-3 transition last:border-0 hover:bg-slate-50;
     }
 
+    .dark .search-bar__result {
+        @apply border-slate-900 hover:bg-slate-900;
+    }
+
     .search-bar__result-image {
         @apply h-12 w-12 rounded-xl object-cover;
     }
 
     .search-bar__result-name {
-        @apply text-sm font-bold text-slate-900;
+        @apply text-sm font-bold text-slate-900 dark:text-slate-100;
     }
 
     .search-bar__result-category {
-        @apply mt-1 text-xs text-slate-500;
+        @apply mt-1 text-xs text-slate-500 dark:text-slate-400;
     }
 
     .search-bar__message {
-        @apply px-4 py-4 text-sm text-slate-500;
+        @apply px-4 py-4 text-sm text-slate-500 dark:text-slate-400;
     }
 
     .search-bar__input::-webkit-search-cancel-button {
