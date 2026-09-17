@@ -17,8 +17,13 @@ const orderSchema = new mongoose.Schema(
           default: 1,
         },
         name: {
-          type: String,
-          required: [true, "Product name is required"],
+          en: {
+            type: String,
+            required: [true, "Product name is required"],
+          },
+          ar: {
+            type: String,
+          },
         },
         price: {
           type: Number,

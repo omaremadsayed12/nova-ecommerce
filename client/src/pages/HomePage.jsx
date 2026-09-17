@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProducts } from "../services/product.service";
 import { getStats } from "../services/stats.service";
+import { useTranslation } from "react-i18next";
 // import { useAuth } from "../context/AuthContext";
 
 function HomePage() {
@@ -10,6 +11,9 @@ function HomePage() {
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { i18n } = useTranslation();
+
+  const currentLanguage = i18n.language;
   // const {requireAuth} = useAuth();
 
   useEffect(() => {
@@ -61,7 +65,7 @@ function HomePage() {
   }, [carouselProducts.length]);
 
   const categories = [
-    ...new Set(products.map((product) => product.category))
+    ...new Set(products.map((product) => product.category[currentLanguage]))
   ];
 
   if (loading) {
@@ -94,12 +98,12 @@ function HomePage() {
                   Shop Collection
                 </Link>
               </div>
-              
+
               <div className="mt-9 flex items-center gap-10 text-sm text-slate-500">
-              <div>
-                <div className="text-2xl font-black text-slate-900">{stats.totalOrders}</div>
-                <div>Orders Placed</div>
-              </div>
+                <div>
+                  <div className="text-2xl font-black text-slate-900">{stats.totalOrders}</div>
+                  <div>Orders Placed</div>
+                </div>
                 <div>
                   <div className="text-2xl font-black text-slate-900">{stats.totalProducts}</div>
                   <div>Product Available</div>
@@ -138,7 +142,7 @@ function HomePage() {
                       >
                         <img
                           src={product.imageUrl}
-                          alt={product.name}
+                          alt={product.name[currentLanguage]}
                           className="h-[560px] w-full object-cover"
                         />
                       </div>
@@ -186,11 +190,11 @@ function HomePage() {
               <div className="p-5">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">{product.tag}</span>
-                  <button className="rounded-full border border-slate-200 p-2 text-slate-600 hover:border-slate-400" onClick={()=> {}}>
+                  <button className="rounded-full border border-slate-200 p-2 text-slate-600 hover:border-slate-400" onClick={() => { }}>
                     <ShoppingBag className="h-4 w-4" />
                   </button>
                 </div>
-                <h3 className="mt-4 text-xl font-bold tracking-[-0.04em] text-slate-900">{product.name}</h3>
+                <h3 className="mt-4 text-xl font-bold tracking-[-0.04em] text-slate-900">{product.name[currentLanguage]}</h3>
                 <div className="mt-3 flex items-center justify-between">
                   {/* <div className="flex items-center gap-1 text-amber-500">
                     <Star className="h-4 w-4 fill-current" />

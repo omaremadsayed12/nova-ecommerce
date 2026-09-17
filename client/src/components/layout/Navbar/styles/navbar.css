@@ -33,15 +33,16 @@
     }
 
     .navbar .logo {
-        @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+        @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
+        font-family: "Google Sans Text", "Segoe UI", sans-serif !important;
     }
 
     .navbar .logo .logo-link {
-        @apply text-[2rem] font-black tracking-[-0.08em] text-slate-900  dark:text-slate-100;
+        @apply text-[2rem] font-black tracking-[-0.08em] text-slate-900 dark:text-slate-100;
     }
 
     .navbar .nav-icons {
-        @apply ml-auto flex items-center gap-4 text-slate-600 dark:text-slate-400 md:gap-5;
+        @apply ms-auto flex items-center gap-4 text-slate-600 dark:text-slate-400 md:gap-5;
     }
 
     .navbar .nav-icons .nav-icon {
@@ -49,6 +50,6 @@
     }
 
     .navbar .nav-icons .nav-icon .nav-span {
-        @apply absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-slate-900 text-[9px] font-bold text-white;
+        @apply absolute -end-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-slate-900 text-[9px] font-bold text-white;
     }
 }

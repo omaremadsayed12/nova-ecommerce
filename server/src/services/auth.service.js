@@ -5,9 +5,13 @@ import users_validator from "./validators/users.validator.js";
 import auth_validator from "./validators/auth.validator.js";
 
 const add_user = async (userData) => {
-  const {name, email, password, imageUrl} = userData;
+  const {name} = userData;
+  if(name){
+    const parsedName = JSON.parse(name);
+    userData.name = parsedName;
+  }
   await users_validator.validate_user_input(userData);
-  const newUser = new User({ name, email, password, imageUrl });
+  const newUser = new User(userData);
   newUser.createdBy = newUser._id;
   newUser.updatedBy = newUser._id;
   await newUser.save();

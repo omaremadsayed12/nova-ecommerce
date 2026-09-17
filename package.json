@@ -13,7 +13,7 @@
     "concurrently": "^10.0.5"
   },
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix server -- --host\" \"npm run dev --prefix client -- --host\""
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\""
   },
   "repository": {
     "type": "git",

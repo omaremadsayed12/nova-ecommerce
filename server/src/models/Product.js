@@ -3,19 +3,34 @@ import mongoose from "mongoose";
 const productSchema = new mongoose.Schema(
   {
     name: {
-      type: String,
-      required: [true, "Product name is required"],
+      en: {
+        type: String,
+        required: [true, "Product name is required"],
+      },
+      ar: {
+        type: String,
+      },
     },
     description: {
-      type: String,
+      en: {
+        type: String,
+      },
+      ar: {
+        type: String,
+      },
     },
     price: {
       type: Number,
       required: [true, "Product price is required"],
     },
     category: {
-      type: String,
-      required: [true, "Product category is required"],
+      en: {
+        type: String,
+        required: [true, "Category is required"],
+      },
+      ar: {
+        type: String,
+      },
     },
     currency: {
       type: String,
@@ -35,13 +50,13 @@ const productSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
     },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
-    }
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -56,7 +71,6 @@ productSchema.methods.toJSON = function () {
 
   return product;
 };
-
 
 const Product = mongoose.model("Product", productSchema);
 

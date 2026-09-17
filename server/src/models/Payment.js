@@ -8,7 +8,7 @@ const paymentSchema = new mongoose.Schema(
     },
     provider: {
       type: String,
-      enum: ["STRIPE", "EDFAPAY"],
+      enum: ["STRIPE"],
       default: "STRIPE",
     },
     providerPaymentId: {

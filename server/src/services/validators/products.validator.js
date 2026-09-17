@@ -23,18 +23,33 @@ const verify_product = async (productId) => {
   }
 };
 
-const validate_product_input = async (productData) => {
+const validate_product_input = (productData) => {
   const { name, price, currency, category } = productData;
-  if (!name || name.length < 2) {
+  const englishName = name.en;
+  const arabicName = name.ar;
+  if (!englishName || englishName.length < 2) {
     const details = {
-      name: "Product name must be at least 2 characters long",
+      name: "English name must be at least 2 characters long",
     };
     throw new ValidationError(details);
   }
-
-  if (!category || category.length < 2) {
+  if (arabicName && arabicName.length < 2) {
     const details = {
-      category: "Product category must be at least 2 characters long",
+      name: "Arabic name must be at least 2 characters long",
+    };
+    throw new ValidationError(details);
+  }
+  const englishCategory = category.en;
+  const arabicCategory = category.ar;
+  if (!englishCategory || englishCategory.length < 2) {
+    const details = {
+      category: "English category must be at least 2 characters long",
+    };
+    throw new ValidationError(details);
+  }
+  if (arabicCategory && arabicCategory.length < 2) {
+    const details = {
+      category: "Arabic category must be at least 2 characters long",
     };
     throw new ValidationError(details);
   }
@@ -53,26 +68,39 @@ const validate_product_input = async (productData) => {
   }
 };
 
-const validate_product_update_input = async (productData) => {
+const validate_product_update_input = (productData) => {
   const { name, price, category } = productData;
-
-  if (name && name.length < 2) {
+  const englishName = name.en;
+  const arabicName = name.ar;
+  if (englishName && englishName.length < 2) {
     const details = {
-      name: "Product name must be at least 2 characters long",
+      name: "English name must be at least 2 characters long",
     };
     throw new ValidationError(details);
   }
-
+  if (arabicName && arabicName.length < 2) {
+    const details = {
+      name: "Arabic name must be at least 2 characters long",
+    };
+    throw new ValidationError(details);
+  }
   if (price && price <= 0) {
     const details = {
       price: "Product price must be a positive number",
     };
     throw new ValidationError(details);
   }
-
-  if (category && category.length < 2) {
+  const englishCategory = category.en;
+  const arabicCategory = category.ar;
+  if (englishCategory && englishCategory.length < 2) {
     const details = {
-      category: "Product category must be at least 2 characters long",
+      category: "English category must be at least 2 characters long",
+    };
+    throw new ValidationError(details);
+  }
+  if (arabicCategory && arabicCategory.length < 2) {
+    const details = {
+      category: "Arabic category must be at least 2 characters long",
     };
     throw new ValidationError(details);
   }

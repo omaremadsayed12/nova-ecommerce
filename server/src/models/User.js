@@ -4,11 +4,19 @@ import bcrypt from "bcryptjs";
 const userSchema = new mongoose.Schema(
   {
     name: {
-      type: String,
-      required: [true, "Name is required"],
-      trim: true,
-      minlength: [2, "Name must be at least 2 characters"],
-      maxlength: [50, "Name cannot exceed 50 characters"],
+      en: {
+        type: String,
+        required: [true, "Name is required"],
+        trim: true,
+        minlength: [2, "Name must be at least 2 characters"],
+        maxlength: [50, "Name cannot exceed 50 characters"],
+      },
+      ar: {
+        type: String,
+        trim: true,
+        minlength: [2, "Name must be at least 2 characters"],
+        maxlength: [50, "Name cannot exceed 50 characters"],
+      },
     },
     role: {
       type: String,

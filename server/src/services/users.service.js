@@ -2,11 +2,27 @@ import User from "../models/User.js";
 import users_validator from "./validators/users.validator.js";
 import auth_validator from "./validators/auth.validator.js";
 
-const get_all_users = async () => {
-  return await User.find();
+const get_all_users = async (page, limit) => {
+  const skip = (page - 1) * limit;
+  const [users, total] = await Promise.all([
+    User.find().skip(skip).limit(limit),
+    User.countDocuments(),
+  ]);
+  const meta = {
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
+  return { users, meta };
 };
 
 const add_user = async (body, creator) => {
+  const { name } = body;
+  if (name) {
+    const parsedName = JSON.parse(name);
+    body.name = parsedName;
+  }
   await users_validator.validate_user_input(body);
   const user = new User(body);
   user.createdBy = creator._id;
@@ -15,6 +31,11 @@ const add_user = async (body, creator) => {
 };
 
 const update_user = async (user_id, user_data, updater) => {
+  const { name } = user_data;
+  if (name) {
+    const parsedName = JSON.parse(name);
+    user_data.name = parsedName;
+  }
   const user = await users_validator.validate_user(user_id);
   await users_validator.validate_user_update_input(user_data);
   await auth_validator.owner_or_admin(updater, user);
@@ -34,7 +55,7 @@ const update_user = async (user_id, user_data, updater) => {
 
 const delete_user = async (user_id, deleter) => {
   const user = await users_validator.validate_user(user_id);
-  await auth_validator(deleter, user);
+  await auth_validator.owner_or_admin(deleter, user);
   return await user.deleteOne();
 };
 

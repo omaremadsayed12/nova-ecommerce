@@ -18,6 +18,7 @@ import AuthModal from "./components/common/AuthModal";
 import AboutPage from "./pages/AboutPage";
 import WishlistPage from "./pages/WishlistPage";
 import ThemeProvider from "./context/ThemeContext";
+import "./i18n";
 
 function App() {
   const { authOpen, closeAuth } = useAuth();

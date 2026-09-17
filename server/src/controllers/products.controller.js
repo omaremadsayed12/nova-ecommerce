@@ -1,9 +1,12 @@
 import product_service from "../services/products.service.js";
 
 const get_all_products = async (req, res) => {
-    const page = Number(req.query.page) || 1;
+  const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 12;
-  const {products, meta} = await product_service.get_all_products(page,limit);
+  const { products, meta } = await product_service.get_all_products(
+    page,
+    limit,
+  );
   res.status(200).json({
     success: true,
     message: "Products fetched successfully",
@@ -64,7 +67,7 @@ const delete_product = async (req, res) => {
     message: "Product deleted successfully",
     data: product,
     error: null,
-    meta: null
+    meta: null,
   });
 };
 

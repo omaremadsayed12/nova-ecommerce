@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
-import { Search, ArrowRight } from "lucide-react";
+import { Search, ArrowRight, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { getProducts } from "../../../services/product.service";
 import DropdownTransation from "../../common/Transations/DropdownTransation";
@@ -13,6 +13,7 @@ function SearchBar({ onClose }) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const inputRef = useRef(null);
+  const isRTL = document.documentElement.dir === "rtl";
 
 
   const handleSubmit = async (event, query) => {
@@ -77,9 +78,11 @@ function SearchBar({ onClose }) {
               className="search-bar__input"
             />
             <button type="submit" className="search-bar__submit" aria-label="Submit search">
-              <ArrowRight className="h-4 w-4" />
-            </button>
-
+              {isRTL ? (
+                <ArrowLeft className="h-4 w-4" />
+              ) : (
+                <ArrowRight className="h-4 w-4" />
+              )}            </button>
           </form>
           <AnimatePresence mode="wait">
             {query.trim() && (

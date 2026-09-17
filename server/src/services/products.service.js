@@ -52,7 +52,8 @@ const get_product_details = async (productId) => {
 };
 
 const add_product = async (productData, creator) => {
-  await products_validator.validate_product_input(productData);
+  productData = parse_input(productData);
+  products_validator.validate_product_input(productData);
   const product = new Products(productData);
   product.createdBy = creator._id;
   product.updatedBy = creator._id;
@@ -60,12 +61,12 @@ const add_product = async (productData, creator) => {
 };
 
 const update_product = async (productId, productData, updater) => {
+  productData = parse_input(productData);
   const product = await products_validator.verify_product(productId);
-  await products_validator.validate_product_update_input(productData);
+  products_validator.validate_product_update_input(productData);
   const updateData = Object.fromEntries(
     Object.entries(productData).filter(([_, value]) => value !== null),
   );
-  Object.assign(product, updateData, { updatedBy: updater._id });
   await product.updateOne({ ...updateData, updatedBy: updater._id });
   return product;
 };
@@ -73,6 +74,23 @@ const update_product = async (productId, productData, updater) => {
 const delete_product = async (productId) => {
   const product = await products_validator.verify_product(productId);
   return await product.deleteOne();
+};
+
+const parse_input = (productData) => {
+  const { name, description, category } = productData;
+  if (name) {
+    const parsedName = JSON.parse(name);
+    productData.name = parsedName;
+  }
+  if (description) {
+    const parsedDescription = JSON.parse(description);
+    productData.description = parsedDescription;
+  }
+  if (category) {
+    const parsedCategory = JSON.parse(category);
+    productData.category = parsedCategory;
+  }
+  return productData;
 };
 
 export default {

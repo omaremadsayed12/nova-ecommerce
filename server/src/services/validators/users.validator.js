@@ -4,12 +4,20 @@ import { NotFoundError, ValidationError } from "../errors.service.js";
 
 const validate_user_input = async (user_data) => {
   const { name, email, password, role } = user_data;
-  if (!name || name.length < 2 || name.length > 50) {
+  const englishName = name.en;
+  const arabicName = name.ar;
+  if (!englishName || englishName.length < 2 || englishName.length > 50) {
     const details = {
-      name: "Name must be between 2 and 50 characters",
+      name: "English name must be between 2 and 50 characters",
     };
     throw new ValidationError(details);
-  }
+  } 
+  if (arabicName && (arabicName.length < 2 || arabicName.length > 50)) {
+    const details = {
+      name: "Arabic name must be between 2 and 50 characters",
+    };
+    throw new ValidationError(details);
+  } 
   if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
     const details = {
       email: "Invalid email format",
