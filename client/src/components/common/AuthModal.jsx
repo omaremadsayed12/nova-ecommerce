@@ -4,15 +4,20 @@ import { getCurrentUser, login, register } from "../../services/auth.service";
 import { ToastContext } from "../../context/ToastContext";
 import { useContext } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 function AuthModal({ isOpen, onClose, onLoginSuccess }) {
   const [registerForm, setRegisterForm] = useState(false);
-  const [name, setName] = useState("");
+  const [englishName, setEnglishName] = useState("");
+  const [arabicName, setArabicName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { showError, showSuccess } = useContext(ToastContext);
   const { setUser } = useAuth();
+  const { t, i18n } = useTranslation();
+
+  const currentLanguage = i18n.language;
 
   if (!isOpen) return null;
 
@@ -24,14 +29,14 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
       localStorage.setItem("access_token", data.data.access_token);
       const user = await getCurrentUser();
       setUser(user.data);
-      showSuccess(`Login Success: Welcome back, ${user.data.name}`);
+      showSuccess(`${t('authModal.loginSuccess')} ${user.data.name[currentLanguage]}`);
       onClose();
       if (onLoginSuccess) {
         onLoginSuccess();
       }
     } catch (error) {
       showError(
-        error.response?.data?.error.message || "Login failed. Please try again."
+        error.response?.data?.error.message || t('authModal.loginFailure')
       );
     } finally {
       setLoading(false);
@@ -42,13 +47,16 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
     e.preventDefault();
     try {
       setLoading(true);
-      console.log(name);
+      const name = {
+        en: englishName,
+        ar: arabicName
+      }
       await register(name, email, password);
       const data = await login(email, password);
       localStorage.setItem("access_token", data.data.access_token);
       const user = await getCurrentUser();
       setUser(user.data);
-      showSuccess(`Sign Up Success: Welcome, ${user.data.name}`);
+      showSuccess(`${t('authModal.signUpSuccess')} ${user.data.name[currentLanguage]}`);
       onClose();
       if (onLoginSuccess) {
         onLoginSuccess();
@@ -56,7 +64,7 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
     } catch (error) {
       console.log(error.response)
       showError(
-        error.response?.data?.error.message || "Signup failed. Please try again."
+        error.response?.data?.error.message || t('authModal.signUpFailure')
       );
     } finally {
       setLoading(false);
@@ -74,34 +82,34 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
             <X />
           </button>
           <h2>
-            Welcome back
+            {t('authModal.loginForm.header')}
           </h2>
           <p>
-            Log in to continue shopping.
+            {t('authModal.loginForm.paragraph')}
           </p>
           <form onSubmit={handleLoginSubmit} className="auth-form">
             <div>
               <label>
-                Email
+                {t('authModal.loginForm.email.label')}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="you@example.com"
+                placeholder={t('authModal.loginForm.email.placeHolder')}
               />
             </div>
             <div>
               <label>
-                Password
+                {t('authModal.loginForm.password.label')}
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Enter your password"
+                placeholder={t('authModal.loginForm.password.placeHolder')}
               />
             </div>
             <button
@@ -109,12 +117,12 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
               disabled={loading}
               className="btn-primary"
             >
-              {loading ? "Logging in..." : "Log In"}
+              {loading ? t('authModal.loginForm.button.loading') : t('authModal.loginForm.button.text')}
             </button>
           </form>
           <div className="switch-caption">
-            <p>New user?</p>
-            <button onClick={() => setRegisterForm(true)}>Register Now</button>
+            <p>{t('authModal.loginForm.switch.paragraph')}</p>
+            <button onClick={() => setRegisterForm(true)}>{t('authModal.loginForm.switch.button')}</button>
           </div>
         </div>}
 
@@ -127,46 +135,54 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
             <X />
           </button>
           <h2>
-            Register Now
+            {t('authModal.signUpForm.header')}
           </h2>
           <p>
-            Sign up to continue shopping.
+            {t('authModal.signUpForm.paragraph')}
           </p>
           <form onSubmit={handleRegisterSubmit} className="auth-form">
             <div>
               <label>
-                Name
+                {t('authModal.signUpForm.englishName.label')}
               </label>
               <input
                 type="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={englishName}
+                onChange={(e) => setEnglishName(e.target.value)}
                 required
-                placeholder="Enter your full name"
+                placeholder={t('authModal.signUpForm.englishName.placeHolder')}
+              />
+              <label>
+                {t('authModal.signUpForm.arabicName.label')}              </label>
+              <input
+                type="name"
+                value={arabicName}
+                onChange={(e) => setArabicName(e.target.value)}
+                placeholder={t('authModal.signUpForm.arabicName.placeHolder')}
               />
             </div>
             <div>
               <label>
-                Email
+                {t('authModal.signUpForm.email.label')}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="you@example.com"
+                placeholder={t('authModal.signUpForm.email.placeHolder')}
               />
             </div>
             <div>
               <label>
-                Password
+                {t('authModal.signUpForm.password.label')}
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Enter your password (8 Characters or more)"
+                placeholder={t('authModal.signUpForm.password.placeHolder')}
               />
             </div>
             <button
@@ -174,12 +190,12 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
               disabled={loading}
               className="btn-primary"
             >
-              {loading ? "Signing up..." : "Sign Up"}
+              {loading ?  t('authModal.signUpForm.button.loading') : t('authModal.signUpForm.button.loading') }
             </button>
           </form>
           <div className="switch-caption">
-            <p>Already Registered?</p>
-            <button onClick={() => setRegisterForm(false)}>Login</button>
+            <p>{t('authModal.signUpForm.switch.paragraph')}</p>
+            <button onClick={() => setRegisterForm(false)}>{t('authModal.signUpForm.switch.button')}</button>
           </div>
         </div>}
     </div>

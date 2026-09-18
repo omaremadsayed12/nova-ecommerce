@@ -9,7 +9,7 @@
     }
 
     .auth-modal .auth-modal-container .close-btn {
-        @apply absolute right-5 top-5 rounded-full p-2 hover:bg-slate-100 dark:hover:bg-slate-900;
+        @apply absolute end-5 top-5 rounded-full p-2 hover:bg-slate-100 dark:hover:bg-slate-900;
     }
 
     .auth-modal .auth-modal-container .close-btn svg {

@@ -8,13 +8,34 @@ import RouteChangeHandler from "../../common/RouteChangeHandler";
 import { AnimatePresence, motion } from "framer-motion";
 import MobileMenu from "./MobileMenu";
 import PrefrencesMenu from "./PrefrencesMenu";
+import { useTranslation } from "react-i18next";
 
 
 const navItems = [
-  { label: "Home", to: "/" },
-  { label: "Shop", to: "/shop" },
-  { label: "The Arsenal", to: "https://arsenal.com/" },
-  { label: "About", to: "/about" },
+  {
+    label: {
+      en: "Home",
+      ar: "الرئيسية"
+    }, to: "/"
+  },
+  {
+    label: {
+      en: "Shop",
+      ar: "تسوق"
+    }, to: "/shop"
+  },
+  {
+    label: {
+      en: "The Arsenal",
+      ar: "أرسنال"
+    }, to: "https://arsenal.com/"
+  },
+  {
+    label: {
+      en: "About",
+      ar: "تعرف علينا"
+    }, to: "/about"
+  },
 ];
 
 function Navbar() {
@@ -22,6 +43,8 @@ function Navbar() {
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { cart } = useContext(CartContext);
+  const{i18n} = useTranslation();
+  const currentLanguage = i18n.language;
 
   const handleNavClick = () => {
     window.scrollTo({
@@ -51,7 +74,7 @@ function Navbar() {
                   className={({ isActive }) =>
                     `nav-item ${isActive ? "active" : "inactive"}`
                   }                >
-                  {item.label}
+                  {item.label[currentLanguage]}
                 </NavLink>
               ))}
             </div>
