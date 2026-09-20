@@ -4,7 +4,7 @@
     }
 
     .auth-modal .auth-modal-container {
-        @apply relative w-full max-w-[420px] rounded-xl bg-[var(--base)] p-8;
+        @apply relative w-xl rounded-xl bg-[var(--base)] p-8;
         box-shadow: var(--shadow-xl);
     }
 

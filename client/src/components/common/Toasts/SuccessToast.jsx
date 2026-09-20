@@ -1,23 +1,31 @@
 import { CircleCheck, X } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import DropdownTransation from "../Transations/DropdownTransation";
 
-function SuccessToast({ message, onClose }) {
+
+function SuccessToast({ message, onClose, btn }) {
   if (!message) return null;
 
   return (
-    <div className="fixed right-6 top-6 z-[9999] flex items-center gap-3 rounded-xl border border-green-500/70 bg-green-500/10 px-5 py-4 text-sm font-semibold text-green-700 shadow-lg backdrop-blur-xl">
-      
-      <CircleCheck className="h-5 w-5 shrink-0 text-green-500" />
+    <DropdownTransation>
+    <div className="success toast">
+
+      <CircleCheck />
 
       <span className="flex-1">{message}</span>
-
+      {btn &&
+        <NavLink to={btn.url} onClick={onClose} >
+          {btn.text}
+        </NavLink>
+      }
       <button
         onClick={onClose}
-        className="rounded-md p-1 text-green-600 transition hover:bg-green-500/10"
         aria-label="Close success message"
       >
-        <X className="h-4 w-4" />
+        <X />
       </button>
     </div>
+    </DropdownTransation>
   );
 }
 

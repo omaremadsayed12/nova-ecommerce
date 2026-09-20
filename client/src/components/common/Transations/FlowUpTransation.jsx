@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-function PageTransition({ children }) {
+function FlowUpTransition({ children }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -13,4 +13,4 @@ function PageTransition({ children }) {
   );
 }
 
-export default PageTransition;
+export default FlowUpTransition;

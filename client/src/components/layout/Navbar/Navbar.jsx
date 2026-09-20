@@ -10,31 +10,34 @@ import MobileMenu from "./MobileMenu";
 import PrefrencesMenu from "./PrefrencesMenu";
 import { useTranslation } from "react-i18next";
 
-
 const navItems = [
   {
     label: {
       en: "Home",
-      ar: "الرئيسية"
-    }, to: "/"
+      ar: "الرئيسية",
+    },
+    to: "/",
   },
   {
     label: {
       en: "Shop",
-      ar: "تسوق"
-    }, to: "/shop"
+      ar: "تسوق",
+    },
+    to: "/shop",
   },
   {
     label: {
       en: "The Arsenal",
-      ar: "أرسنال"
-    }, to: "https://arsenal.com/"
+      ar: "أرسنال",
+    },
+    to: "https://arsenal.com/",
   },
   {
     label: {
       en: "About",
-      ar: "تعرف علينا"
-    }, to: "/about"
+      ar: "تعرف علينا",
+    },
+    to: "/about",
   },
 ];
 
@@ -43,21 +46,22 @@ function Navbar() {
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { cart } = useContext(CartContext);
-  const{i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const currentLanguage = i18n.language;
-
-  const handleNavClick = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
 
   const closeMenus = useCallback(() => {
     setMobileMenuOpen(false);
     setSearchOpen(false);
     setSettingsMenuOpen(false);
   }, []);
+
+  const handleNavClick = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    closeMenus();
+  };
 
   return (
     <>
@@ -73,7 +77,8 @@ function Navbar() {
                   onClick={handleNavClick}
                   className={({ isActive }) =>
                     `nav-item ${isActive ? "active" : "inactive"}`
-                  }                >
+                  }
+                >
                   {item.label[currentLanguage]}
                 </NavLink>
               ))}
@@ -95,46 +100,71 @@ function Navbar() {
             </div>
 
             <div className="nav-icons">
-              <button type="button" aria-label="Search" className="hidden nav-icon md:flex" onClick={() => setSearchOpen(!searchOpen)}>
+              <button
+                type="button"
+                aria-label="Search"
+                className="hidden nav-icon md:flex"
+                onClick={() => setSearchOpen(!searchOpen)}
+              >
                 <Search size={18} strokeWidth={2.1} />
               </button>
-              <NavLink to="/wishlist" aria-label="Wishlist" onClick={handleNavClick} className="hidden nav-icon sm:flex">
+              <NavLink
+                to="/wishlist"
+                aria-label="Wishlist"
+                onClick={handleNavClick}
+                className="hidden nav-icon sm:flex"
+              >
                 <Heart size={18} strokeWidth={2.1} />
               </NavLink>
-              <NavLink to="/cart" aria-label="Shopping bag" onClick={handleNavClick} className="relative nav-icon">
+              <NavLink
+                to="/cart"
+                aria-label="Shopping bag"
+                onClick={handleNavClick}
+                className="relative nav-icon"
+              >
                 <ShoppingBag size={18} strokeWidth={2.1} />
-                {cart.length > 0 && <span className="nav-span">
-                  {cart.length}
-                </span>}
+                {cart.length > 0 && (
+                  <span className="nav-span">{cart.length}</span>
+                )}
               </NavLink>
-              <button type="button" aria-label="Preferences" className="hidden nav-icon sm:flex" onClick={() => {
-                setSettingsMenuOpen(!settingsMenuOpen)
-              }}>
+              <button
+                type="button"
+                aria-label="Preferences"
+                className="hidden nav-icon sm:flex"
+                onClick={() => {
+                  setSettingsMenuOpen(!settingsMenuOpen);
+                }}
+              >
                 <motion.div
                   animate={{ rotate: settingsMenuOpen ? 90 : 0 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <Bolt size={18} strokeWidth={2.1} /></motion.div>
+                  <Bolt size={18} strokeWidth={2.1} />
+                </motion.div>
               </button>
             </div>
           </div>
         </Container>
-      </header >
+      </header>
 
       {mobileMenuOpen && (
         <MobileMenu
           navItems={navItems}
           onClose={() => setMobileMenuOpen(false)}
         />
-      )
-      }
+      )}
       <AnimatePresence mode="wait">
-        {searchOpen && <SearchBar
-          onClose={() => setSearchOpen(false)} />}
+        {searchOpen && <SearchBar onClose={() => setSearchOpen(false)} />}
       </AnimatePresence>
       <AnimatePresence mode="wait">
-        {settingsMenuOpen && <PrefrencesMenu
-          onClose={() => setSettingsMenuOpen(false)} />}
+        {settingsMenuOpen && (
+          <PrefrencesMenu
+            onClose={() => {
+              setSettingsMenuOpen(false);
+              handleNavClick();
+            }}
+          />
+        )}
       </AnimatePresence>
     </>
   );

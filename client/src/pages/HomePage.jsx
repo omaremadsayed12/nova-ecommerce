@@ -1,20 +1,19 @@
 import { ArrowRight, ShoppingBag, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {  useContext, useEffect, useState } from "react";
 import { getProducts } from "../services/product.service";
 import { getStats } from "../services/stats.service";
 import { useTranslation } from "react-i18next";
-// import { useAuth } from "../context/AuthContext";
+import { ToastContext } from "../context/ToastContext";
 
 function HomePage() {
   const [products, setProducts] = useState([]);
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const { i18n } = useTranslation();
+  const {showError}= useContext(ToastContext);
 
   const currentLanguage = i18n.language;
-  // const {requireAuth} = useAuth();
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -22,14 +21,14 @@ function HomePage() {
         const productData = await getProducts();
         setProducts(productData.data);
       } catch (error) {
-        setError("Failed to load products:", error);
+        showError("Failed to load products:", error);
       } finally {
         setLoading(false);
       }
     };
 
     loadProducts();
-  }, []);
+  }, [showError]);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -37,14 +36,14 @@ function HomePage() {
         const statsData = await getStats();
         setStats(statsData.data);
       } catch (error) {
-        setError("Failed to load stats:", error);
+        showError("Failed to load stats:", error);
       } finally {
         setLoading(false);
       }
     };
 
     loadStats();
-  }, []);
+  }, [showError]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
@@ -68,14 +67,10 @@ function HomePage() {
     ...new Set(products.map((product) => product.category[currentLanguage]))
   ];
 
+
   if (loading) {
     return <p>Loading products...</p>;
   }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
-
 
   return (
     <div className="pb-20">

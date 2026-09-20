@@ -1,12 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Google+Sans+Text:wght@400;500;700&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&family=Noto+Sans+Arabic:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap');
 
 @import "tailwindcss";
+@import "../components/layout/footer.css";
 @import "../components/layout/Navbar/styles/navbar.css";
 @import "../components/layout/Navbar/styles/searchBar.css";
 @import "../components/layout/Navbar/styles/mobileMenu.css";
 @import "../components/layout/Navbar/styles/prefrencesMenu.css";
 @import "../components/common/styles/authModal.css";
+@import "../components/common/Toasts/toast.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -25,7 +27,6 @@
   --shadow-lg: 0 24px 60px rgba(15, 23, 42, 0.08);
   --shadow-xl: 0 30px 80px rgba(15, 23, 42, 0.12);
   --shadow-button: 0 10px 24px rgba(11, 28, 48, 0.12);
-  --brand: #0b1c30;
   --brand-soft: #eaf0f8;
   --brand-ghost: #f7f9fc;
   --nav-btn-line: #4e7ae9;
@@ -38,25 +39,18 @@
   --panel: #111a2b;
   --panel-strong: #172237;
   --base: #18243a;
-
   --ink: #edf4ff;
   --muted: #9aa9bd;
   --line: #293752;
-
   --shadow: rgba(0, 0, 0, 0.25);
-
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
   --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.22);
   --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.28);
-  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.30);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.3);
   --shadow-xl: 0 30px 80px rgba(0, 0, 0, 0.36);
-
-  --shadow-button: 0 10px 24px rgba(0, 0, 0, 0.30);
-
-  --brand: #edf4ff;
+  --shadow-button: 0 10px 24px rgba(0, 0, 0, 0.3);
   --brand-soft: #1d2a43;
   --brand-ghost: #111a2b;
-
   --nav-btn-line: #6f9aff;
   --nav-btn-txt: #8aadff;
   --nav-btn-shadow: #1b2b4a;
@@ -80,7 +74,7 @@ body {
 }
 
 [lang="ar"] body {
-    font-family: "Noto Sans Arabic", sans-serif;
+  font-family: "Almarai", sans-serif;
 }
 
 img {
@@ -116,7 +110,7 @@ h6 {
 [lang="ar"] h4,
 [lang="ar"] h5,
 [lang="ar"] h6 {
-    font-family: "Noto Sans Arabic", sans-serif;
+  font-family: "Almarai", sans-serif;
 }
 
 p {
@@ -129,7 +123,7 @@ p {
 
 @layer components {
   .main-layout {
-    @apply min-h-screen bg-[var(--bg)] text-slate-900;
+    @apply min-h-screen bg-(--bg) text-slate-900 dark:text-slate-100;
   }
 
   .eyebrow {
@@ -147,7 +141,7 @@ p {
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-[var(--ink)] px-5 py-3 text-sm font-bold text-[var(--base)] transition hover:-translate-y-px hover:opacity-95;
+    @apply inline-flex items-center justify-center rounded-full bg-(--ink) px-5 py-3 text-sm font-bold text-(--base) transition hover:-translate-y-px hover:opacity-95;
     box-shadow: var(--shadow-button);
   }
 
@@ -173,7 +167,9 @@ p {
     font-size: 0.875rem;
     font-weight: 700;
     line-height: 1;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
   }
 
   .btn-secondary:hover {
@@ -202,7 +198,31 @@ p {
     background: var(--panel-strong);
     box-shadow: var(--shadow-lg);
   }
+}
 
+@utility skeleton {
+  @apply relative overflow-hidden rounded bg-slate-200 dark:bg-slate-700;
+
+  &::after {
+    content: "";
+    @apply absolute inset-0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(255 255 255 / 0.08) 25%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgb(255 255 255 / 0.08) 75%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: shimmer 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
 }
 
 @layer utilities {

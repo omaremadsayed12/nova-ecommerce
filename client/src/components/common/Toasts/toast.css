@@ -1,0 +1,42 @@
+@layer components {
+    .toast {
+        @apply fixed inset-e-6 top-6 z-9999 flex items-center gap-3 rounded-xl border px-5 py-4 text-sm font-semibold shadow-lg backdrop-blur-xl;
+    }
+
+    .toast.error {
+        @apply border-red-500/70 bg-red-500/10 text-red-600;
+    }
+    .toast.success {
+        @apply border-green-500/70 bg-green-500/10 text-green-700;
+    }
+
+    .toast svg {
+        @apply h-5 w-5 shrink-0;
+    }
+
+    .toast.error svg {
+        @apply text-red-500;
+    }
+    .toast.success svg {
+        @apply text-green-500;
+    }
+
+    .toast button {
+        @apply rounded-md p-1 transition;
+    }
+
+    .toast.error button {
+        @apply text-red-500 hover:bg-red-500/10;
+    }
+    .toast.success button {
+        @apply text-green-600 hover:bg-green-500/10;
+    }
+    .toast button svg {
+        @apply h-4 w-4;
+    }
+    .toast.success a{
+        @apply rounded-md p-1 transition text-green-600 hover:bg-green-500/10;
+    }
+}
+
+;

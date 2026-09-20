@@ -1,0 +1,47 @@
+@layer components {
+  footer {
+    @apply mt-24 border-t border-slate-200 dark:border-slate-700 bg-(--base);
+  }
+  footer .upper__footer {
+    @apply grid gap-10 grid-cols-2 px-8;
+  }
+  footer .upper__footer .logo {
+    @apply text-3xl font-black text-slate-900 dark:text-slate-100;
+  }
+  footer .upper__footer p {
+    @apply mt-4 max-w-sm text-sm leading-6 text-slate-600 dark:text-slate-400;
+  }
+  footer .upper__footer h3 {
+    @apply text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400;
+  }
+  footer .upper__footer ul {
+    @apply mt-4 flex flex-col gap-3 text-sm text-slate-600 dark:text-slate-400;
+  }
+  footer .upper__footer ul li{
+    @apply block whitespace-nowrap;
+  }
+  footer .upper__footer ul li a {
+    @apply transition flex items-center gap-1;
+  }
+  footer .upper__footer ul li a svg {
+    @apply w-5 h-5;
+  }
+  footer .upper__footer ul li.loading__item {
+    @apply w-32 h-3 skeleton;
+  }
+  footer .upper__footer ul li a:hover {
+    @apply text-slate-900 dark:text-slate-100;
+  }
+  footer .lower__footer {
+    @apply mt-10 flex flex-col gap-3 border-t border-t-slate-200 pt-5 text-sm text-slate-500 md:flex-row md:items-center md:justify-between;
+  }
+  .dark footer .lower__footer {
+    @apply border-t-slate-600 text-slate-400;
+  }
+  footer .lower__footer a{
+    @apply transition;
+  }
+  footer .lower__footer a:hover{
+    @apply text-slate-900 dark:text-slate-100;
+  }
+}

@@ -40,11 +40,11 @@ i18n.use(initReactI18next).init({
             paragraph: "Sign up to continue shopping.",
             englishName: {
               label: "English Name",
-              placeHolder: "Enter your full name in english",
+              placeHolder: "Enter your name in english",
             },
             arabicName: {
               label: "Arabic Name",
-              placeHolder: "Enter your full name in arabic",
+              placeHolder: "Enter your name in arabic",
             },
             email: {
               label: "Email",
@@ -71,6 +71,18 @@ i18n.use(initReactI18next).init({
             lang: "Language:",
           },
         },
+        footer: {
+          upperFooter:{
+            logo: "NOVA",
+            paragraph: "Shopping made simple with a seamless online shopping experience, secure payments, and lightning-fast delivery.",
+            explore:"Explore",
+            contactUs:"Contact Us"
+          },
+          lowerFooter:{
+            paragraph:"© All rights reserved | NOVA 2026",
+            privacyPolicy:"Privacy Policy"
+          }
+        }
       },
     },
     ar: {
@@ -136,6 +148,18 @@ i18n.use(initReactI18next).init({
             lang: "اللغة:",
           },
         },
+        footer: {
+          upperFooter:{
+            logo: "نوڤا",
+            paragraph: "تجربة تسوق سهلة مع خدمة مدفوعات امنة وتوصيل سريع",
+            explore:"تصفح",
+            contactUs:"تواصل معنا"
+          },
+          lowerFooter:{
+            paragraph:"© جميع الحقوق محفوظة | نوڤا 2026",
+            privacyPolicy:"سياسة الخصوصية"
+          }
+        }
       },
     },
   },
