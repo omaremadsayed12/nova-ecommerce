@@ -5,9 +5,7 @@
   footer .upper__footer {
     @apply grid gap-10 grid-cols-2 px-8;
   }
-  footer .upper__footer .logo {
-    @apply text-3xl font-black text-slate-900 dark:text-slate-100;
-  }
+
   footer .upper__footer p {
     @apply mt-4 max-w-sm text-sm leading-6 text-slate-600 dark:text-slate-400;
   }

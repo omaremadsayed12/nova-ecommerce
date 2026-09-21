@@ -26,14 +26,14 @@ i18n.use(initReactI18next).init({
               label: "Password",
               placeHolder: "Enter your password",
             },
-            button:{
-              loading:"Logging in...",
-              text:"Log In"
+            button: {
+              loading: "Logging in...",
+              text: "Log In",
             },
-            switch:{
-              paragraph:"New user?",
-              button:"Register Now"
-            }
+            switch: {
+              paragraph: "New user?",
+              button: "Register Now",
+            },
           },
           signUpForm: {
             header: "Register Now",
@@ -54,14 +54,14 @@ i18n.use(initReactI18next).init({
               label: "Password",
               placeHolder: "Enter your password (8 Characters or more)",
             },
-            button:{
-              loading:"Signing Up...",
-              text:"Sign up"
+            button: {
+              loading: "Signing Up...",
+              text: "Sign up",
             },
-            switch:{
-              paragraph:"Already registered?",
-              button:"Login"
-            }
+            switch: {
+              paragraph: "Already registered?",
+              button: "Login",
+            },
           },
         },
         navbar: {
@@ -72,17 +72,35 @@ i18n.use(initReactI18next).init({
           },
         },
         footer: {
-          upperFooter:{
+          upperFooter: {
             logo: "NOVA",
-            paragraph: "Shopping made simple with a seamless online shopping experience, secure payments, and lightning-fast delivery.",
-            explore:"Explore",
-            contactUs:"Contact Us"
+            paragraph:
+              "Shopping made simple with a seamless online shopping experience, secure payments, and lightning-fast delivery.",
+            explore: "Explore",
+            contactUs: "Contact Us",
           },
-          lowerFooter:{
-            paragraph:"© All rights reserved | NOVA 2026",
-            privacyPolicy:"Privacy Policy"
-          }
-        }
+          lowerFooter: {
+            paragraph: "© All rights reserved | NOVA 2026",
+            privacyPolicy: "Privacy Policy",
+          },
+        },
+        home: {
+          heroSection: {
+            eyebrow: "New Collection 2026",
+            headline: "Elevate Your Everyday",
+            paragraph:
+              "Discover timeless essentials and modern styles designed to become part of your everyday.",
+            primaryButton: "Shop Collection",
+            sliderNote: {
+              headline: "Fast Delivery",
+              info: "2-4 Days",
+            },
+            stats: {
+              orders: "Orders Placed",
+              products: "Listed Product",
+            },
+          },
+        },
       },
     },
     ar: {
@@ -103,14 +121,14 @@ i18n.use(initReactI18next).init({
               label: "كلمة المرور",
               placeHolder: "قم بادخال كلمة المرور",
             },
-            button:{
-              loading:"يتم تسجيل الدخول...",
-              text:"تسجيل الدخول"
+            button: {
+              loading: "يتم تسجيل الدخول...",
+              text: "تسجيل الدخول",
             },
-            switch:{
-              paragraph:"مستخدم جديد؟",
-              button:"سجل الأن"
-            }
+            switch: {
+              paragraph: "مستخدم جديد؟",
+              button: "سجل الأن",
+            },
           },
           signUpForm: {
             header: "مرحبًا",
@@ -131,14 +149,14 @@ i18n.use(initReactI18next).init({
               label: "كلمة المرور",
               placeHolder: "قم بادخال كلمة مرور لا تقل عن 8 احرف",
             },
-            button:{
-              loading:"يتم تسجيل الحساب...",
-              text:"تسجيل"
+            button: {
+              loading: "يتم تسجيل الحساب...",
+              text: "تسجيل",
             },
-            switch:{
-              paragraph:"مُسجل من قبل؟",
-              button:"تسجيل دخول"
-            }
+            switch: {
+              paragraph: "مُسجل من قبل؟",
+              button: "تسجيل دخول",
+            },
           },
         },
         navbar: {
@@ -149,17 +167,36 @@ i18n.use(initReactI18next).init({
           },
         },
         footer: {
-          upperFooter:{
+          upperFooter: {
             logo: "نوڤا",
             paragraph: "تجربة تسوق سهلة مع خدمة مدفوعات امنة وتوصيل سريع",
-            explore:"تصفح",
-            contactUs:"تواصل معنا"
+            explore: "تصفح",
+            contactUs: "تواصل معنا",
           },
-          lowerFooter:{
-            paragraph:"© جميع الحقوق محفوظة | نوڤا 2026",
-            privacyPolicy:"سياسة الخصوصية"
-          }
-        }
+          lowerFooter: {
+            paragraph: "© جميع الحقوق محفوظة | نوڤا 2026",
+            privacyPolicy: "سياسة الخصوصية",
+          },
+        },
+        home: {
+          heroSection: {
+            eyebrow: "مجموعة 2026 الجديدة",
+            headline: "ارتق بإطلالتك اليومية",
+            paragraph:
+              "اكتشف قطعًا أساسية بتصميم عصري وأناقة تدوم، لتصبح جزءًا من إطلالتك اليومية.",
+            primaryButton: "تسوق المجموعة",
+
+            sliderNote: {
+              headline: "توصيل سريع",
+              info: "4 ايام بحد اقصى",
+            },
+
+            stats: {
+              orders: "طلب",
+              products: "منتج متوفر",
+            },
+          },
+        },
       },
     },
   },

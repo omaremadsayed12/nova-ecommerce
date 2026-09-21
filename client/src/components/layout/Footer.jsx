@@ -42,9 +42,9 @@ function Footer({ categories, loading }) {
               <h3>{t("footer.upperFooter.contactUs")}</h3>
               <ul>
                 <li>
-                  <Link to="tel:+201023811518">
+                  <Link to="tel:+201001111000">
                     <Phone />
-                    <div dir="ltr">+20 102 3811 518</div>
+                    <div dir="ltr">+20 100 1111 000</div>
                   </Link>
                 </li>
                 <li>

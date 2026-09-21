@@ -93,8 +93,8 @@ function Navbar() {
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
 
-            <div className="logo">
-              <NavLink to="/" onClick={handleNavClick} className="logo-link">
+            <div className="logo-positioner">
+              <NavLink to="/" onClick={handleNavClick} className="logo">
                 NOVA
               </NavLink>
             </div>

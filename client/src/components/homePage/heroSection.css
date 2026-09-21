@@ -1,0 +1,68 @@
+@layer components {
+  .hero-section {
+    @apply mx-auto w-full max-w-360 px-6 pt-8 md:px-20 md:pt-12;
+  }
+  .hero-section .hero-shell {
+    @apply overflow-hidden border border-(--line) rounded-4xl bg-(--panel-strong) shadow-(--shadow-lg);
+  }
+  .hero-section .hero-shell .hero-grid{
+    @apply grid items-center gap-10 px-6 py-10 md:grid-cols-2 md:px-12 md:py-16;
+  }
+  .hero-section .hero-shell .hero-grid h1{
+    @apply mt-6 max-w-xl text-5xl font-black tracking-[-0.08em] text-slate-900 dark:text-slate-100 md:text-7xl;
+  }
+  .hero-section .hero-shell .hero-grid p{
+    @apply mt-6 max-w-lg text-lg text-slate-600 dark:text-slate-200;
+  }
+  .hero-section .hero-shell .hero-grid .buttons{
+    @apply mt-8 flex flex-wrap items-center gap-4;
+  }
+  .hero-section .hero-shell .hero-grid .stats{
+    @apply mt-9 flex items-center gap-10 text-sm text-slate-500 dark:text-slate-400;
+  }
+  .hero-section .hero-shell .hero-grid .stats .stat{
+    @apply text-2xl font-black text-slate-900 dark:text-slate-100;
+  }
+  .hero-section .hero-shell .hero-grid .stats .loading-stat{
+    @apply w-12 h-8 skeleton;
+  }
+  .hero-section .hero-shell .hero-grid .stats .loading-stat-text{
+    @apply mt-0.5 w-24 h-5 skeleton;
+  }
+  .hero-section .hero-shell .hero-grid .slider-section{
+    @apply rounded-4xl bg-(--base) p-4 shadow-[0_30px_80px_rgba(15,23,42,0.12)];
+  }
+  .hero-section .hero-shell .hero-grid .slider-section .slider{
+    @apply overflow-hidden rounded-[28px];
+  }
+  .hero-section .hero-shell .hero-grid .slider-section .loading-slider{
+    @apply h-140 w-auto skeleton rounded-[28px];
+  }
+  .hero-section .hero-shell .hero-grid .slider-section .slider .transitioning{
+    @apply transition-transform duration-700 ease-in-out;
+  }
+  .hero-section .hero-shell .hero-grid .slider-section .slider .products{
+    @apply w-full shrink-0;
+  }
+  .hero-section .hero-shell .hero-grid .slider-section .slider .products img{
+    @apply h-140 w-full object-cover;
+  }
+  .hero-section .hero-shell .hero-grid .slider-note{
+    @apply absolute -bottom-6 left-6 rounded-2xl bg-(--base) p-4 shadow-lg;
+  }
+  .hero-section .hero-shell .hero-grid .slider-note .note{
+    @apply flex items-center gap-3;
+  }
+  .hero-section .hero-shell .hero-grid .slider-note .note .icon{
+    @apply rounded-full bg-(--icon-spot) p-2 text-slate-900 dark:text-slate-100;
+  }
+  .hero-section .hero-shell .hero-grid .slider-note .note .icon svg{
+    @apply h-4 w-4;
+  }
+  .hero-section .hero-shell .hero-grid .slider-note .note .headline{
+    @apply text-xs uppercase tracking-[0.15em] text-slate-500 dark:text-slate-400;
+  }
+  .hero-section .hero-shell .hero-grid .slider-note .note .info{
+    @apply font-bold text-slate-900 dark:text-slate-100;
+  }
+};

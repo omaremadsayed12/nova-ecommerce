@@ -1,55 +1,52 @@
 @layer components {
-    .navbar {
-        @apply fixed inset-x-0 top-0 z-50 border-b border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-[var(--bg)]/90 backdrop-blur-xl;
-    }
+  .navbar {
+    @apply fixed inset-x-0 top-0 z-50 border-b border-slate-200 dark:border-slate-700 bg-(--base)/90 backdrop-blur-xl;
+  }
 
-    .navbar .navbar-container {
-        @apply relative flex h-20 items-center justify-between;
-    }
+  .navbar .navbar-container {
+    @apply relative flex h-20 items-center justify-between;
+  }
 
-    .navbar .navbar-container .nav-items {
-        @apply hidden items-center gap-8 md:flex;
-    }
+  .navbar .navbar-container .nav-items {
+    @apply hidden items-center gap-8 md:flex;
+  }
 
-    .navbar .navbar-container .nav-items .nav-item {
-        @apply text-[12px] font-bold tracking-[0.08em];
-    }
+  .navbar .navbar-container .nav-items .nav-item {
+    @apply text-[12px] font-bold tracking-[0.08em];
+  }
 
-    .navbar .navbar-container .nav-items .nav-item.active {
-        @apply border-b border-[var(--nav-btn-line)] pb-1 text-[var(--nav-btn-txt)];
-    }
+  .navbar .navbar-container .nav-items .nav-item.active {
+    @apply border-b border-(--nav-btn-line) pb-1 text-(--nav-btn-txt);
+  }
 
-    .navbar .navbar-container .nav-items .nav-item.inactive {
-        @apply text-slate-500 dark:text-slate-400 transition-colors;
+  .navbar .navbar-container .nav-items .nav-item.inactive {
+    @apply text-slate-500 dark:text-slate-400 transition-colors;
+  }
 
-    }
+  .navbar .navbar-container .nav-items .nav-item.inactive:hover {
+    @apply text-(--nav-btn-txt);
+  }
 
-    .navbar .navbar-container .nav-items .nav-item.inactive:hover {
-        @apply text-[var(--nav-btn-txt)];
-    }
+  .navbar .mobile-menu-button {
+    @apply flex items-center justify-center rounded-full border border-slate-200 p-2 text-slate-700 md:hidden;
+  }
 
-    .navbar .mobile-menu-button {
-        @apply flex items-center justify-center rounded-full border border-slate-200 p-2 text-slate-700 md:hidden;
-    }
+  .navbar .logo-positioner {
+    @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
+  }
+  .navbar .logo-positioner .logo {
+    font-family: "Google Sans Text", "Segoe UI", sans-serif !important;
+  }
 
-    .navbar .logo {
-        @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
-        font-family: "Google Sans Text", "Segoe UI", sans-serif !important;
-    }
+  .navbar .nav-icons {
+    @apply ms-auto flex items-center gap-4 text-slate-600 dark:text-slate-400 md:gap-5;
+  }
 
-    .navbar .logo .logo-link {
-        @apply text-[2rem] font-black tracking-[-0.08em] text-slate-900 dark:text-slate-100;
-    }
+  .navbar .nav-icons .nav-icon {
+    @apply transition hover:text-slate-900 dark:hover:text-slate-100;
+  }
 
-    .navbar .nav-icons {
-        @apply ms-auto flex items-center gap-4 text-slate-600 dark:text-slate-400 md:gap-5;
-    }
-
-    .navbar .nav-icons .nav-icon {
-        @apply transition hover:text-slate-900 dark:hover:text-slate-100;
-    }
-
-    .navbar .nav-icons .nav-icon .nav-span {
-        @apply absolute -end-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-slate-900 text-[9px] font-bold text-white;
-    }
+  .navbar .nav-icons .nav-icon .nav-span {
+    @apply absolute -inset-e-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-slate-900 text-[9px] font-bold text-white;
+  }
 }

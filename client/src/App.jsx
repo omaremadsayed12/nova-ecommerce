@@ -21,10 +21,14 @@ import "./i18n";
 import ToastProvider from "./context/ToastContext";
 import { useEffect, useState } from "react";
 import { getProducts } from "./services/product.service";
+import { useTranslation } from "react-i18next";
 
 function App() {
+  const {t, i18n} = useTranslation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const currentLanguage = i18n.language;
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -56,7 +60,7 @@ function App() {
               <CartProvider>
                 <Routes>
                   <Route element={<MainLayout categories={categories} loading={loading} />}>
-                    <Route path="/" element={<HomePage />} />
+                    <Route path="/" element={<HomePage t={t} currentLanguage={currentLanguage} products={products} loadingProducts={loading} categories={categories}/>} />
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/wishlist" element={<WishlistPage />} />
                     <Route path="/shop" element={<ShopPage />} />
