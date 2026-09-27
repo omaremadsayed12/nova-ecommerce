@@ -100,6 +100,19 @@ i18n.use(initReactI18next).init({
               products: "Listed Product",
             },
           },
+          productsSection:{
+            eyebrow: "Products",
+            headline: "Explore our bestsellers",
+            link: "View all"
+          }
+        },
+        loadingFailed: {
+          eyebrow: "Connection interrupted",
+          title: "We couldn't load this page.",
+          description:
+            "Something went wrong while fetching the latest content. Refresh the page and we will try again.",
+          reload: "Reload page",
+          status: "Temporary loading error",
         },
       },
     },
@@ -169,7 +182,7 @@ i18n.use(initReactI18next).init({
         footer: {
           upperFooter: {
             logo: "نوڤا",
-            paragraph: "تجربة تسوق سهلة مع خدمة مدفوعات امنة وتوصيل سريع",
+            paragraph: "تجربة تسوق سلسة مع خدمة مدفوعات امنة وتوصيل سريع",
             explore: "تصفح",
             contactUs: "تواصل معنا",
           },
@@ -188,7 +201,7 @@ i18n.use(initReactI18next).init({
 
             sliderNote: {
               headline: "توصيل سريع",
-              info: "4 ايام بحد اقصى",
+              info: "أقل من 4 ايام",
             },
 
             stats: {
@@ -196,6 +209,14 @@ i18n.use(initReactI18next).init({
               products: "منتج متوفر",
             },
           },
+        },
+        loadingFailed: {
+          eyebrow: "انقطع الاتصال",
+          title: "تعذر تحميل هذه الصفحة",
+          description:
+            "حدث خطأ أثناء جلب أحدث المحتوى. أعد تحميل الصفحة وسنحاول مرة أخرى.",
+          reload: "إعادة تحميل الصفحة",
+          status: "خطأ مؤقت في التحميل",
         },
       },
     },

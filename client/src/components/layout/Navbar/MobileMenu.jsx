@@ -12,7 +12,7 @@ function MobileMenu({navItems, onClose}) {
                   to={item.to}
                   onClick={onClose}
                   className={({ isActive }) =>
-                    `${isActive ? "active" : "text-slate-600"}`
+                    `${isActive ? "active" : "text-slate-600 dark:text-slate-500"}`
                   }
                 >
                   {item.label}

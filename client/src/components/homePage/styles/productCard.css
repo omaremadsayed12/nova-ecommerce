@@ -1,0 +1,47 @@
+@layer components {
+  .product-card {
+    @apply mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4;
+  }
+  .product-card img{
+    @apply h-72 w-full object-cover;
+  }
+  .product-card .topline {
+    @apply flex items-center justify-between gap-3;
+  }
+  .product-card .topline span {
+    @apply text-xs font-bold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400;
+  }
+  .product-card .topline button {
+    @apply rounded-full border border-slate-200 p-2 text-slate-600 hover:border-slate-400 transition-all duration-300 ease-in-out shrink-0;
+  }
+  .product-card .topline .quantity-bar {
+    @apply flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-full w-max p-1 gap-2 font-light text-center;
+  }
+  .product-card .topline .quantity-bar svg{
+    @apply w-2 h-2;
+  }
+  .product-card .topline button svg{
+    @apply transition-all duration-300 ease-in-out;
+  }
+  .dark .product-card .topline button {
+    @apply border-slate-700 text-slate-400 hover:border-slate-600;
+  }
+  .product-card h3 {
+    @apply mt-4 text-xl font-bold tracking-[-0.04em] text-slate-900 dark:text-slate-100;
+  }
+  .product-card .details {
+    @apply mt-3 flex items-center justify-between;
+  }
+  .product-card .details .rating {
+    @apply flex items-center gap-1 text-amber-500;
+  }
+  .product-card .details .rating svg {
+    @apply fill-current;
+  }
+  .product-card .details .rating span {
+    @apply text-sm font-semibold text-slate-700 dark:text-slate-200;
+  }
+  .product-card .details .price {
+    @apply text-lg font-black text-slate-900 dark:text-slate-100;
+  }
+}

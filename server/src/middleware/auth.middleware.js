@@ -1,6 +1,9 @@
 import jwt_utils from "../utils/jwt.js";
 import User from "../models/User.js";
-import { AuthenticationError, AuthorizationError } from "../services/errors.service.js";
+import {
+  AuthenticationError,
+  AuthorizationError,
+} from "../services/errors.service.js";
 
 const verify_token = (role) => {
   return async (req, res, next) => {
@@ -11,10 +14,11 @@ const verify_token = (role) => {
       };
       throw new AuthenticationError(details);
     }
-    const token = authHeader.split(" ")[1];
-    if (!token) {
+    const [scheme, token] = authHeader.split(" ");
+
+    if (scheme !== "Bearer" || !token) {
       const details = {
-        access_token: "No access token provided",
+        access_token: "Invalid authorization header",
       };
       throw new AuthenticationError(details);
     }
@@ -26,10 +30,10 @@ const verify_token = (role) => {
       };
       throw new AuthenticationError(details);
     }
-    if (role && user.role != role) {
+    if (role && user.role !== role) {
       const details = {
-        user: "User doesn't have the required access"
-      }
+        user: "User doesn't have the required access",
+      };
       throw new AuthorizationError(details);
     }
     req.user = user;

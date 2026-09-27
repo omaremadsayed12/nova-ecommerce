@@ -1,11 +1,17 @@
 import { Link } from "react-router-dom";
 import Container from "./Container";
-import { useTranslation } from "react-i18next";
 import { Mail, Phone } from "lucide-react";
 
-function Footer({ categories, loading }) {
-  const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language;
+function Footer({ categories, loading, t, currentLanguage }) {
+  const handleNavClick = (to) => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    if (location.pathname === to) {
+      window.location.reload();
+    }
+  };
 
   return (
     <footer>
@@ -20,17 +26,17 @@ function Footer({ categories, loading }) {
               <h3>{t("footer.upperFooter.explore")}</h3>
               {loading ? (
                 <ul>
-                  <li className="loading__item" />
-                  <li className="loading__item" />
-                  <li className="loading__item" />
-                  <li className="loading__item" />
+                  <li key="1" className="loading__item" />
+                  <li key="2" className="loading__item" />
+                  <li key="3" className="loading__item" />
+                  <li key="4" className="loading__item" />
                 </ul>
               ) : (
                 <ul>
-                  {categories.map((category) => {
+                  {categories.map((category,index) => {                    
                     return (
-                      <li>
-                        <Link to="/shop">{category[currentLanguage]}</Link>
+                      <li key={index}>
+                        <Link to="/shop" onClick={()=> handleNavClick("/shop")}>{category}</Link>
                       </li>
                     );
                   })}
@@ -40,7 +46,7 @@ function Footer({ categories, loading }) {
 
             <div>
               <h3>{t("footer.upperFooter.contactUs")}</h3>
-              <ul>
+              <ul className="h-full flex justify-center gap-5">
                 <li>
                   <Link to="tel:+201001111000">
                     <Phone />

@@ -8,11 +8,11 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { getProductById } from "../services/product.service";
 import { CartContext } from "../context/CartContext";
-import { ToastContext } from "../context/ToastContext";
+import {  useToast } from "../context/ToastContext";
 
 function ProductDetailsPage() {
   const { id } = useParams();
-  const { showError } = useContext(ToastContext);
+  const { showError } = useToast();
   const { addToCart } = useContext(CartContext);
 
   const [product, setProduct] = useState(null);
@@ -37,10 +37,10 @@ function ProductDetailsPage() {
     loadProduct();
   }, [id]);
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     try {
       setAddingToCart(true);
-      await addToCart(product._id, quantity);
+      addToCart(product._id, quantity);
     } catch (err) {
       showError(
           err.response?.data?.error || "Something went wrong"

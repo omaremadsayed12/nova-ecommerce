@@ -1,4 +1,4 @@
-import DropdownTransation from "../../common/Transations/DropdownTransation";
+import DropdownTransition from "../../common/Transitions/DropdownTransition";
 import { NavLink } from "react-router-dom";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../../../context/ThemeContext";
@@ -24,7 +24,7 @@ function PrefrencesMenu({ onClose }) {
   };
 
   return (
-    <DropdownTransation>
+    <DropdownTransition>
       <div className="pref-menu">
         <div className="menu">
           <NavLink
@@ -90,7 +90,7 @@ function PrefrencesMenu({ onClose }) {
           </div>
         </div>
       </div>
-    </DropdownTransation>
+    </DropdownTransition>
   );
 }
 

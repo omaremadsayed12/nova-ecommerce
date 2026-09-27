@@ -9,7 +9,9 @@
 @import "../components/layout/Navbar/styles/prefrencesMenu.css";
 @import "../components/common/styles/authModal.css";
 @import "../components/common/Toasts/toast.css";
-@import "../components/homePage/heroSection.css";
+@import "../components/homePage/styles/heroSection.css";
+@import "../components/homePage/styles/products.css";
+@import "../components/homePage/styles/productCard.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -171,10 +173,7 @@ p {
   }
 
   .card-surface {
-    border: 1px solid var(--line);
-    background: var(--card);
-    border-radius: 1.75rem;
-    box-shadow: var(--shadow-xs);
+    @apply border border-(--line) bg-(--card) rounded-3xl shadow-(--shadow-xs);
   }
 
   .panel-surface {
@@ -182,6 +181,10 @@ p {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 2rem;
     box-shadow: var(--shadow-lg);
+  }
+
+  svg{
+    @apply w-4 h-4;
   }
 }
 
@@ -202,6 +205,9 @@ p {
     transform: translateX(-100%);
     animation: shimmer 1.8s ease-in-out infinite;
   }
+}
+@utility number {
+    font-family: "Google Sans Text", "Segoe UI", sans-serif;
 }
 
 @keyframes shimmer {

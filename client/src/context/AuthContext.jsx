@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { getCurrentUser } from "../services/auth.service";
-import { ToastContext } from "./ToastContext";
+import {  useToast } from "./ToastContext";
 import AuthModal from "../components/common/AuthModal";
 
 export const AuthContext = createContext(null);
@@ -9,7 +9,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [authOpen, setAuthOpen] = useState(false);
-  const { showError } = useContext(ToastContext);
+  const { showError } = useToast;
 
   const isAuthenticated = Boolean(user);
 
@@ -17,10 +17,13 @@ export function AuthProvider({ children }) {
     const restoreSession = async () => {
       const accessToken = localStorage.getItem("access_token");
 
+    
+
       if (!accessToken) {
         setAuthLoading(false);
         return;
       }
+
 
       try {
         const response = await getCurrentUser();

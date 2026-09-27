@@ -12,7 +12,8 @@ const add_to_wishlist = async (user, product_id) => {
   }
   user.wishlist.push(product_id);
   user.updatedBy = user._id;
-  return await user.save();
+  await user.save();
+  return user.wishlist;
 };
 
 const remove_from_wishlist = async (user, product_id) => {
@@ -20,9 +21,10 @@ const remove_from_wishlist = async (user, product_id) => {
   if (!user.wishlist.includes(product_id)) {
     throw new ValidationError("Product is not in wishlist");
   }
-  user.wishlist.pop(product_id);
+  user.wishlist = user.wishlist.filter((id) => id.toString() !== product_id);
   user.updatedBy = user._id;
-  return await user.save();
+  await user.save();
+  return user.wishlist;
 };
 
 export default { get_wishlist, add_to_wishlist, remove_from_wishlist };

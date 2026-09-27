@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import ErrorToast from "../components/common/Toasts/ErrorToast";
 import SuccessToast from "../components/common/Toasts/SuccessToast";
 import { AnimatePresence } from "framer-motion";
@@ -6,41 +6,73 @@ import { AnimatePresence } from "framer-motion";
 export const ToastContext = createContext(null);
 
 export default function ToastProvider({ children }) {
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [button, setButton] = useState({});
+  const [toasts, setToasts] = useState([]);
+  const MAX_TOASTS = 4;
 
-  const showError = (message) => {
-    setError(message);
+  const removeToast = (id) => {
+    setToasts((current) => current.filter((toast) => toast.id !== id));
+  };
+
+  const addToast = (type, message, button = null) => {
+    const id = crypto.randomUUID();
+
+    setToasts((current) => [
+      ...current.slice(-(MAX_TOASTS - 1)),
+      {
+        id,
+        type,
+        message,
+        button,
+      },
+    ]);
 
     setTimeout(() => {
-      setError("");
+      removeToast(id);
     }, 7000);
   };
 
-  const showSuccess = (message, button) => {
-    setSuccess(message);
-    setButton(button);
-    setTimeout(() => {
-      setSuccess("");
-    }, 7000);
+  const showError = (message) => {
+    addToast("error", message);
+  };
+
+  const showSuccess = (message, button = null) => {
+    addToast("success", message, button);
   };
 
   return (
     <ToastContext.Provider value={{ showError, showSuccess }}>
       {children}
-      <AnimatePresence mode="wait">
-        <ErrorToast key="error" message={error} onClose={() => setError("")} />
-      </AnimatePresence>
 
-      <AnimatePresence mode="wait">
-        <SuccessToast
-          key="success"
-          message={success}
-          onClose={() => setSuccess("")}
-          btn={button}
-        />
-      </AnimatePresence>
+      <div className="toast-container">
+        <AnimatePresence>
+          {toasts.map((toast) =>
+            toast.type === "error" ? (
+              <ErrorToast
+                key={toast.id}
+                message={toast.message}
+                onClose={() => removeToast(toast.id)}
+              />
+            ) : (
+              <SuccessToast
+                key={toast.id}
+                message={toast.message}
+                onClose={() => removeToast(toast.id)}
+                btn={toast.button}
+              />
+            ),
+          )}
+        </AnimatePresence>
+      </div>
     </ToastContext.Provider>
   );
 }
+
+export const useToast = () => {
+  const context = useContext(ToastContext);
+
+  if (!context) {
+    throw new Error("useToast must be used inside ToastProvider");
+  }
+
+  return context;
+};

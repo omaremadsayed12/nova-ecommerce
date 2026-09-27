@@ -14,7 +14,7 @@ const get_wishlist = (req, res) => {
 
 const add_to_wishlist = async (req, res) => {
     const user = req.user;
-    const product_id = req.params.id;
+    const product_id = req.params.id;    
     const wishlist = await wishlist_service.add_to_wishlist(user, product_id);
     res.status(200).json({
         success:true,

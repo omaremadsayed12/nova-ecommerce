@@ -1,13 +1,13 @@
 import { CircleCheck, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import DropdownTransation from "../Transations/DropdownTransation";
+import DropdownTransition from "../Transitions/DropdownTransition";
 
 
 function SuccessToast({ message, onClose, btn }) {
   if (!message) return null;
 
   return (
-    <DropdownTransation>
+    <DropdownTransition>
     <div className="success toast">
 
       <CircleCheck />
@@ -25,7 +25,7 @@ function SuccessToast({ message, onClose, btn }) {
         <X />
       </button>
     </div>
-    </DropdownTransation>
+    </DropdownTransition>
   );
 }
 

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { getCurrentUser, login, register } from "../../services/auth.service";
-import { ToastContext } from "../../context/ToastContext";
+import { useToast } from "../../context/ToastContext";
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import FlowUpTransition from "./Transations/FlowUpTransation";
+import FlowUpTransition from "./Transitions/FlowUpTransition";
 import { AuthContext } from "../../context/AuthContext";
 import { AnimatePresence } from "framer-motion";
 
@@ -15,7 +15,7 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { showError, showSuccess } = useContext(ToastContext);
+  const { showError, showSuccess } = useToast();
   const { setUser } = useContext(AuthContext);
   const { t, i18n } = useTranslation();
 
@@ -69,7 +69,6 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
         onLoginSuccess();
       }
     } catch (error) {
-      console.log(error.response);
       showError(
         error.response?.data?.error.message || t("authModal.signUpFailure"),
       );

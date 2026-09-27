@@ -27,26 +27,19 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const access_token = localStorage.getItem("access_token");
-    
-
     if (
       error.response?.status === 401 &&
-      !originalRequest._retry && access_token
+      !originalRequest._retry &&
+      access_token
     ) {
       originalRequest._retry = true;
 
       try {
         const response = await api.post("/auth/refresh");
-
-        const { access_token } = response.data.data.access_token;
-
+        const access_token  = response.data.data.access_token;
         localStorage.setItem("access_token", access_token);
-
-        originalRequest.headers.Authorization =
-          `Bearer ${access_token}`;
-
+        originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return api(originalRequest);
-
       } catch (refreshError) {
         localStorage.removeItem("access_token");
 
@@ -55,5 +48,5 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );

@@ -2,14 +2,7 @@ import { Truck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-function HeroSection({
-  t,
-  currentLanguage,
-  stats,
-  carouselProducts,
-  loadingStats,
-  loadingCarouselProducts,
-}) {
+function HeroSection({ t, currentLanguage, stats, carouselProducts }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
 
@@ -37,44 +30,26 @@ function HeroSection({
               </Link>
             </div>
             <div className="stats">
-              {loadingStats ? (
-                <>
-                  <div>
-                    <div className="loading-stat" />
-                    <div className="loading-stat-text" />
-                  </div>
-                  <div>
-                    <div className="loading-stat" />
-                    <div className="loading-stat-text" />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <div className="stat">{stats.totalOrders}</div>
-                    <div>{t("home.heroSection.stats.orders")}</div>
-                  </div>
-                  <div>
-                    <div className="stat">{stats.totalProducts}</div>
-                    <div>{t("home.heroSection.stats.products")}</div>
-                  </div>
-                </>
-              )}
+              <div>
+                <div className="stat">{stats.totalOrders}</div>
+                <div>{t("home.heroSection.stats.orders")}</div>
+              </div>
+              <div>
+                <div className="stat">{stats.totalProducts}</div>
+                <div>{t("home.heroSection.stats.products")}</div>
+              </div>
             </div>
           </div>
           <div className="relative">
             <div className="slider-section">
-              {loadingCarouselProducts ? (
-                <div className="loading-slider"></div>
-              ) : (
                 <div className="slider">
                   <div
                     className={`flex ${isTransitioning ? "transitioning" : ""}`}
                     style={{
-                      transform: `translateX(-${currentSlide * 100}%)`,
+                      transform: `translateX(${currentLanguage === "ar" ? currentSlide * 100 : -currentSlide * 100}%)`,
                     }}
                     onTransitionEnd={() => {
-                      if (currentSlide === carouselProducts.length - 1) {
+                      if (currentSlide === 5) {
                         setIsTransitioning(false);
                         setCurrentSlide(0);
 
@@ -87,16 +62,15 @@ function HeroSection({
                     }}
                   >
                     {carouselProducts.map((product, index) => (
-                      <div key={`${product._id}-${index}`} className="products">
+                      <Link key={`${product._id}-${index}`} className="products" to={`/product/${product._id}`}>
                         <img
                           src={product.imageUrl}
                           alt={product.name[currentLanguage]}
                         />
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 </div>
-              )}
             </div>
             <div className="slider-note">
               <div className="note">

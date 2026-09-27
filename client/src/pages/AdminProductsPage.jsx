@@ -7,7 +7,7 @@ const products = [
   { name: "Luna Lamp", category: "Home", price: "$98", stock: 10 },
 ];
 
-function AdminProductsPage() {
+function AdminProductsPage({currentLanguage}) {
   return (
     <div className="mx-auto w-full max-w-[1440px] px-6 pb-20 pt-6 md:px-20">
       <div className="mb-8 flex items-center justify-between gap-4">
@@ -36,7 +36,7 @@ function AdminProductsPage() {
           </thead>
           <tbody>
             {products.map((product) => (
-              <tr key={product.name} className="border-t border-slate-200 text-sm text-slate-700">
+              <tr key={product.name[currentLanguage]} className="border-t border-slate-200 text-sm text-slate-700">
                 <td className="p-4 font-bold text-slate-900">{product.name}</td>
                 <td className="p-4">{product.category}</td>
                 <td className="p-4">{product.price}</td>

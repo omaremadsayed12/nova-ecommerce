@@ -8,7 +8,6 @@ import RouteChangeHandler from "../../common/RouteChangeHandler";
 import { AnimatePresence, motion } from "framer-motion";
 import MobileMenu from "./MobileMenu";
 import PrefrencesMenu from "./PrefrencesMenu";
-import { useTranslation } from "react-i18next";
 
 const navItems = [
   {
@@ -41,13 +40,11 @@ const navItems = [
   },
 ];
 
-function Navbar() {
+function Navbar({currentLanguage}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { cart } = useContext(CartContext);
-  const { i18n } = useTranslation();
-  const currentLanguage = i18n.language;
 
   const closeMenus = useCallback(() => {
     setMobileMenuOpen(false);
@@ -55,12 +52,15 @@ function Navbar() {
     setSettingsMenuOpen(false);
   }, []);
 
-  const handleNavClick = () => {
+  const handleNavClick = (to) => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
     closeMenus();
+    if (location.pathname === to) {
+      window.location.reload();
+    }
   };
 
   return (
@@ -74,7 +74,7 @@ function Navbar() {
                 <NavLink
                   key={item.to}
                   to={item.to}
-                  onClick={handleNavClick}
+                  onClick={()=>handleNavClick(item.to)}
                   className={({ isActive }) =>
                     `nav-item ${isActive ? "active" : "inactive"}`
                   }
@@ -94,7 +94,7 @@ function Navbar() {
             </button>
 
             <div className="logo-positioner">
-              <NavLink to="/" onClick={handleNavClick} className="logo">
+              <NavLink to="/" onClick={()=> handleNavClick("/")} className="logo">
                 NOVA
               </NavLink>
             </div>
@@ -111,7 +111,7 @@ function Navbar() {
               <NavLink
                 to="/wishlist"
                 aria-label="Wishlist"
-                onClick={handleNavClick}
+                onClick={()=>handleNavClick("/wishlist")}
                 className="hidden nav-icon sm:flex"
               >
                 <Heart size={18} strokeWidth={2.1} />
@@ -119,12 +119,12 @@ function Navbar() {
               <NavLink
                 to="/cart"
                 aria-label="Shopping bag"
-                onClick={handleNavClick}
+                onClick={()=>handleNavClick("/cart")}
                 className="relative nav-icon"
               >
                 <ShoppingBag size={18} strokeWidth={2.1} />
                 {cart.length > 0 && (
-                  <span className="nav-span">{cart.length}</span>
+                  <span>{cart.length}</span>
                 )}
               </NavLink>
               <button
@@ -161,7 +161,6 @@ function Navbar() {
           <PrefrencesMenu
             onClose={() => {
               setSettingsMenuOpen(false);
-              handleNavClick();
             }}
           />
         )}

@@ -1,11 +1,11 @@
 import { CircleAlert, X } from "lucide-react";
-import DropdownTransation from "../Transations/DropdownTransation";
+import DropdownTransition from "../Transitions/DropdownTransition";
 
 function ErrorToast({ message, onClose }) {
   if (!message) return null;
 
   return (
-    <DropdownTransation>
+    <DropdownTransition>
       <div className="error toast">
         <CircleAlert />
 
@@ -15,7 +15,7 @@ function ErrorToast({ message, onClose }) {
           <X />
         </button>
       </div>
-    </DropdownTransation>
+    </DropdownTransition>
   );
 }
 

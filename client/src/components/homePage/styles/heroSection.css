@@ -23,12 +23,6 @@
   .hero-section .hero-shell .hero-grid .stats .stat{
     @apply text-2xl font-black text-slate-900 dark:text-slate-100;
   }
-  .hero-section .hero-shell .hero-grid .stats .loading-stat{
-    @apply w-12 h-8 skeleton;
-  }
-  .hero-section .hero-shell .hero-grid .stats .loading-stat-text{
-    @apply mt-0.5 w-24 h-5 skeleton;
-  }
   .hero-section .hero-shell .hero-grid .slider-section{
     @apply rounded-4xl bg-(--base) p-4 shadow-[0_30px_80px_rgba(15,23,42,0.12)];
   }

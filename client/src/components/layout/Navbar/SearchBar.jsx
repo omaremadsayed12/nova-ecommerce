@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Search, ArrowRight, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { getProducts } from "../../../services/product.service";
-import DropdownTransation from "../../common/Transations/DropdownTransation";
+import DropdownTransition from "../../common/Transitions/DropdownTransition";
 import { AnimatePresence } from "framer-motion";
 
 
@@ -63,7 +63,7 @@ function SearchBar({ onClose }) {
     : [];
 
   return (
-    <DropdownTransation>
+    <DropdownTransition>
       <div className="search-bar">
         <div className="search-bar__inner">
           <form className="search-bar__form" onSubmit={(event) => handleSubmit(event, query)}>
@@ -86,7 +86,7 @@ function SearchBar({ onClose }) {
           </form>
           <AnimatePresence mode="wait">
             {query.trim() && (
-              <DropdownTransation>
+              <DropdownTransition>
                 <div className="search-bar__results">
                   {loading && <p className="search-bar__message">Searching...</p>}
                   {!loading && results.length === 0 && (
@@ -107,12 +107,12 @@ function SearchBar({ onClose }) {
                     </Link>
                   ))}
                 </div>
-              </DropdownTransation>
+              </DropdownTransition>
             )}
           </AnimatePresence>
         </div>
       </div>
-    </DropdownTransation>);
+    </DropdownTransition>);
 }
 
 export default SearchBar
