@@ -5,43 +5,41 @@ import { CartContext } from "../../context/CartContext";
 import { WishlistContext } from "../../context/WishlistContext";
 import { AuthContext } from "../../context/AuthContext";
 
-function ProductCard({ currentLanguage, products }) {
+function ProductCard({ currentLanguage, product }) {
   const { inCart, addToCart, removeFromCart, updateCart, quantity } =
     useContext(CartContext);
   const { inWishlist, addProductToWishlist, removeProductFromWishlist } =
     useContext(WishlistContext);
   const { requireAuth } = useContext(AuthContext);
 
-  const handleWishlist = (productId) => {
-    if (inWishlist(productId)) {
-      removeProductFromWishlist(productId);
+  const handleWishlist = () => {
+    if (inWishlist(product._id)) {
+      removeProductFromWishlist(product._id);
     } else {
-      addProductToWishlist(productId);
+      addProductToWishlist(product._id);
     }
   };
 
-  const handleMinus = (productId) => {
-    const newQuantity = quantity(productId) - 1;
+  const handleMinus = () => {
+    const newQuantity = quantity(product._id) - 1;
     if (newQuantity === 0) {
-      removeFromCart(productId);
+      removeFromCart(product._id);
     } else {
-      updateCart(productId, newQuantity);
+      updateCart(product._id, newQuantity);
     }
   };
 
-  const handlePlus = (productId) => {
-    const newQuantity = quantity(productId) + 1;
+  const handlePlus = () => {
+    const newQuantity = quantity(product._id) + 1;
     if (newQuantity === 0) {
-      removeFromCart(productId);
+      removeFromCart(product._id);
     } else {
-      updateCart(productId, newQuantity);
+      updateCart(product._id, newQuantity);
     }
   };
 
   return (
-    <div className="product-card">
-      {products.map((product) => (
-        <div key={product._id} className="card-surface overflow-hidden">
+        <div key={product._id} className="product-card">
           <Link to={`/product/${product._id}`}>
             <img
               src={product.imageUrl}
@@ -60,7 +58,7 @@ function ProductCard({ currentLanguage, products }) {
                       : "Add to wishlist"
                   }
                   aria-pressed={inWishlist(product._id)}
-                  onClick={() => requireAuth(() => handleWishlist(product._id))}
+                  onClick={() => requireAuth(() => handleWishlist())}
                 >
 
                     <Heart
@@ -72,13 +70,13 @@ function ProductCard({ currentLanguage, products }) {
                       key="quantity"
                       className="quantity-bar"
                     >
-                      <button onClick={() => handleMinus(product._id)}>
+                      <button onClick={() => handleMinus()}>
                         <Minus />
                       </button>
 
                       <div>{quantity(product._id)}</div>
 
-                      <button onClick={() => handlePlus(product._id)}>
+                      <button onClick={() => handlePlus()}>
                         <Plus />
                       </button>
                     </div>
@@ -111,8 +109,6 @@ function ProductCard({ currentLanguage, products }) {
             </div>
           </div>
         </div>
-      ))}
-    </div>
   );
 }
 

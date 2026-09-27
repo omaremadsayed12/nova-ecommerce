@@ -1,29 +1,30 @@
-import { ArrowLeft, ArrowRight} from "lucide-react"
-import { Link } from "react-router-dom"
-import ProductCard from "./ProductCard"
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import ProductCard from "./ProductCard";
 
-function Products({ t, currentLanguage, products}) {
-    products = products
-      .sort((a, b) => b.averageRating - a.averageRating)
-      .slice(0, 4);
+function Products({ t, currentLanguage, products }) {
+  products = products
+    .sort((a, b) => b.averageRating - a.averageRating)
+    .slice(0, 4);
   return (
     <section className="products-section">
-          <div className="headline">
-            <div>
-              <span className="eyebrow">{t('home.productsSection.eyebrow')}</span>
-              <h2>
-                {t('home.productsSection.headline')}
-              </h2>
-            </div>
-            <Link
-              to="/shop"
-            >
-              {t('home.productsSection.link')} { currentLanguage == "en" ? <ArrowRight/> : <ArrowLeft/> }
-            </Link>
-          </div>
-          <ProductCard currentLanguage={currentLanguage} products={products}/>
-        </section>
-  )
+      <div className="headline">
+        <div>
+          <span className="eyebrow">{t("home.productsSection.eyebrow")}</span>
+          <h2>{t("home.productsSection.headline")}</h2>
+        </div>
+        <Link to="/shop">
+          {t("home.productsSection.link")}{" "}
+          {currentLanguage == "en" ? <ArrowRight /> : <ArrowLeft />}
+        </Link>
+      </div>
+      <div className="product-cards">
+        {products.map((product) => (
+          <ProductCard currentLanguage={currentLanguage} product={product} key={product._id} />
+        ))}
+      </div>
+    </section>
+  );
 }
 
-export default Products
+export default Products;

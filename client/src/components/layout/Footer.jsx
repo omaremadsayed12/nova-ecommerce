@@ -2,7 +2,10 @@ import { Link } from "react-router-dom";
 import Container from "./Container";
 import { Mail, Phone } from "lucide-react";
 
-function Footer({ categories, loading, t, currentLanguage }) {
+function Footer({ categories, loading,loadingFailed, t }) {
+
+categories = categories.slice(0,4)
+
   const handleNavClick = (to) => {
     window.scrollTo({
       top: 0,
@@ -12,6 +15,23 @@ function Footer({ categories, loading, t, currentLanguage }) {
       window.location.reload();
     }
   };
+
+  if (loading || loadingFailed) {
+    categories = [
+      {
+        name: "Home Page"
+      },
+      {
+        name: "Store"
+      },
+      {
+        name: "Arsenal"
+      },
+      {
+        name: "About Us"
+      },
+    ] 
+  }
 
   return (
     <footer>
@@ -24,29 +44,20 @@ function Footer({ categories, loading, t, currentLanguage }) {
           <div className="grid grid-cols-2">
             <div>
               <h3>{t("footer.upperFooter.explore")}</h3>
-              {loading ? (
-                <ul>
-                  <li key="1" className="loading__item" />
-                  <li key="2" className="loading__item" />
-                  <li key="3" className="loading__item" />
-                  <li key="4" className="loading__item" />
-                </ul>
-              ) : (
                 <ul>
                   {categories.map((category,index) => {                    
                     return (
                       <li key={index}>
-                        <Link to="/shop" onClick={()=> handleNavClick("/shop")}>{category}</Link>
+                        <Link to="/shop" onClick={()=> handleNavClick("/shop")}>{category["name"]}</Link>
                       </li>
                     );
                   })}
                 </ul>
-              )}
             </div>
 
             <div>
               <h3>{t("footer.upperFooter.contactUs")}</h3>
-              <ul className="h-full flex justify-center gap-5">
+              <ul className="h-full flex justify-between content-center pt-4 pb-12">
                 <li>
                   <Link to="tel:+201001111000">
                     <Phone />

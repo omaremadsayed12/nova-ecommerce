@@ -1,0 +1,17 @@
+@layer components {
+    .category-box {
+        @apply rounded-[28px] border border-slate-200 dark:border-slate-700 bg-(--base) p-4;
+    }
+    .category-box .top-line{
+        @apply flex items-center justify-between;
+    }
+    .category-box .top-line .index{
+        @apply text-sm font-bold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400;
+    }
+    .category-box h3{
+        @apply mt-4 text-3xl font-black tracking-[-0.06em] text-slate-900 dark:text-slate-100;
+    }
+    .category-box a{
+        @apply mt-6 inline-flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-slate-100;
+    }
+}

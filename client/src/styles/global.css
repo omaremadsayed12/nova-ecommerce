@@ -10,9 +10,10 @@
 @import "../components/common/styles/authModal.css";
 @import "../components/common/Toasts/toast.css";
 @import "../components/homePage/styles/heroSection.css";
+@import "../components/homePage/styles/categoriesSection.css";
+@import "../components/homePage/styles/categoryBox.css";
 @import "../components/homePage/styles/products.css";
 @import "../components/homePage/styles/productCard.css";
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
@@ -172,10 +173,6 @@ p {
     background: #f8fafc;
   }
 
-  .card-surface {
-    @apply border border-(--line) bg-(--card) rounded-3xl shadow-(--shadow-xs);
-  }
-
   .panel-surface {
     border: 1px solid var(--line);
     background: rgba(255, 255, 255, 0.9);
@@ -183,7 +180,7 @@ p {
     box-shadow: var(--shadow-lg);
   }
 
-  svg{
+  svg {
     @apply w-4 h-4;
   }
 }
@@ -207,13 +204,17 @@ p {
   }
 }
 @utility number {
-    font-family: "Google Sans Text", "Segoe UI", sans-serif;
+  font-family: "Google Sans Text", "Segoe UI", sans-serif;
 }
 
 @keyframes shimmer {
   to {
     transform: translateX(100%);
   }
+}
+
+@utility card-surface {
+  @apply border border-(--line) bg-(--card) rounded-3xl shadow-(--shadow-xs);
 }
 
 @layer utilities {

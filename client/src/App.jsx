@@ -1,4 +1,4 @@
-import {  Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import MainLayout from "./components/layout/MainLayout";
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/ShopPage";
@@ -50,9 +50,15 @@ function App() {
     loadProducts();
   }, [showError]);
 
-  const categories = [
-    ...new Set(products.map((product) => product.category[currentLanguage])),
-  ];
+  const frequencyMap = products.reduce((acc, product) => {
+    const category = product.category[currentLanguage];
+    acc[category] = (acc[category] || 0) + 1;
+    return acc;
+  }, {});
+
+  const categories = Object.entries(frequencyMap)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, count]) => ({ name, count }));
 
   return (
     <>

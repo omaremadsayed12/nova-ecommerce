@@ -106,6 +106,30 @@ i18n.use(initReactI18next).init({
             link: "View all"
           }
         },
+        about: {
+          eyebrow: "About NOVA",
+          title: "Everyday shopping, made simpler.",
+          description:
+            "NOVA is an online shop for everyday essentials and modern styles. We bring useful finds together in one place, with a simple way to browse, order, and pay.",
+          shopCta: "Explore the shop",
+          overviewLabel: "Who we are",
+          overviewTitle: "A straightforward place to shop.",
+          overviewDescription:
+            "We built NOVA around the parts of online shopping that matter: a clear selection of products, an easy checkout, and reliable delivery. Browse at your pace, find what you need, and place your order in a few simple steps.",
+          commitmentsLabel: "The NOVA experience",
+          commitmentsTitle: "From browsing to delivery.",
+          selectionTitle: "Useful finds",
+          selectionDescription:
+            "Explore a changing range of everyday products and contemporary styles, all together in one shop.",
+          paymentTitle: "Secure checkout",
+          paymentDescription:
+            "Place your order through a simple checkout with secure online payment.",
+          deliveryTitle: "Fast delivery",
+          deliveryDescription:
+            "Once your order is placed, we get it ready and on its way to you as quickly as we can.",
+          closingTitle: "Ready to take a look?",
+          closingDescription: "Browse the collection and find something for your everyday.",
+        },
         loadingFailed: {
           eyebrow: "Connection interrupted",
           title: "We couldn't load this page.",
@@ -209,6 +233,30 @@ i18n.use(initReactI18next).init({
               products: "منتج متوفر",
             },
           },
+        },
+        about: {
+          eyebrow: "عن نوفا",
+          title: "تسوّق يومي أسهل.",
+          description:
+            "نوفا متجر إلكتروني للاحتياجات اليومية والأساليب العصرية. نجمع منتجات مفيدة في مكان واحد، مع تجربة بسيطة للتصفح والطلب والدفع.",
+          shopCta: "اكتشف المتجر",
+          overviewLabel: "من نحن",
+          overviewTitle: "متجر واضح وسهل الاستخدام.",
+          overviewDescription:
+            "أنشأنا نوفا لتكون تجربة التسوق عبر الإنترنت بسيطة في أهم تفاصيلها: منتجات واضحة، وخطوات شراء سهلة، وتوصيل موثوق. تصفح براحتك، واختر ما تحتاجه، وأكمل طلبك في خطوات بسيطة.",
+          commitmentsLabel: "تجربة نوفا",
+          commitmentsTitle: "من التصفح حتى التوصيل.",
+          selectionTitle: "منتجات مفيدة",
+          selectionDescription:
+            "تصفح مجموعة متجددة من المنتجات اليومية والأساليب العصرية في متجر واحد.",
+          paymentTitle: "دفع آمن",
+          paymentDescription:
+            "أكمل طلبك بخطوات بسيطة وادفع عبر الإنترنت بأمان.",
+          deliveryTitle: "توصيل سريع",
+          deliveryDescription:
+            "بعد تأكيد طلبك، نجهزه ونرسله إليك في أسرع وقت ممكن.",
+          closingTitle: "هل ترغب في إلقاء نظرة؟",
+          closingDescription: "تصفح المنتجات واختر ما يناسب يومك.",
         },
         loadingFailed: {
           eyebrow: "انقطع الاتصال",

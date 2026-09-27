@@ -2,11 +2,10 @@ import { Image } from "lucide-react";
 
 function ProductCardSkeleton() {
   return (
-    <div className="product-card">
-      <div key="1" className="card-surface overflow-hidden">
+      <div className="product-card">
         <div>
           <div className="h-72 w-auto skeleton flex items-center justify-center">
-            <Image className="w-52 h-52 text-slate-100 dark:text-slate-600" />
+            <Image className="w-42 h-42 text-slate-100 dark:text-slate-600" />
           </div>
         </div>
         <div className="p-5">
@@ -34,124 +33,12 @@ function ProductCardSkeleton() {
               <span className="w-3 h-4 skeleton"/>
             </div>
             <div className="price inline-flex">
-                <div className="w-3 h-6 skeleton mx-1"/>
-                <div className="w-12 h-6 skeleton"/>
+                <div className="w-4 h-6 skeleton mx-1"/>
+                <div className="w-10 h-6 skeleton"/>
             </div>
           </div>
         </div>
       </div>
-      <div key="2" className="card-surface overflow-hidden">
-        <div>
-          <div className="h-72 w-auto skeleton flex items-center justify-center">
-            <Image className="w-52 h-52 text-slate-100 dark:text-slate-600" />
-          </div>
-        </div>
-        <div className="p-5">
-          <div className="topline m-2">
-            <span className="w-16 h-4 skeleton"/>
-            <div className="flex gap-2">
-              <div className="rounded-full border p-1 border-slate-100 dark:border-slate-600"
-              >
-                <div
-                  className="w-4 h-4 skeleton"
-                />
-              </div>
-              <div className="rounded-full border p-1 border-slate-100 dark:border-slate-600"
-              >
-                <div
-                  className="w-4 h-4 skeleton"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="h-7 w-60 skeleton"/>
-          <div className="details">
-            <div className="rating">
-              <div className="w-4 h-4 skeleton" />
-              <span className="w-3 h-4 skeleton"/>
-            </div>
-            <div className="price inline-flex">
-                <div className="w-3 h-6 skeleton mx-1"/>
-                <div className="w-12 h-6 skeleton"/>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div key="3" className="card-surface overflow-hidden">
-        <div>
-          <div className="h-72 w-auto skeleton flex items-center justify-center">
-            <Image className="w-52 h-52 text-slate-100 dark:text-slate-600" />
-          </div>
-        </div>
-        <div className="p-5">
-          <div className="topline m-2">
-            <span className="w-16 h-4 skeleton"/>
-            <div className="flex gap-2">
-              <div className="rounded-full border p-1 border-slate-100 dark:border-slate-600"
-              >
-                <div
-                  className="w-4 h-4 skeleton"
-                />
-              </div>
-              <div className="rounded-full border p-1 border-slate-100 dark:border-slate-600"
-              >
-                <div
-                  className="w-4 h-4 skeleton"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="h-7 w-60 skeleton"/>
-          <div className="details">
-            <div className="rating">
-              <div className="w-4 h-4 skeleton" />
-              <span className="w-3 h-4 skeleton"/>
-            </div>
-            <div className="price inline-flex">
-                <div className="w-3 h-6 skeleton mx-1"/>
-                <div className="w-12 h-6 skeleton"/>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div key="4" className="card-surface overflow-hidden">
-        <div>
-          <div className="h-72 w-auto skeleton flex items-center justify-center">
-            <Image className="w-52 h-52 text-slate-100 dark:text-slate-600" />
-          </div>
-        </div>
-        <div className="p-5">
-          <div className="topline m-2">
-            <span className="w-16 h-4 skeleton"/>
-            <div className="flex gap-2">
-              <div className="rounded-full border p-1 border-slate-100 dark:border-slate-600"
-              >
-                <div
-                  className="w-4 h-4 skeleton"
-                />
-              </div>
-              <div className="rounded-full border p-1 border-slate-100 dark:border-slate-600"
-              >
-                <div
-                  className="w-4 h-4 skeleton"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="h-7 w-60 skeleton"/>
-          <div className="details">
-            <div className="rating">
-              <div className="w-4 h-4 skeleton" />
-              <span className="w-3 h-4 skeleton"/>
-            </div>
-            <div className="price inline-flex">
-                <div className="w-3 h-6 skeleton mx-1"/>
-                <div className="w-12 h-6 skeleton"/>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
 

@@ -1,6 +1,6 @@
 @layer components {
   .product-card {
-    @apply mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4;
+    @apply card-surface overflow-hidden;
   }
   .product-card img{
     @apply h-72 w-full object-cover;
