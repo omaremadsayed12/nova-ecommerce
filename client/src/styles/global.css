@@ -9,21 +9,34 @@
 @import "../components/layout/Navbar/styles/prefrencesMenu.css";
 @import "../components/common/styles/authModal.css";
 @import "../components/common/Toasts/toast.css";
-@import "../components/homePage/styles/heroSection.css";
-@import "../components/homePage/styles/categoriesSection.css";
-@import "../components/homePage/styles/categoryBox.css";
-@import "../components/homePage/styles/products.css";
-@import "../components/homePage/styles/productCard.css";
+@import "../components/home/styles/heroSection.css";
+@import "../components/home/styles/categoriesSection.css";
+@import "../components/home/styles/categoryBox.css";
+@import "../components/home/styles/products.css";
+@import "../components/home/styles/productCard.css";
+@import "../components/shop/styles/filtersSection.css";
+@import "../components/shop/styles/filtersMenu.css";
+@import "../components/shop/styles/shopSearchBar.css";
+@import "../pages/styles/aboutPage.css";
+@import "../pages/styles/loadingPage.css";
+@import "../pages/styles/shopPage.css";
+
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* =========================================================
+   Theme
+========================================================= */
 
 :root {
   --bg: #f5f7fb;
   --panel: #eef3f8;
   --panel-strong: #edf3fb;
   --base: #ffffff;
+
   --ink: #0b1c30;
   --muted: #5a6475;
   --line: #dfe6f1;
+
   --shadow: rgba(11, 28, 48, 0.07);
   --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.06);
@@ -31,11 +44,14 @@
   --shadow-lg: 0 24px 60px rgba(15, 23, 42, 0.08);
   --shadow-xl: 0 30px 80px rgba(15, 23, 42, 0.12);
   --shadow-button: 0 10px 24px rgba(11, 28, 48, 0.12);
+
   --brand-soft: #eaf0f8;
   --brand-ghost: #f7f9fc;
+
   --nav-btn-line: #4e7ae9;
   --nav-btn-txt: #3e6fe8;
   --nav-btn-shadow: #eaf1ff;
+
   --icon-spot: #eef3ff;
 }
 
@@ -44,9 +60,11 @@
   --panel: #111a2b;
   --panel-strong: #172237;
   --base: #18243a;
+
   --ink: #edf4ff;
   --muted: #9aa9bd;
   --line: #293752;
+
   --shadow: rgba(0, 0, 0, 0.25);
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
   --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.22);
@@ -54,13 +72,20 @@
   --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.3);
   --shadow-xl: 0 30px 80px rgba(0, 0, 0, 0.36);
   --shadow-button: 0 10px 24px rgba(0, 0, 0, 0.3);
+
   --brand-soft: #1d2a43;
   --brand-ghost: #111a2b;
+
   --nav-btn-line: #6f9aff;
   --nav-btn-txt: #8aadff;
   --nav-btn-shadow: #1b2b4a;
+
   --icon-spot: #1e293b;
 }
+
+/* =========================================================
+   Base
+========================================================= */
 
 * {
   box-sizing: border-box;
@@ -127,63 +152,70 @@ p {
   min-height: 100vh;
 }
 
+/* =========================================================
+   Components
+========================================================= */
+
 @layer components {
   .main-layout {
-    @apply min-h-screen bg-(--bg) text-slate-900 dark:text-slate-100;
-  }
-
-  .eyebrow {
-    @apply inline-flex items-center rounded-full border border-(--line) bg-(--base,0.8) p-2 text-[0.625rem] font-bold tracking-[0.16em] uppercase text-(--muted);
-  }
-
-  .btn-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-(--ink) px-5 py-3 text-sm font-bold text-(--base) transition hover:-translate-y-px hover:opacity-95;
-    box-shadow: var(--shadow-button);
-  }
-
-  .btn-primary:hover {
-    opacity: 0.95;
-    transform: translateY(-1px);
-  }
-
-  .btn-primary:focus-visible {
-    outline: 2px solid rgba(11, 28, 48, 0.2);
-    outline-offset: 2px;
-  }
-
-  .btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 9999px;
-    border: 1px solid var(--line);
-    background: var(--card);
-    padding: 0.75rem 1.25rem;
-    color: var(--ink);
-    font-size: 0.875rem;
-    font-weight: 700;
-    line-height: 1;
-    transition:
-      border-color 0.2s ease,
-      background-color 0.2s ease;
-  }
-
-  .btn-secondary:hover {
-    border-color: #cfd8ea;
-    background: #f8fafc;
+    @apply flex min-h-screen flex-col bg-(--bg) text-slate-900 dark:text-slate-100;
   }
 
   .panel-surface {
     border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--base);
     border-radius: 2rem;
     box-shadow: var(--shadow-lg);
   }
 
   svg {
-    @apply w-4 h-4;
+    @apply h-4 w-4;
   }
 }
+
+/* =========================================================
+   Buttons
+========================================================= */
+
+@utility eyebrow {
+  @apply inline-flex items-center rounded-full border border-(--line)
+      p-2 text-[0.625rem] font-bold tracking-[0.16em]
+      uppercase text-(--muted);
+  background: color-mix(in srgb, var(--base) 80%, transparent);
+}
+@utility btn-primary {
+  @apply inline-flex items-center justify-center rounded-full
+    bg-(--ink) px-5 py-3 text-sm font-bold
+    text-(--base) transition;
+
+  box-shadow: var(--shadow-button);
+
+  &:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(11, 28, 48, 0.2);
+    outline-offset: 2px;
+  }
+}
+
+@utility btn-secondary {
+  @apply inline-flex items-center justify-center rounded-full
+    border border-(--line) bg-(--base) px-5 py-3
+    text-sm font-bold leading-none text-(--ink) transition;
+
+  transition-property: border-color, background-color, transform;
+
+  &:hover {
+    @apply bg-(--panel) border-slate-700 dark:border-slate-200;
+  }
+}
+
+/* =========================================================
+   Skeleton
+========================================================= */
 
 @utility skeleton {
   @apply relative overflow-hidden rounded bg-slate-200 dark:bg-slate-700;
@@ -191,20 +223,19 @@ p {
   &::after {
     content: "";
     @apply absolute inset-0;
+
     background: linear-gradient(
       90deg,
       transparent 0%,
       rgb(255 255 255 / 0.08) 25%,
-      rgba(255, 255, 255, 0.35) 50%,
+      rgb(255 255 255 / 0.35) 50%,
       rgb(255 255 255 / 0.08) 75%,
       transparent 100%
     );
+
     transform: translateX(-100%);
     animation: shimmer 1.8s ease-in-out infinite;
   }
-}
-@utility number {
-  font-family: "Google Sans Text", "Segoe UI", sans-serif;
 }
 
 @keyframes shimmer {
@@ -213,16 +244,25 @@ p {
   }
 }
 
+/* =========================================================
+   Utilities
+========================================================= */
+
+@utility number {
+  font-family: "Google Sans Text", "Segoe UI", sans-serif;
+}
+
 @utility card-surface {
-  @apply border border-(--line) bg-(--card) rounded-3xl shadow-(--shadow-xs);
+  @apply rounded-3xl border border-(--line) bg-(--base) shadow-(--shadow-xs);
+}
+
+@utility logo {
+  @apply text-3xl font-black tracking-[-0.08em]
+    text-slate-900 dark:text-slate-100;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-}
-
-@utility logo {
-  @apply text-3xl font-black tracking-[-0.08em] text-slate-900 dark:text-slate-100;
 }

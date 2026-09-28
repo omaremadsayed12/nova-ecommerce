@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { getStats } from "../services/stats.service";
 import { useToast } from "../context/ToastContext";
-import HeroSection from "../components/homePage/HeroSection";
-import HeroSkeleton from "../components/homePage/Skeletons/HeroSkeleton";
-import ProductsSkeleton from "../components/homePage/Skeletons/ProductsSkeleton";
-import CategoriesSkeleton from "../components/homePage/Skeletons/CategoriesSkeleton";
+import HeroSection from "../components/home/HeroSection";
+import HeroSkeleton from "../components/home/Skeletons/HeroSkeleton";
+import ProductsSkeleton from "../components/home/Skeletons/ProductsSkeleton";
+import CategoriesSkeleton from "../components/home/Skeletons/CategoriesSkeleton";
 import FlowUpTransition from "../components/common/Transitions/FlowUpTransition";
-import Products from "../components/homePage/Products";
+import Products from "../components/home/Products";
 import LoadingFailed from "./LoadingFailed";
-import CategoriesSection from "../components/homePage/CategoriesSection";
+import CategoriesSection from "../components/home/CategoriesSection";
 
 function HomePage({
   t,

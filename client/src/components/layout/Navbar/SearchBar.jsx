@@ -79,9 +79,9 @@ function SearchBar({ onClose }) {
             />
             <button type="submit" className="search-bar__submit" aria-label="Submit search">
               {isRTL ? (
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft />
               ) : (
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight />
               )}            </button>
           </form>
           <AnimatePresence mode="wait">

@@ -6,7 +6,7 @@ function MainLayout({ categories, loading, t, currentLanguage }) {
   return (
     <div className="main-layout">
       <Navbar currentLanguage={currentLanguage} />
-      <main className="pt-20">
+      <main className="pt-20 flex-1">
         <Outlet />
       </main>
       <Footer categories={categories} loading={loading} t={t} currentLanguage={currentLanguage} />

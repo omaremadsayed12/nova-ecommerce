@@ -1,0 +1,17 @@
+@layer components {
+  .filters-section {
+    @apply flex items-end justify-between gap-4;
+  }
+
+  .filters-section span {
+    @apply eyebrow;
+  }
+
+  .filters-section h1 {
+    @apply mt-4 text-5xl font-black tracking-[-0.07em] text-slate-900 dark:text-slate-100;
+  }
+  .filters-section button {
+    @apply btn-secondary gap-1;
+  }
+
+}

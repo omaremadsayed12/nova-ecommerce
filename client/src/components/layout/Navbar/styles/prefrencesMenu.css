@@ -1,10 +1,10 @@
 @layer components {
     .pref-menu {
-        @apply fixed end-10 top-20 z-40 rounded-xl border border-slate-200 bg-white p-3 shadow-lg;
+        @apply fixed inset-e-10 top-20 z-40 rounded-xl border border-slate-200 bg-white p-3 shadow-lg;
     }
 
     .dark .pref-menu{
-        @apply bg-[var(--bg)] border-slate-700;
+        @apply bg-(--bg) border-slate-700;
     }
 
     .pref-menu .menu {
@@ -24,7 +24,7 @@
     }
 
     .pref-menu .menu a:hover {
-        @apply bg-[var(--nav-btn-shadow)] text-[var(--nav-btn-txt)];
+        @apply bg-(--nav-btn-shadow) text-(--nav-btn-txt);
     }
 
     .option {
@@ -44,11 +44,11 @@
     }
 
     .option__actions button:hover {
-        @apply bg-[var(--nav-btn-shadow)] text-[var(--nav-btn-txt)];
+        @apply bg-(--nav-btn-shadow) text-(--nav-btn-txt);
     }
 
     .option__actions button.active {
-        @apply bg-[var(--nav-btn-shadow)] text-[var(--nav-btn-txt)];
+        @apply bg-(--nav-btn-shadow) text-(--nav-btn-txt);
     }
 
 

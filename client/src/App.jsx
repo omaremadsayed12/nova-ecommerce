@@ -86,7 +86,7 @@ function App() {
                       path="/"
                       element={
                         loadingFailed ? (
-                          <LoadingFailed />
+                          <LoadingFailed t={t} />
                         ) : (
                           <HomePage
                             t={t}
@@ -98,9 +98,29 @@ function App() {
                         )
                       }
                     />
-                    <Route path="/about" element={<AboutPage />} />
+                    <Route
+                      path="/about"
+                      element={
+                        <AboutPage t={t} currentLanguage={currentLanguage} />
+                      }
+                    />
                     <Route path="/wishlist" element={<WishlistPage />} />
-                    <Route path="/shop" element={<ShopPage />} />
+                    <Route
+                      path="/shop"
+                      element={
+                        loadingFailed ? (
+                          <LoadingFailed t={t} />
+                        ) : (
+                          <ShopPage
+                            products={products}
+                            categories={categories}
+                            loading={loading}
+                            currentLanguage={currentLanguage}
+                            t={t}
+                          />
+                        )
+                      }
+                    />
                     <Route
                       path="/product/:id"
                       element={<ProductDetailsPage />}

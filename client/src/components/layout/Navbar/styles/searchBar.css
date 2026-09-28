@@ -1,6 +1,6 @@
 @layer components {
     .search-bar {
-        @apply fixed inset-x-0 top-20 z-[60];
+        @apply fixed inset-x-0 top-20 z-60;
     }
 
     .search-bar__inner {
@@ -8,7 +8,7 @@
     }
 
     .search-bar__form {
-        @apply mx-auto flex max-w-5xl items-center gap-3 rounded-2xl border border-slate-200 bg-[var(--base)] px-4 py-2 transition focus-within:border-slate-400;
+        @apply mx-auto flex max-w-5xl items-center gap-3 rounded-2xl border border-slate-200 bg-(--base) px-4 py-2 transition focus-within:border-slate-400;
         box-shadow: var(--shadow-md);
     }
 
@@ -33,7 +33,7 @@
     }
 
     .search-bar__submit {
-        @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-[var(--base)] transition hover:-translate-y-px hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900;
+        @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-(--base) transition hover:-translate-y-px hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900;
     }
 
     .dark .search-bar__submit {
@@ -41,7 +41,7 @@
     }
 
     .search-bar__results {
-        @apply mx-auto mt-1 max-w-5xl overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-[var(--base)]/70 backdrop-blur-md;
+        @apply mx-auto mt-1 max-w-5xl overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-(--base)/70 backdrop-blur-md;
         box-shadow: var(--shadow-md);
     }
 

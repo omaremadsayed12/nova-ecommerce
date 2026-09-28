@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import Container from "./Container";
 import { Mail, Phone } from "lucide-react";
+import FlowUpTransition from "../common/Transitions/FlowUpTransition";
+import { AnimatePresence } from "framer-motion";
 
-function Footer({ categories, loading,loadingFailed, t }) {
-
-categories = categories.slice(0,4)
+function Footer({ categories, loading, loadingFailed, t }) {
+  categories = categories.slice(0, 4);
 
   const handleNavClick = (to) => {
     window.scrollTo({
@@ -19,71 +20,82 @@ categories = categories.slice(0,4)
   if (loading || loadingFailed) {
     categories = [
       {
-        name: "Home Page"
+        name: "Home Page",
       },
       {
-        name: "Store"
+        name: "Store",
       },
       {
-        name: "Arsenal"
+        name: "Arsenal",
       },
       {
-        name: "About Us"
+        name: "About Us",
       },
-    ] 
+    ];
   }
 
   return (
     <footer>
-      <Container className="py-12">
-        <div className="upper__footer">
-          <div>
-            <div className="logo">{t("footer.upperFooter.logo")}</div>
-            <p>{t("footer.upperFooter.paragraph")} </p>
-          </div>
-          <div className="grid grid-cols-2">
-            <div>
-              <h3>{t("footer.upperFooter.explore")}</h3>
-                <ul>
-                  {categories.map((category,index) => {                    
-                    return (
-                      <li key={index}>
-                        <Link to="/shop" onClick={()=> handleNavClick("/shop")}>{category["name"]}</Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-            </div>
+      <AnimatePresence mode="wait">
+        <Container className="py-12">
+          <FlowUpTransition>
+            <div className="upper__footer">
+              <div>
+                <div className="logo">{t("footer.upperFooter.logo")}</div>
+                <p>{t("footer.upperFooter.paragraph")} </p>
+              </div>
+              <div className="grid grid-cols-2">
+                <div>
+                  <h3>{t("footer.upperFooter.explore")}</h3>
+                  <ul>
+                    {categories.map((category) => {
+                      const categoryName = category["name"].toLowerCase();
+                      const url = `/shop?category=${categoryName}`
+                      return (
+                        <li key={categoryName}>
+                          <Link
+                            to={url}
+                            onClick={() => handleNavClick(url)}
+                          >
+                            {category["name"]}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
 
-            <div>
-              <h3>{t("footer.upperFooter.contactUs")}</h3>
-              <ul className="h-full flex justify-between content-center pt-4 pb-12">
-                <li>
-                  <Link to="tel:+201001111000">
-                    <Phone />
-                    <div dir="ltr">+20 100 1111 000</div>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="mailto:contact@nova.eg">
-                    <Mail />
-                    <div dir="ltr">contact@nova.eg</div>
-                  </Link>
-                </li>
-              </ul>
+                <div>
+                  <h3>{t("footer.upperFooter.contactUs")}</h3>
+                  <ul className="h-full flex justify-between content-center pt-4 pb-12">
+                    <li>
+                      <Link to="tel:+201001111000">
+                        <Phone />
+                        <div dir="ltr">+20 100 1111 000</div>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="mailto:contact@nova.eg">
+                        <Mail />
+                        <div dir="ltr">contact@nova.eg</div>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </FlowUpTransition>
+
+          <div className="lower__footer">
+            <p>{t("footer.lowerFooter.paragraph")}</p>
+            <div className="flex flex-wrap">
+              <Link to="/privacy-policy">
+                {t("footer.lowerFooter.privacyPolicy")}
+              </Link>
             </div>
           </div>
-        </div>
-
-        <div className="lower__footer">
-          <p>{t("footer.lowerFooter.paragraph")}</p>
-          <div className="flex flex-wrap">
-            <Link to="/privacy-policy">
-              {t("footer.lowerFooter.privacyPolicy")}
-            </Link>
-          </div>
-        </div>
-      </Container>
+        </Container>
+      </AnimatePresence>
     </footer>
   );
 }

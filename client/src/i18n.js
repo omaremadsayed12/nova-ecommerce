@@ -104,6 +104,19 @@ i18n.use(initReactI18next).init({
             eyebrow: "Products",
             headline: "Explore our bestsellers",
             link: "View all"
+          },
+          categoriesSection:{
+            headline: "Browse by category",
+            categoryBox: {
+              button: "Discover"
+            }
+          }
+        },
+        shop:{
+          filtersSection:{
+            eyebrow:"Shop",
+            filtersButton: "Sort & Filter",
+            all:"All"
           }
         },
         about: {
@@ -222,12 +235,10 @@ i18n.use(initReactI18next).init({
             paragraph:
               "اكتشف قطعًا أساسية بتصميم عصري وأناقة تدوم، لتصبح جزءًا من إطلالتك اليومية.",
             primaryButton: "تسوق المجموعة",
-
             sliderNote: {
               headline: "توصيل سريع",
               info: "أقل من 4 ايام",
             },
-
             stats: {
               orders: "طلب",
               products: "منتج متوفر",

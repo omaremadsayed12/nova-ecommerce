@@ -9,7 +9,7 @@ function CategoryBox({ category, index, t, currentLanguage }) {
       </div>
       <h3>{category["name"]}</h3>
       <Link to="/shop">
-        {t("homePage.categoriesSection.categoryBox.button")}{" "}
+        {t("home.categoriesSection.categoryBox.button")}{" "}
         {currentLanguage === "en" ? <ArrowRight /> : <ArrowLeft />}
       </Link>
     </div>

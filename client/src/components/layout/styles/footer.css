@@ -1,6 +1,6 @@
 @layer components {
   footer {
-    @apply mt-24 border-t border-slate-200 dark:border-slate-700 bg-(--base);
+    @apply border-t border-slate-200 dark:border-slate-700 bg-(--base);
   }
   footer .upper__footer {
     @apply grid gap-10 grid-cols-2 px-8;

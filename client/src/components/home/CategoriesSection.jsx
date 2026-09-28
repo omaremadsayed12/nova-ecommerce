@@ -5,7 +5,7 @@ function CategoriesSection({ categories, t, currentLanguage }) {
   return (
     <section className="categories">
       <div className="headline">
-        <h2>{t("homePage.categoriesSection.headline")}</h2>
+        <h2>{t("home.categoriesSection.headline")}</h2>
       </div>
       <div className="category-boxes">
         {categories.map((category, index) => (
