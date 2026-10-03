@@ -1,7 +1,9 @@
 
+import { useTranslation } from "react-i18next";
 import CategoryBox from "./CategoryBox";
 
-function CategoriesSection({ categories, t, currentLanguage }) {
+function CategoriesSection({ categories }) {
+  const {t} = useTranslation();
   return (
     <section className="categories">
       <div className="headline">
@@ -9,7 +11,7 @@ function CategoriesSection({ categories, t, currentLanguage }) {
       </div>
       <div className="category-boxes">
         {categories.map((category, index) => (
-          <CategoryBox key={index} category={category} index={index} t={t} currentLanguage={currentLanguage}/>
+          <CategoryBox key={index} category={category} index={index}/>
         ))}
       </div>
     </section>

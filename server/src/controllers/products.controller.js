@@ -1,12 +1,8 @@
 import product_service from "../services/products.service.js";
 
 const get_all_products = async (req, res) => {
-  const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 12;
-  const { products, meta } = await product_service.get_all_products(
-    page,
-    limit,
-  );
+  const params = req.query;
+  const { products, meta } = await product_service.get_all_products(params);
   res.status(200).json({
     success: true,
     message: "Products fetched successfully",

@@ -4,8 +4,11 @@ import { Link } from "react-router-dom";
 import { CartContext } from "../../context/CartContext";
 import { WishlistContext } from "../../context/WishlistContext";
 import { AuthContext } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
-function ProductCard({ currentLanguage, product }) {
+function ProductCard({  product }) {
+  const {i18n} = useTranslation();
+  const currentLanguage = i18n.language;
   const { inCart, addToCart, removeFromCart, updateCart, quantity } =
     useContext(CartContext);
   const { inWishlist, addProductToWishlist, removeProductFromWishlist } =

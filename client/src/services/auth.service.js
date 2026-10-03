@@ -22,6 +22,11 @@ export const getCurrentUser = async () => {
   return response.data;
 };
 
+export const refreshToken = async () => {
+  const response = await api.post("/auth/refresh");
+  return response.data;
+};
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -35,8 +40,8 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const response = await api.post("/auth/refresh");
-        const access_token  = response.data.data.access_token;
+        const response = await refreshToken();
+        const access_token  = response.data.access_token;
         localStorage.setItem("access_token", access_token);
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return api(originalRequest);

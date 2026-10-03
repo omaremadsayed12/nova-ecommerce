@@ -9,84 +9,98 @@ import FlowUpTransition from "../components/common/Transitions/FlowUpTransition"
 import Products from "../components/home/Products";
 import LoadingFailed from "./LoadingFailed";
 import CategoriesSection from "../components/home/CategoriesSection";
+import { useTranslation } from "react-i18next";
+import { getCategories, getProducts } from "../services/product.service";
 
-function HomePage({
-  t,
-  currentLanguage,
-  products,
-  loadingProducts,
-  categories,
-}) {
+function HomePage() {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language;
   const [stats, setStats] = useState([]);
-  const [loadingStats, setLoadingStats] = useState(true);
-  const [statsLoadingFailed, setStatsLoadingFailed] = useState(false);
+  const [carouselProducts, setCarouselProducts] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingFailed, setLoadingFailed] = useState(false);
   const { showError } = useToast();
 
   useEffect(() => {
-    const loadStats = async () => {
+    const loadData = async () => {
       try {
-        const statsData = await getStats();
-        setStats(statsData.data);
+        const carouselProductsParams = {
+          sortBy: "createdAt",
+          method: "DESC",
+          limit: 5,
+          page: 1
+        };
+        const productParams = {
+          sortBy: "averageRating",
+          method: "DESC",
+          limit: 4,
+          page: 1
+
+        };
+        const categoriesParams ={ 
+          sortBy: `name.${currentLanguage}`,
+          method: "ASC",
+          limit: 0,
+          page: 1
+        };
+        const [statsResponse, carouselProdutsResponse, productsResponse, categoriesResponse] = await Promise.all([
+          getStats(),
+          getProducts(carouselProductsParams),
+          getProducts(productParams),
+          getCategories(categoriesParams)
+        ]);
+        setStats(statsResponse.data);
+        setProducts(productsResponse.data);
+        setCarouselProducts(carouselProdutsResponse.data);
+        setCategories(categoriesResponse.data);
       } catch (error) {
-        showError("Failed to load stats:", error);
-        setStatsLoadingFailed(true);
+        showError(t('common.loadingError'), error.response?.error?.message);
+        setLoadingFailed(true);
       } finally {
-        setLoadingStats(false);
+        setLoading(false);
       }
     };
 
-    loadStats();
-  }, [showError]);
+    loadData();
+  }, [showError, currentLanguage,t]);
 
-  const carouselProducts =
-    products.length > 0
-      ? [
-          ...[...products]
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, 5),
-          products[0],
-        ]
-      : [];
-  if (statsLoadingFailed) return <LoadingFailed t={t} />;
+  if (loadingFailed)
+    return <LoadingFailed />;
 
   return (
     <div className="pb-20">
-      {loadingProducts || loadingStats ? (
+      {loading ? (
         <FlowUpTransition>
           <HeroSkeleton />
         </FlowUpTransition>
       ) : (
         <FlowUpTransition>
           <HeroSection
-            t={t}
-            currentLanguage={currentLanguage}
             stats={stats}
             carouselProducts={carouselProducts}
           />
         </FlowUpTransition>
       )}
-      {loadingProducts ? (
+      {loading ? (
         <FlowUpTransition>
           <ProductsSkeleton />
         </FlowUpTransition>
       ) : (
         <FlowUpTransition>
           <Products
-            t={t}
-            currentLanguage={currentLanguage}
             products={products}
           />
         </FlowUpTransition>
       )}
-      {loadingProducts ? (
+      {loading ? (
         <FlowUpTransition>
           <CategoriesSkeleton />
         </FlowUpTransition>
       ) : (
         <FlowUpTransition>
           <CategoriesSection
-            t={t}
-            currentLanguage={currentLanguage}
             categories={categories}
           />
         </FlowUpTransition>

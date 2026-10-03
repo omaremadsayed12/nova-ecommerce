@@ -1,11 +1,12 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
+import { useTranslation } from "react-i18next";
 
-function Products({ t, currentLanguage, products }) {
-  products = products
-    .sort((a, b) => b.averageRating - a.averageRating)
-    .slice(0, 4);
+function Products({ products }) {
+  const {t, i18n} = useTranslation();
+  const currentLanguage = i18n.language;
+
   return (
     <section className="products-section">
       <div className="headline">
@@ -20,7 +21,7 @@ function Products({ t, currentLanguage, products }) {
       </div>
       <div className="product-cards">
         {products.map((product) => (
-          <ProductCard currentLanguage={currentLanguage} product={product} key={product._id} />
+          <ProductCard product={product} key={product._id} />
         ))}
       </div>
     </section>

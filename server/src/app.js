@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import auth_routes from "./routes/auth.routes.js";
 import users_routes from "./routes/users.routes.js";
 import products_routes from "./routes/products.routes.js";
+import categories_routes from "./routes/categories.routes.js";
 import order_routes from "./routes/order.routes.js";
 import payment_routes from "./routes/payment.routes.js";
 import webhook_routes from "./routes/webhook.routes.js";
@@ -40,6 +41,7 @@ app.use(
 app.use("/api/auth", auth_routes);
 app.use("/api/users", users_routes);
 app.use("/api/products", products_routes);
+app.use("/api/categories", categories_routes);
 app.use("/api/order", order_routes);
 app.use("/api/payment", payment_routes);
 app.use("/api/settings", settings_routes);

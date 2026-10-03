@@ -1,9 +1,12 @@
 import { ArrowDownNarrowWide, ArrowDownWideNarrow } from "lucide-react";
-import { useState } from "react";
+import {  useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import DropdownTransition from "../common/Transitions/DropdownTransition";
+import { useTranslation } from "react-i18next";
 
-function FiltersMenu({ t, categories, minPrice, maxPrice }) {
+function FiltersMenu({ minPrice, maxPrice, categories }) {
+  const { t,i18n } = useTranslation();
+  const currentLanguage = i18n.language;
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedSort, setSelectedSort] = useState(searchParams.get("sort"));
   const [sortMethod, setSortMethod] = useState(searchParams.get("method"));
@@ -129,16 +132,15 @@ function FiltersMenu({ t, categories, minPrice, maxPrice }) {
               {t("shop.filtersSection.all")}
             </button>
             {categories.map((category) => {
-              const categoryName = category.name.toLowerCase();
               return (
                 <button
-                  key={categoryName}
+                  key={category.slug}
                   className={
-                    selectedCategories.includes(categoryName) ? "active" : ""
+                    selectedCategories.includes(category.slug) ? "active" : ""
                   }
-                  onClick={() => handleSelect(categoryName)}
+                  onClick={() => handleSelect(category.slug)}
                 >
-                  {category["name"]}
+                  {category.name[currentLanguage]}
                 </button>
               );
             })}

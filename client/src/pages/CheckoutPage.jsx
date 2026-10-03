@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function CheckoutPage() {
   return (
-    <div className="mx-auto w-full max-w-[1440px] px-6 pb-20 pt-6 md:px-20">
+    <div className="mx-auto w-full max-w-360 px-6 pb-20 pt-6 md:px-20">
       <div className="mb-8">
         <span className="inline-flex items-center rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
           Checkout

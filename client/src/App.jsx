@@ -18,47 +18,9 @@ import AboutPage from "./pages/AboutPage";
 import WishlistPage from "./pages/WishlistPage";
 import ThemeProvider from "./context/ThemeContext";
 import "./i18n";
-import { useEffect, useState } from "react";
-import { getProducts } from "./services/product.service";
-import { useTranslation } from "react-i18next";
 import WishlistProvider from "./context/WishlistContext";
-import LoadingFailed from "./pages/LoadingFailed";
-import { useToast } from "./context/ToastContext";
 
 function App() {
-  const { t, i18n } = useTranslation();
-  const { showError } = useToast();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingFailed, setLoadingFailed] = useState(false);
-
-  const currentLanguage = i18n.language;
-
-  useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const productData = await getProducts();
-        setProducts(productData.data);
-      } catch (error) {
-        showError(error);
-        setLoadingFailed(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProducts();
-  }, [showError]);
-
-  const frequencyMap = products.reduce((acc, product) => {
-    const category = product.category[currentLanguage];
-    acc[category] = (acc[category] || 0) + 1;
-    return acc;
-  }, {});
-
-  const categories = Object.entries(frequencyMap)
-    .sort((a, b) => b[1] - a[1])
-    .map(([name, count]) => ({ name, count }));
 
   return (
     <>
@@ -70,57 +32,13 @@ function App() {
         <AuthProvider>
           <WishlistProvider>
             <ThemeProvider>
-              <CartProvider t={t}>
+              <CartProvider>
                 <Routes>
-                  <Route
-                    element={
-                      <MainLayout
-                        categories={categories}
-                        loading={loading}
-                        t={t}
-                        currentLanguage={currentLanguage}
-                      />
-                    }
-                  >
-                    <Route
-                      path="/"
-                      element={
-                        loadingFailed ? (
-                          <LoadingFailed t={t} />
-                        ) : (
-                          <HomePage
-                            t={t}
-                            currentLanguage={currentLanguage}
-                            products={products}
-                            loadingProducts={loading}
-                            categories={categories}
-                          />
-                        )
-                      }
-                    />
-                    <Route
-                      path="/about"
-                      element={
-                        <AboutPage t={t} currentLanguage={currentLanguage} />
-                      }
-                    />
+                  <Route element={<MainLayout />}>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/about" element={<AboutPage />} />
                     <Route path="/wishlist" element={<WishlistPage />} />
-                    <Route
-                      path="/shop"
-                      element={
-                        loadingFailed ? (
-                          <LoadingFailed t={t} />
-                        ) : (
-                          <ShopPage
-                            products={products}
-                            categories={categories}
-                            loading={loading}
-                            currentLanguage={currentLanguage}
-                            t={t}
-                          />
-                        )
-                      }
-                    />
+                    <Route path="/shop" element={<ShopPage />} />
                     <Route
                       path="/product/:id"
                       element={<ProductDetailsPage />}

@@ -3,9 +3,71 @@ import Container from "./Container";
 import { Mail, Phone } from "lucide-react";
 import FlowUpTransition from "../common/Transitions/FlowUpTransition";
 import { AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useToast } from "../../context/ToastContext";
+import { getCategories } from "../../services/product.service";
+import { useTranslation } from "react-i18next";
 
-function Footer({ categories, loading, loadingFailed, t }) {
-  categories = categories.slice(0, 4);
+function Footer() {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language;
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingFailed, setLoadingFailed] = useState(false);
+  const { showError } = useToast();
+
+  const navItems = [
+    {
+      label: {
+        en: "Home",
+        ar: "الرئيسية",
+      },
+      to: "/",
+    },
+    {
+      label: {
+        en: "Shop",
+        ar: "تسوق",
+      },
+      to: "/shop",
+    },
+    {
+      label: {
+        en: "The Arsenal",
+        ar: "أرسنال",
+      },
+      to: "https://arsenal.com/",
+    },
+    {
+      label: {
+        en: "About",
+        ar: "تعرف علينا",
+      },
+      to: "/about",
+    },
+  ];
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const params = {
+          sortBy: "count",
+          method: "DESC",
+          page: 1,
+          limit: 4,
+        };
+        const response = await getCategories(params);
+        setCategories(response.data);
+      } catch (error) {
+        showError(t("common.errorLoadingData") & error);
+        setLoadingFailed(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadCategories();
+  }, [showError, t]);
 
   const handleNavClick = (to) => {
     window.scrollTo({
@@ -16,23 +78,6 @@ function Footer({ categories, loading, loadingFailed, t }) {
       window.location.reload();
     }
   };
-
-  if (loading || loadingFailed) {
-    categories = [
-      {
-        name: "Home Page",
-      },
-      {
-        name: "Store",
-      },
-      {
-        name: "Arsenal",
-      },
-      {
-        name: "About Us",
-      },
-    ];
-  }
 
   return (
     <footer>
@@ -48,20 +93,28 @@ function Footer({ categories, loading, loadingFailed, t }) {
                 <div>
                   <h3>{t("footer.upperFooter.explore")}</h3>
                   <ul>
-                    {categories.map((category) => {
-                      const categoryName = category["name"].toLowerCase();
-                      const url = `/shop?category=${categoryName}`
-                      return (
-                        <li key={categoryName}>
-                          <Link
-                            to={url}
-                            onClick={() => handleNavClick(url)}
-                          >
-                            {category["name"]}
-                          </Link>
-                        </li>
-                      );
-                    })}
+                    {loading || loadingFailed ? (
+                      navItems.map((item) => {
+                        return(
+                          <li key={item.to}>
+                            <Link to={item.to} onClick={() => handleNavClick(item.to)}>
+                              {item.label[currentLanguage]}
+                            </Link>
+                          </li>
+                        )
+                      })
+                    ) : (
+                      categories.map((category) => {
+                        const url = `/shop?category=${category.slug}`;
+                        return (
+                          <li key={category.slug}>
+                            <Link to={url} onClick={() => handleNavClick(url)}>
+                              {category.name[currentLanguage]}
+                            </Link>
+                          </li>
+                        );
+                      })
+                    )}
                   </ul>
                 </div>
 

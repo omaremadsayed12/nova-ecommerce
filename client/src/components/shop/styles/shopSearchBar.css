@@ -20,7 +20,7 @@
     }
 
     .shop__search-bar .search-bar__inner form input{
-        @apply min-w-0 flex-1 border-0 bg-transparent px-1 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400;
+        @apply min-w-0 flex-1 border-0 bg-transparent px-1 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 w-4xl;
     }
 
     .dark .shop__search-bar .search-bar__inner form input {

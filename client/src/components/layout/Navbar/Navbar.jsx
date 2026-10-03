@@ -8,6 +8,7 @@ import RouteChangeHandler from "../../common/RouteChangeHandler";
 import { AnimatePresence, motion } from "framer-motion";
 import MobileMenu from "./MobileMenu";
 import PrefrencesMenu from "./PrefrencesMenu";
+import { useTranslation } from "react-i18next";
 
 const navItems = [
   {
@@ -40,7 +41,9 @@ const navItems = [
   },
 ];
 
-function Navbar({currentLanguage}) {
+function Navbar() {
+  const {i18n} = useTranslation();
+  const currentLanguage = i18n.language;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);

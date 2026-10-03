@@ -1,8 +1,11 @@
 import { Truck } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-function HeroSection({ t, currentLanguage, stats, carouselProducts }) {
+function HeroSection({ stats, carouselProducts }) {
+  const {t, i18n} = useTranslation();
+  const currentLanguage =i18n.language;
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
 

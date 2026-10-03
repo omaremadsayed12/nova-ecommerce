@@ -1,9 +1,11 @@
-
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import FlowUpTransition from "../components/common/Transitions/FlowUpTransition";
 import "./styles/loadingPage.css";
+import { useTranslation } from "react-i18next";
 
-function LoadingFailed({t}) {
+function LoadingFailed() {
+  const { t } = useTranslation();
+
   const reloadPage = () => {
     window.location.reload();
   };
@@ -16,17 +18,17 @@ function LoadingFailed({t}) {
             <AlertTriangle aria-hidden="true" strokeWidth={1.8} />
           </div>
 
-          <p className="loading-page__eyebrow">
-            {t("loadingFailed.eyebrow")}
-          </p>
-          <h1 className="loading-page__title">
-            {t("loadingFailed.title")}
-          </h1>
+          <p className="loading-page__eyebrow">{t("loadingFailed.eyebrow")}</p>
+          <h1 className="loading-page__title">{t("loadingFailed.title")}</h1>
           <p className="loading-page__description">
             {t("loadingFailed.description")}
           </p>
 
-          <button type="button" onClick={reloadPage} className="loading-page__button btn-primary">
+          <button
+            type="button"
+            onClick={reloadPage}
+            className="loading-page__button btn-primary"
+          >
             <RefreshCw aria-hidden="true" />
             {t("loadingFailed.reload")}
           </button>
@@ -40,4 +42,4 @@ function LoadingFailed({t}) {
   );
 }
 
-export default LoadingFailed
+export default LoadingFailed;

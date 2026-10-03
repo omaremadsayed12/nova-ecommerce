@@ -1,9 +1,11 @@
 import { useEffect, useState,  createContext } from "react";
 import {  useToast } from "./ToastContext";
+import { useTranslation } from "react-i18next";
 
 export const CartContext = createContext(null);
 
-export default function CartProvider({ children, t }) {
+export default function CartProvider({ children }) {
+  const {t} = useTranslation();
   const { showSuccess, showError } = useToast();
 
   const [cart, setCart] = useState(() => {

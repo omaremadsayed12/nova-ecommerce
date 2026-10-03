@@ -2,49 +2,247 @@ import Products from "../models/Product.js";
 import Reviews from "../models/Reviews.js";
 import products_validator from "./validators/products.validator.js";
 
-const get_all_products = async (page, limit) => {
+const get_all_products = async (params = {}) => {
+  let {
+    page = 1,
+    limit = 12,
+    sortBy = "createdAt",
+    method = "ASC",
+    category,
+    minPrice,
+    maxPrice,
+    query,
+    minRating,
+  } = params;
+
+  page = Math.max(Number(page) || 1, 1);
+  limit = Number(limit);
+
   const skip = (page - 1) * limit;
-  const [products, total] = await Promise.all([
-    Products.find().skip(skip).limit(limit),
-    Products.countDocuments(),
-  ]);
-  const productIds = products.map((product) => product._id);
 
-  const ratings = await Reviews.aggregate([
-    {
-      $match: {
-        product: { $in: productIds },
-      },
-    },
-    {
-      $group: {
-        _id: "$product",
-        averageRating: { $avg: "$rating" },
-      },
-    },
-  ]);
+  method = method.toUpperCase() === "DESC" ? "DESC" : "ASC";
 
-  const ratingMap = new Map(
-    ratings.map((rating) => [
-      rating._id.toString(),
+  const direction = method === "DESC" ? -1 : 1;
+
+  const allowedSortFields = [
+    "createdAt",
+    "updatedAt",
+    "price",
+    "averageRating",
+    "name.en",
+    "name.ar",
+  ];
+
+  if (!allowedSortFields.includes(sortBy)) {
+    sortBy = "createdAt";
+  }
+
+  const sort = {
+    [sortBy]: direction,
+  };
+
+  const filter = {};
+
+  const categories = Array.isArray(category)
+    ? category
+    : category
+      ? [category]
+      : [];
+
+  if (minPrice !== undefined && minPrice !== "") {
+    filter.price = {
+      ...(filter.price || {}),
+      $gte: Number(minPrice),
+    };
+  }
+
+  if (maxPrice !== undefined && maxPrice !== "") {
+    filter.price = {
+      ...(filter.price || {}),
+      $lte: Number(maxPrice),
+    };
+  }
+
+  if (query?.trim()) {
+    const searchQuery = query.trim();
+
+    filter.$or = [
       {
-        averageRating: Number(rating.averageRating.toFixed(1)),
+        "name.en": {
+          $regex: searchQuery,
+          $options: "i",
+        },
       },
-    ]),
-  );
+      {
+        "name.ar": {
+          $regex: searchQuery,
+          $options: "i",
+        },
+      },
+      {
+        "category.en": {
+          $regex: searchQuery,
+          $options: "i",
+        },
+      },
+      {
+        "category.ar": {
+          $regex: searchQuery,
+          $options: "i",
+        },
+      },
+    ];
+  }
 
-  const productsWithRatings = products.map((product) => ({
-    ...product.toObject(),
-    averageRating: ratingMap.get(product._id.toString())?.averageRating || 0,
-  }));
+  const pipeline = [
+    {
+      $match: filter,
+    },
+      ...(categories.length > 0
+    ? [
+        {
+          $match: {
+            $expr: {
+              $in: [
+                { $toLower: "$category.en" },
+                categories,
+              ],
+            },
+          },
+        },
+      ]
+    : []),
+    {
+      $lookup: {
+        from: Reviews.collection.name,
+
+        let: {
+          productId: "$_id",
+        },
+
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$product", "$$productId"],
+              },
+            },
+          },
+
+          {
+            $group: {
+              _id: null,
+              averageRating: {
+                $avg: "$rating",
+              },
+              reviewCount: {
+                $sum: 1,
+              },
+            },
+          },
+        ],
+
+        as: "ratingData",
+      },
+    },
+
+    {
+      $set: {
+        averageRating: {
+          $round: [
+            {
+              $ifNull: [
+                {
+                  $arrayElemAt: [
+                    "$ratingData.averageRating",
+                    0,
+                  ],
+                },
+                0,
+              ],
+            },
+            1,
+          ],
+        },
+
+        reviewCount: {
+          $ifNull: [
+            {
+              $arrayElemAt: [
+                "$ratingData.reviewCount",
+                0,
+              ],
+            },
+            0,
+          ],
+        },
+      },
+    },
+    ...(minRating !== undefined && minRating !== ""
+      ? [
+          {
+            $match: {
+              averageRating: {
+                $gte: Number(minRating),
+              },
+            },
+          },
+        ]
+      : []),
+    {
+      $facet: {
+        products:
+          limit === 0
+            ? [
+                {
+                  $sort: sort,
+                },
+              ]
+            : [
+                {
+                  $sort: sort,
+                },
+                ...(skip > 0
+                  ? [
+                      {
+                        $skip: skip,
+                      },
+                    ]
+                  : []),
+                {
+                  $limit: limit,
+                },
+              ],
+
+        total: [
+          {
+            $count: "count",
+          },
+        ],
+      },
+    },
+  ];
+
+  const [result] = await Products.aggregate(pipeline);
+
+  const products = result?.products || [];
+
+  const total = result?.total?.[0]?.count || 0;
 
   const meta = {
     page,
     limit,
     total,
-    totalPages: Math.ceil(total / limit),
+    totalPages:
+      limit === 0
+        ? 1
+        : Math.ceil(total / limit),
   };
-  return { products: productsWithRatings, meta };
+
+  return {
+    products,
+    meta,
+  };
 };
 
 const get_product_details = async (productId) => {
