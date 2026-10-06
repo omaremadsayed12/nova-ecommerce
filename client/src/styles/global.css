@@ -96,7 +96,6 @@ html {
 
 body {
   margin: 0;
-  min-width: 320px;
   background: var(--bg);
   color: var(--ink);
   font-family: "Google Sans Text", "Segoe UI", sans-serif;

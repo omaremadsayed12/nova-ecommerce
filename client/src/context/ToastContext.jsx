@@ -1,19 +1,19 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import ErrorToast from "../components/common/Toasts/ErrorToast";
 import SuccessToast from "../components/common/Toasts/SuccessToast";
 import { AnimatePresence } from "framer-motion";
 
 export const ToastContext = createContext(null);
+const MAX_TOASTS = 4;
 
 export default function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
-  const MAX_TOASTS = 4;
 
-  const removeToast = (id) => {
+  const removeToast = useCallback((id) => {
     setToasts((current) => current.filter((toast) => toast.id !== id));
-  };
+  }, []);
 
-  const addToast = (type, message, button = null) => {
+  const addToast = useCallback((type, message, button = null) => {
     const id = crypto.randomUUID();
 
     setToasts((current) => [
@@ -29,18 +29,20 @@ export default function ToastProvider({ children }) {
     setTimeout(() => {
       removeToast(id);
     }, 7000);
-  };
+  }, [removeToast]);
 
-  const showError = (message) => {
+  const showError = useCallback((message) => {
     addToast("error", message);
-  };
+  }, [addToast]);
 
-  const showSuccess = (message, button = null) => {
+  const showSuccess = useCallback((message, button = null) => {
     addToast("success", message, button);
-  };
+  }, [addToast]);
+
+  const value = useMemo(() => ({ showError, showSuccess }), [showError, showSuccess]);
 
   return (
-    <ToastContext.Provider value={{ showError, showSuccess }}>
+    <ToastContext.Provider value={value}>
       {children}
 
       <div className="toast-container">

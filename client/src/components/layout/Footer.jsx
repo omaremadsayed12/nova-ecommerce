@@ -89,7 +89,7 @@ function Footer() {
                 <div className="logo">{t("footer.upperFooter.logo")}</div>
                 <p>{t("footer.upperFooter.paragraph")} </p>
               </div>
-              <div className="grid grid-cols-2">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 <div>
                   <h3>{t("footer.upperFooter.explore")}</h3>
                   <ul>

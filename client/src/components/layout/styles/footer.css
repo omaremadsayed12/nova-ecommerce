@@ -3,7 +3,7 @@
     @apply border-t border-slate-200 dark:border-slate-700 bg-(--base);
   }
   footer .upper__footer {
-    @apply grid gap-10 grid-cols-2 px-8;
+    @apply grid grid-cols-1 gap-6 px-4 sm:grid-cols-2 sm:gap-8 sm:px-6;
   }
 
   footer .upper__footer p {

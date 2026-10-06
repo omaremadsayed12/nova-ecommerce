@@ -7,10 +7,13 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import FlowUpTransition from "../components/common/Transitions/FlowUpTransition";
+import { useTranslation } from "react-i18next";
 
-function AboutPage({ t, currentLanguage }) {
+function AboutPage() {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language === "ar" ? "ar" : "en";
   return (
-    <main>
+    <main className="about-page">
       <FlowUpTransition>
         <section className="about-nova">
           <p className="headline">

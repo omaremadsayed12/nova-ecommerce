@@ -59,9 +59,11 @@ Completed: The existing checkout sends cart IDs/quantities to server order creat
 - [x] Loading/error/empty states
 Completed: Key API-backed views now expose loading, error, retry, and empty states. Navbar search uses server query parameters and localized product fields instead of an invalid no-argument request; category-filter failures and product-detail failures can be retried, and stale product requests are cancelled. Home/Footer error notifications now pass readable messages. Cart, wishlist, shop, order, admin, and checkout states were reviewed. Client lint/build passed; browser interaction was not performed.
 - [x] RTL/i18n
-- [ ] Responsive UI
+- [x] Responsive UI
 
 Completed: Arabic and English now stay in sync with the document language and direction. Customer shopping, order, checkout, payment, search, and admin screens use localized labels, status text, prices/dates, and product fields; mobile navigation labels and translated accessible names were corrected. Client lint, production build, a language/direction smoke check, and `git diff --check` passed. Browser visual interaction was not performed. Server-provided error messages can still be English.
+
+Completed: Responsive layouts now stack the footer on narrow screens, scale product-detail imagery and quantity controls, and render the About page with its intended styles. The 320px minimum body width was removed to prevent a forced horizontal scrollbar when browser scrollbars reduce the available width. Toast callbacks are stable across provider renders so toast updates do not retrigger dependent error-fetch effects. Browser checks at 320px, 375px, and 768px confirmed the main customer/admin routes fit; the mobile menu opened successfully. Client lint, production build, and `git diff --check` passed. The local backend was not running, so API-backed page data (including the homepage and product details) could not be visually verified; the homepage showed its existing unavailable state.
 
 Completed: The production build issue was traced to one invalid Windows-1252 byte in `AdminDashboardPage.jsx`, corrected to UTF-8. Client lint and production build pass; Vite still reports an existing bundle-size advisory.
 
@@ -73,11 +75,13 @@ Completed: Cart rows load authoritative product display details by ID, show curr
 
 ## Phase 7 - Verification
 - [ ] Backend tests
-- [ ] Frontend build
+- [x] Frontend build
 - [ ] API smoke tests
 - [ ] Authentication flow
 - [ ] Order lifecycle
 - [ ] Payment lifecycle
+
+Completed: After the responsive changes, `npm run lint`, `npm run build`, and `git diff --check` passed. The production build still reports the existing 594.90 kB minified JavaScript chunk advisory. Backend/API lifecycle verification remains open below.
 
 ## Phase 8 - Deployment
 - [ ] Production environment variables

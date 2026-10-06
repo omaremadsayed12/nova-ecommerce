@@ -114,7 +114,7 @@ function ProductDetailsPage() {
           <img
             src={product.imageUrl}
             alt={name}
-            className="h-[640px] w-full rounded-[24px] object-cover"
+            className="h-[420px] w-full rounded-[24px] object-cover sm:h-[520px] lg:h-[640px]"
           />
         </div>
 
@@ -142,7 +142,7 @@ function ProductDetailsPage() {
           </p>
 
           {/* Quantity */}
-          <div className="mt-8 flex items-center gap-5">
+          <div className="mt-8 flex flex-wrap items-center gap-3 sm:gap-5">
             <div className="inline-flex items-center gap-4 rounded-full border border-slate-200 bg-white px-3 py-2">
               <button
                 onClick={decreaseQuantity}
