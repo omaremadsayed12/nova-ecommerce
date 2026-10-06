@@ -18,7 +18,7 @@ import reviews_routes from "./routes/reviews.routes.js";
 
 import fileUpload from "express-fileupload";
 import errorHandler from "./middleware/error.middleware.js";
-import AppError from "./utils/appError.js";
+import AppError from "./utils/AppError.js";
 import { getAllowedClientOrigins } from "./config/clientUrl.js";
 import initialize from "./config/initialize.js";
 

@@ -3,7 +3,7 @@ import stripe from "../../../config/stripe.js";
 import User from "../../../models/User.js";
 import Payment from "../../../models/Payment.js";
 import Order from "../../../models/Order.js";
-import AppError from "../../../utils/appError.js";
+import AppError from "../../../utils/AppError.js";
 import getClientUrl from "../../../config/clientUrl.js";
 import { NotFoundError, ValidationError } from "../../errors.service.js";
 import order_service from "../../order.service.js";

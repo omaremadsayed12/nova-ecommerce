@@ -1,6 +1,6 @@
 import stripe_service from "../services/payment/stripe/stripe.service.js";
 import stripe from "../config/stripe.js";
-import AppError from "../utils/appError.js";
+import AppError from "../utils/AppError.js";
 
 
 const fetch_stripe_webhook = async (req, res) => {
