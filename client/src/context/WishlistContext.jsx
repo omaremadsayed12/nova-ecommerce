@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { addToWishlist, getWishlist, removeFromWishlist } from "../services/wishlist.service";
 import { useToast } from "./ToastContext";
 import { AuthContext } from "./AuthContext";
+import { useTranslation } from "react-i18next";
 
 export const WishlistContext = createContext(null);
 
@@ -10,6 +11,7 @@ function normalizeWishlist(value) {
 }
 
 export default function WishlistProvider({ children }) {
+  const { t } = useTranslation();
   const { user, isAuthenticated, authLoading } = useContext(AuthContext);
   const { showSuccess, showError } = useToast();
   const [savedWishlist, setSavedWishlist] = useState([]);
@@ -34,7 +36,7 @@ export default function WishlistProvider({ children }) {
     }).catch((error) => {
       if (active && error.name !== "CanceledError") {
         setSavedWishlist([]);
-        setLoadErrorState({ scope, message: error.response?.data?.error?.message || "Could not load your wishlist." });
+        setLoadErrorState({ scope, message: error.response?.data?.error?.message || t("wishlistContext.loadError") });
         setLoadedScope(scope);
         setLoadedRequestKey(requestKey);
       }
@@ -43,7 +45,7 @@ export default function WishlistProvider({ children }) {
       active = false;
       controller.abort();
     };
-  }, [authLoading, isAuthenticated, requestKey, scope]);
+  }, [authLoading, isAuthenticated, requestKey, scope, t]);
 
   const wishlist = isAuthenticated && loadedScope === scope ? savedWishlist : [];
   const loadingWishlist = authLoading || (isAuthenticated && loadedRequestKey !== requestKey);
@@ -51,17 +53,17 @@ export default function WishlistProvider({ children }) {
 
   const addProductToWishlist = async (productId) => {
     if (inWishlist(productId)) {
-      showError("Product already in wishlist");
+      showError(t("wishlistContext.alreadySaved"));
       return false;
     }
     try {
       const response = await addToWishlist(productId);
       setSavedWishlist(normalizeWishlist(response.data));
       setLoadedScope(scope);
-      showSuccess(response.message, { url: "/wishlist", text: "Open Wishlist" });
+      showSuccess(t("wishlistContext.addSuccess"), { url: "/wishlist", text: t("wishlistContext.openWishlist") });
       return true;
     } catch (error) {
-      showError(error.response?.data?.error?.message || "Could not add this product to your wishlist.");
+      showError(error.response?.data?.error?.message || t("wishlistContext.addError"));
       return false;
     }
   };
@@ -72,10 +74,10 @@ export default function WishlistProvider({ children }) {
       const response = await removeFromWishlist(productId);
       setSavedWishlist(normalizeWishlist(response.data));
       setLoadedScope(scope);
-      showSuccess(response.message, { url: "/wishlist", text: "Open Wishlist" });
+      showSuccess(t("wishlistContext.removeSuccess"), { url: "/wishlist", text: t("wishlistContext.openWishlist") });
       return true;
     } catch (error) {
-      showError(error.response?.data?.error?.message || "Could not remove this product from your wishlist.");
+      showError(error.response?.data?.error?.message || t("wishlistContext.removeError"));
       return false;
     }
   };

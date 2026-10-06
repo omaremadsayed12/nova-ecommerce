@@ -7,7 +7,7 @@ import { AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 function SearchBar({ onClose }) {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [query, setQuery] = useState("");
   const [resultsState, setResultsState] = useState({ query: "", products: [] });
   const [errorState, setErrorState] = useState({ query: "", message: "" });
@@ -41,7 +41,7 @@ function SearchBar({ onClose }) {
         }
       } catch (error) {
         if (active && error.name !== "CanceledError") {
-          setErrorState({ query: normalizedQuery, message: error.response?.data?.error?.message || "Search is unavailable. Please try again." });
+          setErrorState({ query: normalizedQuery, message: error.response?.data?.error?.message || t("search.unavailable") });
         }
       }
     }, 200);
@@ -50,7 +50,7 @@ function SearchBar({ onClose }) {
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [normalizedQuery, retryKey]);
+  }, [normalizedQuery, retryKey, t]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -71,16 +71,16 @@ function SearchBar({ onClose }) {
         <div className="search-bar__inner">
           <form className="search-bar__form" onSubmit={handleSubmit}>
             <Search className="search-bar__icon" aria-hidden="true" />
-            <input ref={inputRef} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" aria-label="Search products" className="search-bar__input" />
-            <button type="submit" className="search-bar__submit" aria-label="Submit search">{isRTL ? <ArrowLeft /> : <ArrowRight />}</button>
+            <input ref={inputRef} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("search.placeholder")} aria-label={t("search.placeholder")} className="search-bar__input" />
+            <button type="submit" className="search-bar__submit" aria-label={t("search.submit")}>{isRTL ? <ArrowLeft /> : <ArrowRight />}</button>
           </form>
           <AnimatePresence mode="wait">
             {normalizedQuery && <DropdownTransition><div className="search-bar__results">
-              {loading && <p role="status" className="search-bar__message">Searching...</p>}
-              {error && <div role="alert" className="search-bar__message"><p>{error}</p><button type="button" onClick={() => setRetryKey((key) => key + 1)} className="font-bold underline">Try again</button></div>}
-              {!loading && !error && products.length === 0 && resultsState.query === normalizedQuery && <p className="search-bar__message">No products found.</p>}
+              {loading && <p role="status" className="search-bar__message">{t("search.loading")}</p>}
+              {error && <div role="alert" className="search-bar__message"><p>{error}</p><button type="button" onClick={() => setRetryKey((key) => key + 1)} className="font-bold underline">{t("common.tryAgain")}</button></div>}
+              {!loading && !error && products.length === 0 && resultsState.query === normalizedQuery && <p className="search-bar__message">{t("search.empty")}</p>}
               {products.map((product) => {
-                const name = product.name?.[language] || product.name?.en || "Product";
+                const name = product.name?.[language] || product.name?.en || t("common.product");
                 const category = product.category?.[language] || product.category?.en || "";
                 return <Link key={product._id} to={`/product/${product._id}`} className="search-bar__result" onClick={onClose}><img src={product.imageUrl} alt="" className="search-bar__result-image" /><div><div className="search-bar__result-name">{name}</div><div className="search-bar__result-category">{category}</div></div></Link>;
               })}

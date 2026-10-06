@@ -30,7 +30,7 @@ export default function CartProvider({ children }) {
 
   const addToCart = (productId, requestedQuantity = 1, maxQuantity = Infinity) => {
     if (!Number.isSafeInteger(requestedQuantity) || requestedQuantity < 1 || requestedQuantity > maxQuantity) {
-      showError("Requested quantity is not available.");
+      showError(t("cartContext.quantityUnavailable"));
       return false;
     }
     if (inCart(productId)) {
@@ -50,7 +50,7 @@ export default function CartProvider({ children }) {
     const currentQuantity = cart.find((item) => String(item.product) === String(productId))?.quantity || 0;
     const isReducingQuantity = requestedQuantity < currentQuantity;
     if (!Number.isSafeInteger(requestedQuantity) || requestedQuantity < 1 || (requestedQuantity > maxQuantity && !isReducingQuantity)) {
-      showError("Requested quantity is not available.");
+      showError(t("cartContext.quantityUnavailable"));
       return false;
     }
     setCart((items) => items.map((item) => String(item.product) === String(productId) ? { ...item, quantity: requestedQuantity } : item));

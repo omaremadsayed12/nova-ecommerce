@@ -51,7 +51,7 @@ function FiltersSection({ minPrice, maxPrice }) {
           {t("shop.filtersSection.filtersButton")}
         </button>
       </div>
-      {loadingFailed && <div role="alert" className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900"><p>{error}</p><button type="button" onClick={() => setRetryKey((key) => key + 1)} className="mt-2 font-bold underline">Try again</button></div>}
+      {loadingFailed && <div role="alert" className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900"><p>{error}</p><button type="button" onClick={() => setRetryKey((key) => key + 1)} className="mt-2 font-bold underline">{t("common.tryAgain")}</button></div>}
       {(menuOpen && !loading && !loadingFailed) && <AnimatePresence mode="wait"><FiltersMenu categories={categories} minPrice={minPrice} maxPrice={maxPrice} /></AnimatePresence>}
     </>
   );

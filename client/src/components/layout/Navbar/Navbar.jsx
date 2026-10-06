@@ -42,7 +42,7 @@ const navItems = [
 ];
 
 function Navbar() {
-  const {i18n} = useTranslation();
+  const {i18n, t} = useTranslation();
   const currentLanguage = i18n.language;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
@@ -90,7 +90,7 @@ function Navbar() {
             <button
               type="button"
               className="mobile-menu-button"
-              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-label={mobileMenuOpen ? t("navbar.accessibility.closeMenu") : t("navbar.accessibility.openMenu")}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -105,7 +105,7 @@ function Navbar() {
             <div className="nav-icons">
               <button
                 type="button"
-                aria-label="Search"
+                aria-label={t("navbar.accessibility.search")}
                 className="hidden nav-icon md:flex"
                 onClick={() => setSearchOpen(!searchOpen)}
               >
@@ -113,7 +113,7 @@ function Navbar() {
               </button>
               <NavLink
                 to="/wishlist"
-                aria-label="Wishlist"
+                aria-label={t("navbar.accessibility.wishlist")}
                 onClick={()=>handleNavClick("/wishlist")}
                 className="hidden nav-icon sm:flex"
               >
@@ -121,7 +121,7 @@ function Navbar() {
               </NavLink>
               <NavLink
                 to="/cart"
-                aria-label="Shopping bag"
+                aria-label={t("navbar.accessibility.shoppingBag")}
                 onClick={()=>handleNavClick("/cart")}
                 className="relative nav-icon"
               >
@@ -132,7 +132,7 @@ function Navbar() {
               </NavLink>
               <button
                 type="button"
-                aria-label="Preferences"
+                aria-label={t("navbar.accessibility.preferences")}
                 className="hidden nav-icon sm:flex"
                 onClick={() => {
                   setSettingsMenuOpen(!settingsMenuOpen);

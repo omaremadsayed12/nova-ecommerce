@@ -58,8 +58,10 @@ Completed: Wishlist now loads and mutates through the authenticated existing API
 Completed: The existing checkout sends cart IDs/quantities to server order creation and waits to clear cart until payment success. Payment status errors now retry polling; FAILED/CANCELLED removes only the matching obsolete pending-order ID while preserving the cart, and offers a fresh checkout link. Refunded payments remain distinct. Client lint and production build passed. Browser checkout remains unverified because the client Stripe publishable key is not configured.
 - [x] Loading/error/empty states
 Completed: Key API-backed views now expose loading, error, retry, and empty states. Navbar search uses server query parameters and localized product fields instead of an invalid no-argument request; category-filter failures and product-detail failures can be retried, and stale product requests are cancelled. Home/Footer error notifications now pass readable messages. Cart, wishlist, shop, order, admin, and checkout states were reviewed. Client lint/build passed; browser interaction was not performed.
-- [ ] RTL/i18n
+- [x] RTL/i18n
 - [ ] Responsive UI
+
+Completed: Arabic and English now stay in sync with the document language and direction. Customer shopping, order, checkout, payment, search, and admin screens use localized labels, status text, prices/dates, and product fields; mobile navigation labels and translated accessible names were corrected. Client lint, production build, a language/direction smoke check, and `git diff --check` passed. Browser visual interaction was not performed. Server-provided error messages can still be English.
 
 Completed: The production build issue was traced to one invalid Windows-1252 byte in `AdminDashboardPage.jsx`, corrected to UTF-8. Client lint and production build pass; Vite still reports an existing bundle-size advisory.
 

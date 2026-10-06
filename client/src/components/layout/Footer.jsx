@@ -60,7 +60,7 @@ function Footer() {
         const response = await getCategories(params);
         setCategories(response.data);
       } catch (error) {
-        showError(error.response?.data?.error?.message || t("common.errorLoadingData"));
+        showError(error.response?.data?.error?.message || t("common.loadingFailed"));
         setLoadingFailed(true);
       } finally {
         setLoading(false);

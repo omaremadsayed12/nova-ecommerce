@@ -12,7 +12,7 @@ function formatMoney(amount, currency, language) {
 }
 
 function WishlistPage() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const language = i18n.language === "ar" ? "ar-EG-u-nu-latn" : "en-US";
   const { isAuthenticated, authLoading, openAuth } = useContext(AuthContext);
   const { wishlist, loadingWishlist, loadError, retryWishlist, removeProductFromWishlist } = useContext(WishlistContext);
@@ -38,12 +38,12 @@ function WishlistPage() {
       setProductsById((current) => ({ ...current, ...entries }));
       setProductErrorState({
         key: requestKey,
-        message: Object.values(entries).some((product) => !product) ? "Some wishlist products are no longer available." : "",
+        message: Object.values(entries).some((product) => !product) ? t("wishlistPage.productError") : "",
       });
       setLoadedKey(requestKey);
     }).catch((error) => {
       if (active && error.name !== "CanceledError") {
-        setProductErrorState({ key: requestKey, message: error.response?.data?.error?.message || "Could not load wishlist products." });
+        setProductErrorState({ key: requestKey, message: error.response?.data?.error?.message || t("wishlistPage.productError") });
         setLoadedKey(requestKey);
       }
     });
@@ -51,23 +51,27 @@ function WishlistPage() {
       active = false;
       controller.abort();
     };
-  }, [productKey, requestKey]);
+  }, [productKey, requestKey, t]);
 
   const loadingProducts = Boolean(productKey) && loadedKey !== requestKey;
   const productError = productErrorState.key === requestKey ? productErrorState.message : "";
   const products = wishlist.map((id) => ({ id, product: productsById[id] }));
 
-  if (authLoading) return <div role="status" className="mx-auto max-w-6xl px-6 py-16 text-slate-600">Loading wishlist...</div>;
-  if (!isAuthenticated) return <main className="mx-auto max-w-3xl px-6 py-20 text-center"><Heart className="mx-auto h-10 w-10 text-slate-400" /><h1 className="mt-5 text-3xl font-black text-slate-900">Your wishlist</h1><p className="mt-3 text-slate-600">Sign in to view and save your favorite products.</p><button onClick={openAuth} className="mt-6 rounded-full bg-slate-900 px-6 py-3 font-bold text-white">Sign in</button></main>;
+  if (authLoading) return <div role="status" className="mx-auto max-w-6xl px-6 py-16 text-slate-600">{t("wishlistPage.loading")}</div>;
+  if (!isAuthenticated) return <main className="mx-auto max-w-3xl px-6 py-20 text-center"><Heart className="mx-auto h-10 w-10 text-slate-400" /><h1 className="mt-5 text-3xl font-black text-slate-900">{t("wishlistPage.title")}</h1><p className="mt-3 text-slate-600">{t("wishlistPage.signInMessage")}</p><button onClick={openAuth} className="mt-6 rounded-full bg-slate-900 px-6 py-3 font-bold text-white">{t("common.signIn")}</button></main>;
 
   return (
     <main className="mx-auto w-full max-w-6xl px-6 pb-20 pt-8 md:px-12">
-      <div className="mb-8"><p className="text-xs font-bold uppercase tracking-widest text-slate-500">Saved for later</p><h1 className="mt-3 text-4xl font-black tracking-tight text-slate-900">Your wishlist</h1></div>
-      {loadError && <div role="alert" className="mb-5 rounded-xl bg-red-50 p-4 text-red-800"><p>{loadError}</p><button onClick={retryWishlist} className="mt-2 font-bold underline">Try again</button></div>}
-      {productError && <div role="alert" className="mb-5 rounded-xl bg-amber-50 p-4 text-amber-800"><p>{productError}</p><button onClick={() => setRetryKey((key) => key + 1)} className="mt-2 font-bold underline">Retry product details</button></div>}
-      {(loadingWishlist || loadingProducts) && !loadError && <p role="status" className="rounded-2xl bg-white p-6 text-slate-600">Loading wishlist products...</p>}
-      {!loadingWishlist && !loadingProducts && !loadError && products.length === 0 && <section className="rounded-3xl border border-slate-200 bg-white p-10 text-center"><Heart className="mx-auto h-9 w-9 text-slate-400" /><h2 className="mt-4 text-xl font-bold text-slate-900">Your wishlist is empty</h2><p className="mt-2 text-slate-600">Save products you like and find them here later.</p><Link to="/shop" className="mt-6 inline-flex rounded-full bg-slate-900 px-5 py-3 font-bold text-white">Browse the shop</Link></section>}
-      {!loadingWishlist && !loadingProducts && products.length > 0 && <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{products.map(({ id, product }) => product ? <article key={id} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm"><Link to={`/product/${id}`}><img src={product.imageUrl} alt={product.name?.[i18n.language] || product.name?.en || "Product"} className="h-64 w-full object-cover" /></Link><div className="p-5"><p className="text-sm text-slate-500">{product.category?.[i18n.language] || product.category?.en || ""}</p><h2 className="mt-1 text-xl font-bold text-slate-900">{product.name?.[i18n.language] || product.name?.en || "Product"}</h2><div className="mt-4 flex items-center justify-between gap-3"><span className="font-bold">{formatMoney(product.price, product.currency, language)}</span><button onClick={() => removeProductFromWishlist(id)} className="rounded-full border border-slate-200 p-2 text-slate-600" aria-label={`Remove ${product.name?.en || "product"} from wishlist`}><Trash2 className="h-4 w-4" /></button></div><button disabled={inCart(id) || product.stock < 1} onClick={() => addToCart(id, 1, product.stock)} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"><ShoppingBag className="h-4 w-4" />{product.stock < 1 ? "Out of stock" : inCart(id) ? "Already in cart" : "Add to cart"}</button></div></article> : <article key={id} className="flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 p-5"><span>This product is unavailable.</span><button onClick={() => removeProductFromWishlist(id)} className="rounded-full border p-2" aria-label="Remove unavailable product"><Trash2 className="h-4 w-4" /></button></article>)}</div>}
+      <div className="mb-8"><p className="text-xs font-bold uppercase tracking-widest text-slate-500">{t("wishlistPage.eyebrow")}</p><h1 className="mt-3 text-4xl font-black tracking-tight text-slate-900">{t("wishlistPage.title")}</h1></div>
+      {loadError && <div role="alert" className="mb-5 rounded-xl bg-red-50 p-4 text-red-800"><p>{loadError}</p><button onClick={retryWishlist} className="mt-2 font-bold underline">{t("common.tryAgain")}</button></div>}
+      {productError && <div role="alert" className="mb-5 rounded-xl bg-amber-50 p-4 text-amber-800"><p>{productError}</p><button onClick={() => setRetryKey((key) => key + 1)} className="mt-2 font-bold underline">{t("wishlistPage.retryProducts")}</button></div>}
+      {(loadingWishlist || loadingProducts) && !loadError && <p role="status" className="rounded-2xl bg-white p-6 text-slate-600">{t("wishlistPage.loading")}</p>}
+      {!loadingWishlist && !loadingProducts && !loadError && products.length === 0 && <section className="rounded-3xl border border-slate-200 bg-white p-10 text-center"><Heart className="mx-auto h-9 w-9 text-slate-400" /><h2 className="mt-4 text-xl font-bold text-slate-900">{t("wishlistPage.emptyTitle")}</h2><p className="mt-2 text-slate-600">{t("wishlistPage.emptyMessage")}</p><Link to="/shop" className="mt-6 inline-flex rounded-full bg-slate-900 px-5 py-3 font-bold text-white">{t("common.browseShop")}</Link></section>}
+      {!loadingWishlist && !loadingProducts && products.length > 0 && <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{products.map(({ id, product }) => {
+        if (!product) return <article key={id} className="flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 p-5"><span>{t("wishlistPage.unavailable")}</span><button onClick={() => removeProductFromWishlist(id)} className="rounded-full border p-2" aria-label={t("cartPage.removeUnavailable")}><Trash2 className="h-4 w-4" /></button></article>;
+        const name = product.name?.[i18n.language] || product.name?.en || t("common.product");
+        return <article key={id} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm"><Link to={`/product/${id}`}><img src={product.imageUrl} alt={name} className="h-64 w-full object-cover" /></Link><div className="p-5"><p className="text-sm text-slate-500">{product.category?.[i18n.language] || product.category?.en || ""}</p><h2 className="mt-1 text-xl font-bold text-slate-900">{name}</h2><div className="mt-4 flex items-center justify-between gap-3"><span className="font-bold">{formatMoney(product.price, product.currency, language)}</span><button onClick={() => removeProductFromWishlist(id)} className="rounded-full border border-slate-200 p-2 text-slate-600" aria-label={t("wishlistPage.remove", { name })}><Trash2 className="h-4 w-4" /></button></div><button disabled={inCart(id) || product.stock < 1} onClick={() => addToCart(id, 1, product.stock)} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"><ShoppingBag className="h-4 w-4" />{product.stock < 1 ? t("wishlistPage.outOfStock") : inCart(id) ? t("wishlistPage.alreadyInCart") : t("wishlistPage.addToCart")}</button></div></article>;
+      })}</div>}
     </main>
   );
 }

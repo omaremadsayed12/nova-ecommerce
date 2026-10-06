@@ -18,9 +18,6 @@ function PrefrencesMenu({ onClose }) {
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
-    document.dir = lang === "ar" ? "rtl" : "ltr";
-    document.documentElement.lang = lang;
-    localStorage.setItem("language", lang);
   };
 
   return (
@@ -51,6 +48,7 @@ function PrefrencesMenu({ onClose }) {
                   onClose();
                 }}
                 className={theme === "light" ? "active" : ""}
+                aria-label={t("navbar.accessibility.lightTheme")}
               >
                 <Sun size={14} strokeWidth={2} />
               </button>
@@ -60,6 +58,7 @@ function PrefrencesMenu({ onClose }) {
                   onClose();
                 }}
                 className={theme === "dark" ? "active" : ""}
+                aria-label={t("navbar.accessibility.darkTheme")}
               >
                 <Moon size={14} strokeWidth={2} />
               </button>

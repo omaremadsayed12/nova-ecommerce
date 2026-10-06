@@ -1,9 +1,11 @@
 import { CircleCheck, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import DropdownTransition from "../Transitions/DropdownTransition";
+import { useTranslation } from "react-i18next";
 
 
 function SuccessToast({ message, onClose, btn }) {
+  const { t } = useTranslation();
   if (!message) return null;
 
   return (
@@ -20,7 +22,7 @@ function SuccessToast({ message, onClose, btn }) {
       }
       <button
         onClick={onClose}
-        aria-label="Close success message"
+        aria-label={t("common.closeSuccess")}
       >
         <X />
       </button>

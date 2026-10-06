@@ -1,7 +1,9 @@
 import { CircleAlert, X } from "lucide-react";
 import DropdownTransition from "../Transitions/DropdownTransition";
+import { useTranslation } from "react-i18next";
 
 function ErrorToast({ message, onClose }) {
+  const { t } = useTranslation();
   if (!message) return null;
 
   return (
@@ -11,7 +13,7 @@ function ErrorToast({ message, onClose }) {
 
         <span className="flex-1">{message}</span>
 
-        <button onClick={onClose} aria-label="Close error">
+        <button onClick={onClose} aria-label={t("common.closeError")}>
           <X />
         </button>
       </div>

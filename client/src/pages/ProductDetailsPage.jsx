@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import {
   ArrowLeft,
+  ArrowRight,
   Minus,
   Plus,
   ShoppingCart,
@@ -9,9 +10,19 @@ import { Link, useParams } from "react-router-dom";
 import { getProductById } from "../services/product.service";
 import { CartContext } from "../context/CartContext";
 import {  useToast } from "../context/ToastContext";
+import { useTranslation } from "react-i18next";
+
+function localizedValue(value, language, fallback = "") {
+  if (typeof value === "string") return value;
+  return value?.[language] || value?.en || fallback;
+}
 
 function ProductDetailsPage() {
   const { id } = useParams();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language === "ar" ? "ar" : "en";
+  const locale = currentLanguage === "ar" ? "ar-EG-u-nu-latn" : "en-US";
+  const isRTL = currentLanguage === "ar";
   const { showError } = useToast();
   const { addToCart } = useContext(CartContext);
 
@@ -34,7 +45,7 @@ function ProductDetailsPage() {
     }).then((productData) => {
       if (active && productData) setProduct(productData.data);
     }).catch((requestError) => {
-      if (active && requestError.name !== "CanceledError") setError(requestError.response?.data?.error?.message || "Failed to load product.");
+      if (active && requestError.name !== "CanceledError") setError(requestError.response?.data?.error?.message || t("productDetailsPage.loadError"));
     }).finally(() => {
       if (active) setLoading(false);
     });
@@ -42,7 +53,7 @@ function ProductDetailsPage() {
       active = false;
       controller.abort();
     };
-  }, [id, retryKey]);
+  }, [id, retryKey, t]);
 
   const handleAddToCart = () => {
     try {
@@ -50,7 +61,7 @@ function ProductDetailsPage() {
       addToCart(product._id, quantity, product.stock);
     } catch (err) {
       showError(
-          err.response?.data?.error || "Something went wrong"
+          err.response?.data?.error || t("common.loadingError")
         );
     } finally {
       setAddingToCart(false);
@@ -58,16 +69,20 @@ function ProductDetailsPage() {
   };
 
   if (loading) {
-    return <div className="p-20">Loading product...</div>;
+    return <div role="status" className="p-20">{t("productDetailsPage.loading")}</div>;
   }
 
   if (error) {
-    return <div className="p-20 text-red-600"><p role="alert">{error}</p><button type="button" onClick={() => setRetryKey((key) => key + 1)} className="mt-4 font-bold underline">Try again</button></div>;
+    return <div className="p-20 text-red-600"><p role="alert">{error}</p><button type="button" onClick={() => setRetryKey((key) => key + 1)} className="mt-4 font-bold underline">{t("common.tryAgain")}</button></div>;
   }
 
   if (!product) {
-    return <div className="p-20">Product not found.</div>;
+    return <div className="p-20">{t("productDetailsPage.notFound")}</div>;
   }
+
+  const name = localizedValue(product.name, currentLanguage, t("common.product"));
+  const category = localizedValue(product.category, currentLanguage);
+  const description = localizedValue(product.description, currentLanguage);
 
   const increaseQuantity = () => {
     if (quantity < product.stock) {
@@ -88,8 +103,8 @@ function ProductDetailsPage() {
         to="/shop"
         className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-slate-600"
       >
-        <ArrowLeft className="h-4 w-4" />
-        Shop
+        {isRTL ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
+        {t("productDetailsPage.shop")}
       </Link>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_1fr]">
@@ -98,7 +113,7 @@ function ProductDetailsPage() {
         <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white p-3">
           <img
             src={product.imageUrl}
-            alt={product.name}
+            alt={name}
             className="h-[640px] w-full rounded-[24px] object-cover"
           />
         </div>
@@ -107,23 +122,23 @@ function ProductDetailsPage() {
         <div className="pt-2">
 
           <span className="text-xs font-bold uppercase tracking-[0.15em] text-slate-500">
-            {product.category}
+            {category}
           </span>
 
           <h1 className="mt-4 text-5xl font-black tracking-[-0.07em] text-slate-900">
-            {product.name}
+            {name}
           </h1>
 
 
           <div className="mt-7 text-4xl font-black tracking-[-0.05em] text-slate-900">
-            {new Intl.NumberFormat("en-US", {
+            {new Intl.NumberFormat(locale, {
               style: "currency",
               currency: product.currency,
             }).format(product.price)}
           </div>
 
           <p className="mt-6 text-base leading-7 text-slate-600">
-            {product.description}
+            {description}
           </p>
 
           {/* Quantity */}
@@ -132,6 +147,7 @@ function ProductDetailsPage() {
               <button
                 onClick={decreaseQuantity}
                 disabled={quantity === 1}
+                aria-label={t("productDetailsPage.decrease")}
                 className="rounded-full p-1 text-slate-700 hover:bg-slate-100 disabled:opacity-40"
               >
                 <Minus className="h-4 w-4" />
@@ -144,6 +160,7 @@ function ProductDetailsPage() {
               <button
                 onClick={increaseQuantity}
                 disabled={quantity === product.stock}
+                aria-label={t("productDetailsPage.increase")}
                 className="rounded-full p-1 text-slate-700 hover:bg-slate-100 disabled:opacity-40"
               >
                 <Plus className="h-4 w-4" />
@@ -157,14 +174,14 @@ function ProductDetailsPage() {
             >
               <ShoppingCart className="h-4 w-4" />
 
-              {addingToCart ? "Adding..." : "Add to Cart"}
+              {addingToCart ? t("productDetailsPage.adding") : t("productDetailsPage.addToCart")}
             </button>
 
             <button
               disabled={product.stock === 0}
               className="rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-900 disabled:opacity-50"
             >
-              Buy Now
+              {t("productDetailsPage.buyNow")}
             </button>
           </div>
 
@@ -176,11 +193,11 @@ function ProductDetailsPage() {
                   ✓
                 </span>
 
-                {product.stock} left in stock
+                {t("productDetailsPage.stockCount", { count: product.stock })}
               </div>
             ) : (
               <div className="text-red-600">
-                Out of stock
+                {t("productDetailsPage.outOfStock")}
               </div>
             )}
           </div>
