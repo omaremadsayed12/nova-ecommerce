@@ -8,7 +8,9 @@ import { useTranslation } from "react-i18next";
 
 function ProductCard({  product }) {
   const {i18n} = useTranslation();
-  const currentLanguage = i18n.language;
+  const currentLanguage = i18n.language === "ar" ? "ar" : "en";
+  const productName = product.name?.[currentLanguage] || product.name?.en || "Product";
+  const categoryName = product.category?.[currentLanguage] || product.category?.en || "";
   const { inCart, addToCart, removeFromCart, updateCart, quantity } =
     useContext(CartContext);
   const { inWishlist, addProductToWishlist, removeProductFromWishlist } =
@@ -46,12 +48,12 @@ function ProductCard({  product }) {
           <Link to={`/product/${product._id}`}>
             <img
               src={product.imageUrl}
-              alt={product.name[currentLanguage]}
+              alt={productName}
             />
           </Link>
           <div className="p-5">
             <div className="topline">
-              <span>{product.category[currentLanguage]}</span>
+              <span>{categoryName}</span>
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -94,7 +96,7 @@ function ProductCard({  product }) {
                   )}
               </div>
             </div>
-            <h3>{product.name[currentLanguage]}</h3>
+            <h3>{productName}</h3>
             <div className="details">
               <div className="rating">
                 <Star />

@@ -10,8 +10,8 @@ export const getProductById = async (id) => {
   return response.data;
 };
 
-export const getCategories = async (params) => {
-  const response = await api.get('/categories', {params});
+export const getCategories = async (params, config = {}) => {
+  const response = await api.get("/categories", { ...config, params });
   return response.data;
 };
 

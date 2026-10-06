@@ -15,7 +15,7 @@ import { getCategories, getProducts } from "../services/product.service";
 function HomePage() {
   const { t, i18n } = useTranslation();
   const currentLanguage = i18n.language;
-  const [stats, setStats] = useState([]);
+  const [stats, setStats] = useState({ totalOrders: 0, totalProducts: 0 });
   const [carouselProducts, setCarouselProducts] = useState([]);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -24,86 +24,46 @@ function HomePage() {
   const { showError } = useToast();
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const carouselProductsParams = {
-          sortBy: "createdAt",
-          method: "DESC",
-          limit: 5,
-          page: 1
-        };
-        const productParams = new URLSearchParams({
-          sortBy: "averageRating",
-          method: "DESC",
-          limit: 4,
-          page: 1
-        });
-        const categoriesParams ={ 
-          sortBy: `name.${currentLanguage}`,
-          method: "ASC",
-          limit: 0,
-          page: 1
-        };
-        const [statsResponse, carouselProdutsResponse, productsResponse, categoriesResponse] = await Promise.all([
-          getStats(),
-          getProducts(carouselProductsParams),
-          getProducts(productParams),
-          getCategories(categoriesParams)
-        ]);
-        setStats(statsResponse.data);
-        setProducts(productsResponse.data);
-        setCarouselProducts(carouselProdutsResponse.data);
-        setCategories(categoriesResponse.data);
-      } catch (error) {
-        showError(t('common.loadingError'), error.response?.error?.message);
+    const controller = new AbortController();
+    let active = true;
+    Promise.resolve().then(() => {
+      if (!active) return null;
+      setLoading(true);
+      setLoadingFailed(false);
+      const carouselParams = new URLSearchParams({ sortBy: "createdAt", method: "DESC", limit: "5", page: "1" });
+      const productParams = new URLSearchParams({ sortBy: "averageRating", method: "DESC", limit: "4", page: "1" });
+      const categoriesParams = new URLSearchParams({ sortBy: `name.${currentLanguage === "ar" ? "ar" : "en"}`, method: "ASC", limit: "0", page: "1" });
+      return Promise.all([
+        getStats({ signal: controller.signal }),
+        getProducts(carouselParams, { signal: controller.signal }),
+        getProducts(productParams, { signal: controller.signal }),
+        getCategories(categoriesParams, { signal: controller.signal }),
+      ]);
+    }).then((responses) => {
+      if (!active || !responses) return;
+      const [statsResponse, carouselResponse, productsResponse, categoriesResponse] = responses;
+      setStats(statsResponse.data);
+      setCarouselProducts(carouselResponse.data || []);
+      setProducts(productsResponse.data || []);
+      setCategories(categoriesResponse.data || []);
+    }).catch((error) => {
+      if (active && error.name !== "CanceledError") {
+        showError(t("common.loadingError"), error.response?.data?.error?.message);
         setLoadingFailed(true);
-      } finally {
-        setLoading(false);
       }
-    };
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => { active = false; controller.abort(); };
+  }, [showError, currentLanguage, t]);
 
-    loadData();
-  }, [showError, currentLanguage,t]);
-
-  if (loadingFailed)
-    return <LoadingFailed />;
+  if (loadingFailed) return <LoadingFailed />;
 
   return (
     <div className="pb-20">
-      {loading ? (
-        <FlowUpTransition>
-          <HeroSkeleton />
-        </FlowUpTransition>
-      ) : (
-        <FlowUpTransition>
-          <HeroSection
-            stats={stats}
-            carouselProducts={carouselProducts}
-          />
-        </FlowUpTransition>
-      )}
-      {loading ? (
-        <FlowUpTransition>
-          <ProductsSkeleton />
-        </FlowUpTransition>
-      ) : (
-        <FlowUpTransition>
-          <Products
-            products={products}
-          />
-        </FlowUpTransition>
-      )}
-      {loading ? (
-        <FlowUpTransition>
-          <CategoriesSkeleton />
-        </FlowUpTransition>
-      ) : (
-        <FlowUpTransition>
-          <CategoriesSection
-            categories={categories}
-          />
-        </FlowUpTransition>
-      )}
+      {loading ? <FlowUpTransition><HeroSkeleton /></FlowUpTransition> : <FlowUpTransition><HeroSection stats={stats} carouselProducts={carouselProducts} /></FlowUpTransition>}
+      {loading ? <FlowUpTransition><ProductsSkeleton /></FlowUpTransition> : <FlowUpTransition><Products products={products} /></FlowUpTransition>}
+      {loading ? <FlowUpTransition><CategoriesSkeleton /></FlowUpTransition> : <FlowUpTransition><CategoriesSection categories={categories} /></FlowUpTransition>}
     </div>
   );
 }

@@ -7,9 +7,12 @@ const get_all_categories = async (params = {}) => {
   limit = Math.max(Number(limit) || 0, 0);
 
   const skip = (page - 1) * limit;
+  method = String(method).toUpperCase() === "DESC" ? "DESC" : "ASC";
   const direction = method === "DESC" ? -1 : 1;
+  const allowedSortFields = ["count", "slug", "name.en", "name.ar"];
+  if (!allowedSortFields.includes(sortBy)) sortBy = "count";
 
-  const sort = { sortBy: direction };
+  const sort = { [sortBy]: direction };
 
   const pipeline = [
     {
