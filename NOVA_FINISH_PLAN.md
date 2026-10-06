@@ -54,7 +54,8 @@ Completed: User PATCH validates localized names, normalized unique email, passwo
 - [x] Cart
 - [x] Wishlist
 Completed: Wishlist now loads and mutates through the authenticated existing API, normalizes ObjectId/string IDs, clears account-scoped items on logout or account switch, and exposes loading, retry, and error states. The page shows product details, empty and unavailable products, remove controls, and stock-aware add-to-cart actions. Server comparisons now match Mongoose ObjectIds safely. Client lint/build, backend syntax checks, and a focused service check for duplicate rejection/removal passed. Browser interaction and live HTTP/database wishlist flow were not exercised.
-- [ ] Checkout
+- [x] Checkout
+Completed: The existing checkout sends cart IDs/quantities to server order creation and waits to clear cart until payment success. Payment status errors now retry polling; FAILED/CANCELLED removes only the matching obsolete pending-order ID while preserving the cart, and offers a fresh checkout link. Refunded payments remain distinct. Client lint and production build passed. Browser checkout remains unverified because the client Stripe publishable key is not configured.
 - [ ] Loading/error/empty states
 - [ ] RTL/i18n
 - [ ] Responsive UI
