@@ -40,8 +40,8 @@ Product partial updates completed: update validation now accepts only supported 
 
 User partial updates completed: PATCH now validates model-shaped localized names, normalized unique email, password, admin-only role, and profile image URL; it merges supplied name languages and returns the saved user while hashing changed passwords. Unsupported fields are rejected and customers remain limited to their own profile. Atlas + local HTTP checks passed for nested-name preservation, duplicate email, protected fields, customer isolation, self-role denial, admin role updates, and trusted admin user creation. Backend syntax checks passed.
 ## Phase 6 - Frontend
-- [ ] Repair build environment
-- [ ] Shop API integration
+- [x] Repair build environment
+Build environment completed: no dependencies changed. An elevated production build exposed one invalid Windows-1252 middle-dot byte in `AdminDashboardPage.jsx`; converting it to UTF-8 resolved the bundler read error. `npm run build` and `npm run lint` now pass. The earlier in-sandbox native binding/spawn failure was process restriction-related; the actual source encoding defect was fixed and verified by the successful elevated build.- [ ] Shop API integration
 - [ ] Homepage API integration
 - [ ] Cart
 - [ ] Wishlist
