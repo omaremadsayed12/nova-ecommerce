@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
+import Payment from "../models/Payment.js";
 import StoreSettings from "../models/StoreSettings.js";
 import { NotFoundError, ValidationError } from "./errors.service.js";
 import order_validator from "./validators/order.validator.js";
@@ -107,6 +108,16 @@ const cancel_order = async (user, orderId) => {
       if (order.status !== "PENDING" || order.paymentStatus !== "UNPAID") {
         throw new ValidationError({
           order: "Only unpaid pending orders can be cancelled",
+        });
+      }
+
+      const activePayment = await Payment.findOne({
+        order: order._id,
+        status: { $in: ["INITIATED", "PENDING", "AUTHORIZED"] },
+      }).session(session);
+      if (activePayment) {
+        throw new ValidationError({
+          order: "Cancel the active checkout session before cancelling this order",
         });
       }
 

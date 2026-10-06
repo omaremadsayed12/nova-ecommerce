@@ -5,6 +5,8 @@ const paymentSchema = new mongoose.Schema(
     order: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
+      required: true,
+      unique: true,
     },
     provider: {
       type: String,
@@ -31,8 +33,9 @@ const paymentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.Mixed,
     },
     paidAt: {
-      type: Date 
-  }},
+      type: Date,
+    },
+  },
   {
     timestamps: true,
   },

@@ -15,13 +15,15 @@ Completed: public registration forces `CUSTOMER`; customers cannot change their 
 Completed: order items use database product snapshots and store settings. Conditional stock reservation, order save, cancellation stock restoration, and status transition run in transactions. Atlas topology probe confirmed a replica set with logical sessions. Database-backed checks passed for successful ordering, insufficient stock, injected save failure rollback, concurrent cancellation, and repeated cancellation. Concurrent order-reservation stress testing and the API-level flow were not performed. The backend has no cart model/service, so it accepts submitted cart items and does not clear a persisted server cart.
 
 ## Phase 3 - Payments
-- [ ] Checkout
-- [ ] Stripe payment creation
-- [ ] Stripe webhook
-- [ ] Payment status transitions
-- [ ] Failed payment handling
-- [ ] Successful payment handling
-- [ ] Prevent duplicate payment processing
+- [x] Checkout
+- [x] Stripe payment creation
+- [x] Stripe webhook
+- [x] Payment status transitions
+- [x] Failed payment handling
+- [x] Successful payment handling
+- [x] Prevent duplicate payment processing
+
+Completed: checkout creates orders from cart IDs and quantities, initiates Stripe Embedded Checkout using server order totals, and clears the browser cart only after the server reports `PAID`. Payment rows are unique per order; retries reuse the same Stripe session. Signed webhook events verify order/payment metadata and amount/currency, keep order and payment status separate, and make paid/failed/expired transitions idempotent. Failed/expired sessions cancel the unpaid order and restore inventory once. Atlas + Stripe test-mode checks passed for session creation, amount, initiation retry, signed success/expiry/failure payloads, duplicate events, mismatch rejection, and stock restoration. No card charge was made. Frontend lint and backend syntax checks passed. Browser checkout was not exercised because `client/.env` has no `VITE_STRIPE_PUBLISHABLE_KEY`; the frontend build remains blocked by the installed Tailwind native binding and Windows `spawn EPERM`. Webhook events were signed and verified locally with the configured test secret, not delivered by Stripe over HTTP.
 
 ## Phase 4 - User experience
 - [ ] Order history

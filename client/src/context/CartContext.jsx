@@ -1,4 +1,4 @@
-import { useEffect, useState,  createContext } from "react";
+import { useCallback, useEffect, useState, createContext } from "react";
 import {  useToast } from "./ToastContext";
 import { useTranslation } from "react-i18next";
 
@@ -50,6 +50,8 @@ export default function CartProvider({ children }) {
     }
   };
 
+  const clearCart = useCallback(() => setCart([]), []);
+
   const removeFromCart = (productId) => {
     setCart((Items) => Items.filter((item) => item.product != productId));
     showSuccess(t('cartContext.removeSuccess'),viewCartButton);
@@ -75,6 +77,7 @@ export default function CartProvider({ children }) {
         addToCart,
         updateCart,
         removeFromCart,
+        clearCart,
         inCart,
       }}
     >
