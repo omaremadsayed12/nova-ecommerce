@@ -12,7 +12,7 @@ Completed: Public registration forces `CUSTOMER`; customers cannot change their 
 - [x] Cancellation
 - [x] Verify MongoDB transaction support
 
-Completed: Orders use database product snapshots and settings. Conditional stock reservation, order creation, cancellation restoration, and status transitions run in transactions. Atlas replica-set support was confirmed. Database checks passed for successful orders, insufficient stock, injected save failure rollback, concurrent cancellation, and repeated cancellation. Concurrent order-reservation stress testing and API-level lifecycle testing were not performed. There is no server cart model/service.
+Completed: Orders use database product snapshots and settings. Conditional stock reservation, order creation, cancellation restoration, and status transitions run in transactions. Atlas replica-set support was confirmed. Database checks passed for successful orders, insufficient stock, injected save failure rollback, concurrent cancellation, and repeated cancellation. A two-customer concurrent reservation test and API-level lifecycle checks were later completed in Phase 7. There is no server cart model/service.
 
 ## Phase 3 - Payments
 - [x] Checkout
@@ -23,7 +23,7 @@ Completed: Orders use database product snapshots and settings. Conditional stock
 - [x] Successful payment handling
 - [x] Prevent duplicate payment processing
 
-Completed: Checkout creates orders from product IDs and quantities, initiates Stripe Embedded Checkout using server totals, and clears the browser cart only after the server reports `PAID`. Payment rows are unique per order and retries reuse the same Stripe session. Signed webhook transitions validate metadata and totals, keep order/payment states separate, and handle duplicate events idempotently. Atlas + Stripe test-mode checks covered session creation, amount, retry, locally signed success/expiry/failure payloads, duplicate events, mismatch rejection, and stock restoration. No charge was made and Stripe did not deliver an HTTP webhook. Browser checkout was not exercised because `client/.env` lacks `VITE_STRIPE_PUBLISHABLE_KEY`.
+Completed: Checkout creates orders from product IDs and quantities, initiates Stripe Embedded Checkout using server totals, and clears the browser cart only after the server reports `PAID`. Payment rows are unique per order and retries reuse the same Stripe session. Signed webhook transitions validate metadata and totals, keep order/payment states separate, and handle duplicate events idempotently. Atlas + Stripe test-mode checks covered session creation, amount, retry, locally signed success/expiry/failure payloads, duplicate events, mismatch rejection, and stock restoration. Phase 7 also exercised locally signed webhook requests over HTTP. No charge was made and Stripe did not deliver an actual webhook. Browser checkout was not exercised because `client/.env` lacks `VITE_STRIPE_PUBLISHABLE_KEY`.
 
 ## Phase 4 - User experience
 - [x] Order history
@@ -97,3 +97,5 @@ Completed: Stripe test-mode HTTP checks created and retried Checkout Sessions, r
 - [ ] Frontend deployment
 - [ ] Database configuration
 - [ ] Webhook production configuration
+
+Deployment blocker: `.env.example` files list all referenced backend and frontend variable names, and the real `.env` files are ignored by Git. The repository has no hosting configuration, deploy workflow, Docker configuration, or installed hosting CLI; the only remote is GitHub. The local backend connected to Atlas and Stripe credentials are test-mode. Production secrets, database, hostnames, public API URL, and webhook endpoint are not configured. Choosing the hosting provider and production domains determines CORS, API routing, webhook delivery, secret storage, and database isolation, so deployment cannot proceed without that architecture decision.
