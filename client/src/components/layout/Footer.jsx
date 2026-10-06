@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useToast } from "../../context/ToastContext";
 import { getCategories } from "../../services/product.service";
 import { useTranslation } from "react-i18next";
+import { ARSENAL_URL } from "../../constants/externalLinks";
 
 function Footer() {
   const { t, i18n } = useTranslation();
@@ -37,7 +38,8 @@ function Footer() {
         en: "The Arsenal",
         ar: "أرسنال",
       },
-      to: "https://arsenal.com/",
+      to: ARSENAL_URL,
+      external: true,
     },
     {
       label: {
@@ -97,9 +99,15 @@ function Footer() {
                       navItems.map((item) => {
                         return(
                           <li key={item.to}>
-                            <Link to={item.to} onClick={() => handleNavClick(item.to)}>
-                              {item.label[currentLanguage]}
-                            </Link>
+                            {item.external ? (
+                              <a href={item.to} target="_blank" rel="noreferrer">
+                                {item.label[currentLanguage]}
+                              </a>
+                            ) : (
+                              <Link to={item.to} onClick={() => handleNavClick(item.to)}>
+                                {item.label[currentLanguage]}
+                              </Link>
+                            )}
                           </li>
                         )
                       })

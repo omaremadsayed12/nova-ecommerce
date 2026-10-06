@@ -10,16 +10,29 @@ function MobileMenu({navItems, onClose}) {
           <Container className="py-4">
             <nav aria-label={t("navbar.accessibility.mobileNavigation")}>
               {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  onClick={onClose}
-                  className={({ isActive }) =>
-                    `${isActive ? "active" : "text-slate-600 dark:text-slate-500"}`
-                  }
-                >
-                  {item.label[currentLanguage]}
-                </NavLink>
+                item.external ? (
+                  <a
+                    key={item.to}
+                    href={item.to}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={onClose}
+                    className="text-(--muted)"
+                  >
+                    {item.label[currentLanguage]}
+                  </a>
+                ) : (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    onClick={onClose}
+                    className={({ isActive }) =>
+                      `${isActive ? "active" : "text-(--muted)"}`
+                    }
+                  >
+                    {item.label[currentLanguage]}
+                  </NavLink>
+                )
               ))}
             </nav>
           </Container>

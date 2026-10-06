@@ -4,11 +4,11 @@ function ProductsSkeleton() {
   return (
     <section className="products-section">
       <div className="headline">
-        <div>
+        <div className="min-w-0 flex-1">
           <span className="eyebrow">
             <div className="h-3.5 w-16 skeleton" />
           </span>
-          <div className="h-12 w-lg skeleton mt-2" />
+          <div className="mt-2 h-12 w-full max-w-lg skeleton" />
         </div>
         <div className="inline-flex justify-center content-center items-center">
           <div className="h-4 w-20 skeleton mx-1" />

@@ -1,6 +1,5 @@
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import FlowUpTransition from "../components/common/Transitions/FlowUpTransition";
-import "./styles/loadingPage.css";
 import { useTranslation } from "react-i18next";
 
 function LoadingFailed() {

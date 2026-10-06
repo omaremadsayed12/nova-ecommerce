@@ -91,11 +91,35 @@ Completed: Atlas-backed HTTP order checks confirmed database-sourced price/tax/s
 
 Completed: Stripe test-mode HTTP checks created and retried Checkout Sessions, rejected invalid signatures and amount mismatches, and exercised locally signed expiry, async-failure, and success events through the webhook route. Expiry/failure cancelled unpaid orders and restored inventory once; success kept order/payment states separate, reported `PAID`, and did not restore sold stock. Duplicate events were idempotent; retrying a completed order returned a 400 validation envelope. Test Checkout Sessions were expired and temporary database records removed. No real charge or Stripe-delivered event occurred; browser checkout remains unverified because `VITE_STRIPE_PUBLISHABLE_KEY` is missing.
 
-## Phase 8 - Deployment
-- [ ] Production environment variables
-- [ ] Backend deployment
-- [ ] Frontend deployment
-- [ ] Database configuration
-- [ ] Webhook production configuration
+## Phase 8 - Staging/demo deployment
+- [x] Select staging hosts
+- [x] Add frontend and backend deployment configuration
+- [ ] Deploy backend - requires manual provider authorization and environment setup
+- [ ] Deploy frontend - requires manual Vercel/GitHub authorization and Preview variables
+- [ ] Configure demo database access and Stripe test webhook - requires dashboard actions
+- [ ] Run deployed health/connectivity/payment smoke tests - blocked until deployment
 
-Deployment blocker: `.env.example` files list all referenced backend and frontend variable names, and the real `.env` files are ignored by Git. The repository has no hosting configuration, deploy workflow, Docker configuration, or installed hosting CLI; the only remote is GitHub. The local backend connected to Atlas and Stripe credentials are test-mode. Production secrets, database, hostnames, public API URL, and webhook endpoint are not configured. Choosing the hosting provider and production domains determines CORS, API routing, webhook delivery, secret storage, and database isolation, so deployment cannot proceed without that architecture decision.
+Completed preparation: the existing Express API remains a regular Node service on Render's free web tier; no serverless rewrite was introduced. `render.yaml` sets the health check and lists backend-only dashboard variables as unsynchronized values. `client/vercel.json` configures the Vite build and SPA fallback. Cloudinary is now declared directly in the server package, matching the server import and allowing a clean Render install rooted at `server/`; duplicate frontend/backend runtime packages were removed from the root dev-runner package. The `.env.example` files now contain safe placeholders and local defaults. The root README documents Vercel Preview, Render, the demo Atlas database, and Stripe test mode. Local config verification has not yet deployed either service.
+
+Dependency audit: after adding Cloudinary, compatible fixes removed the server runtime advisories; `npm audit --prefix server --omit=dev` reports zero vulnerabilities. A full audit still reports three high-severity findings in the development-only `nodemon → chokidar → braces` chain; npm offers only a forced fix that would downgrade nodemon to 1.x, so that breaking workaround was not applied.
+
+Requires manual action: authorize/connect this GitHub repository in Vercel and Render; create the Vercel project with `client` as its root; enter `VITE_API_URL` and `VITE_STRIPE_PUBLISHABLE_KEY` for Preview; create the Render Blueprint service from `render.yaml`; enter its `MONGODB_URI`, `CLIENT_URL`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, and `CLOUDINARY_URL` values through the Render dashboard only; configure the Stripe test webhook at `https://<render-service-host>/api/webhook/stripe` for `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, and `checkout.session.expired`; then set Atlas network access for the chosen staging host. Do not paste any secret values into chat or commit them. After the actual Vercel Preview origin and Render hostname exist, set `CLIENT_URL` to that exact origin and `VITE_API_URL` to the deployed API base URL.
+
+## Phase 9 - Finish objectives and verification
+- [x] Audit light/dark styling and responsive layouts
+- [x] Correct Preferences menu sizing and spacing
+- [x] Consolidate frontend styling into `client/src/styles/global.css`
+- [x] Preserve cart until verified paid status
+- [x] Correct Arsenal external navigation behavior
+- [x] Verify Stripe frontend key wiring and test-mode initialization
+- [x] Create public-facing root README and clean repository ignore/docs
+- [x] Run local build, lint, syntax, and browser checks
+- [ ] Complete hosted staging smoke checks - blocked by Phase 8 manual actions
+
+Verified: browser checks exercised light/dark surfaces and preferences, RTL preferences at 320px, desktop navigation, and the mobile menu. The preferences panel measured 352x232px at 1440px wide and 296x232px at 320px wide; its controls fit without horizontal overflow. The initial viewport matrix caught oversized Home and Shop skeletons; those were made responsive, and a follow-up checked 40 route/viewport combinations (320, 375, 768, and 1440px) with no document overflow. Browser-level mocked payment-status checks confirmed `PAID` empties the cart while `PENDING`, `FAILED`, and `CANCELLED` preserve it; pending state also retains its pending-order ID. This verifies client behavior only; server-side payment verification remains in Phase 3.
+
+Verified: client ESLint and production build pass, and `node --check` passes for all 58 server JavaScript files. A clean install from `server/` and import of the Express app also pass. The backend production-dependency audit reports zero vulnerabilities; the full audit has three high-severity findings in the development-only `nodemon → chokidar → braces` chain, with no non-breaking automated fix. The build reports the existing advisory that the minified JavaScript bundle exceeds 500 kB. `git diff --check` passes. Stripe.js loads in the browser from the local `pk_test_` configuration; no backend checkout session was created in this browser check. The local API was not running, so pages depending on API data rendered their existing loading/error states; no live browser API/payment flow was verified here.
+
+Verified cleanup: `client/src/main.jsx` is the only frontend stylesheet import and imports `global.css`; `global.css` is the only remaining frontend CSS file in the working tree. The old component/page CSS files, obsolete Vite template README, and unused Webhint config were removed after reference checks. Root ignore rules cover env files, build output, dependency directories, logs, and hosting/tool caches; package-lock files remain. No tracked `.env` files or recognized Stripe, database, Cloudinary, GitHub-token, or AWS credential markers were detected in Git history. Existing local `.env` files remain ignored and were not displayed or copied into public files.
+
+Still blocked: the local API is not running in this workspace, and no Vercel/Render CLI or provider authorization is available. A deployed health check, frontend-to-backend connectivity test, hosted Stripe test checkout, and Stripe-delivered webhook test must wait until the manual actions in Phase 8 are complete.

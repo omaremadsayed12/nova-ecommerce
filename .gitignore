@@ -18,6 +18,13 @@ dist/
 build/
 coverage/
 
+# Hosting and tool caches
+.vercel/
+.render/
+.cache/
+.turbo/
+*.tsbuildinfo
+
 # Local tooling
 .vscode/
 .idea/

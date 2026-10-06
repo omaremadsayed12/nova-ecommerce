@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import MobileMenu from "./MobileMenu";
 import PrefrencesMenu from "./PrefrencesMenu";
 import { useTranslation } from "react-i18next";
+import { ARSENAL_URL } from "../../../constants/externalLinks";
 
 const navItems = [
   {
@@ -30,7 +31,8 @@ const navItems = [
       en: "The Arsenal",
       ar: "أرسنال",
     },
-    to: "https://arsenal.com/",
+    to: ARSENAL_URL,
+    external: true,
   },
   {
     label: {
@@ -74,16 +76,29 @@ function Navbar() {
           <div className="navbar-container">
             <div className="nav-items">
               {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  onClick={()=>handleNavClick(item.to)}
-                  className={({ isActive }) =>
-                    `nav-item ${isActive ? "active" : "inactive"}`
-                  }
-                >
-                  {item.label[currentLanguage]}
-                </NavLink>
+                item.external ? (
+                  <a
+                    key={item.to}
+                    href={item.to}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={closeMenus}
+                    className="nav-item inactive"
+                  >
+                    {item.label[currentLanguage]}
+                  </a>
+                ) : (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => handleNavClick(item.to)}
+                    className={({ isActive }) =>
+                      `nav-item ${isActive ? "active" : "inactive"}`
+                    }
+                  >
+                    {item.label[currentLanguage]}
+                  </NavLink>
+                )
               ))}
             </div>
 
@@ -133,7 +148,9 @@ function Navbar() {
               <button
                 type="button"
                 aria-label={t("navbar.accessibility.preferences")}
-                className="hidden nav-icon sm:flex"
+                aria-expanded={settingsMenuOpen}
+                aria-controls={settingsMenuOpen ? "preferences-menu" : undefined}
+                className="nav-icon"
                 onClick={() => {
                   setSettingsMenuOpen(!settingsMenuOpen);
                 }}

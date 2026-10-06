@@ -22,8 +22,8 @@ function PrefrencesMenu({ onClose }) {
 
   return (
     <DropdownTransition>
-      <div className="pref-menu">
-        <div className="menu">
+      <div className="pref-menu" id="preferences-menu">
+        <div className="pref-menu__content">
           <NavLink
             key="Settings"
             to="/dashboard"
@@ -34,7 +34,7 @@ function PrefrencesMenu({ onClose }) {
               onClose();
             }}
           >
-            <img src={user?.imageUrl || defaultImage} />
+            <img src={user?.imageUrl || defaultImage} alt="" />
             <h5>
               {user?.name[currentLanguage] || t("navbar.prefMenu.login")}{" "}
             </h5>
@@ -43,22 +43,26 @@ function PrefrencesMenu({ onClose }) {
             <p>{t("navbar.prefMenu.theme")}</p>
             <div className="option__actions">
               <button
+                type="button"
                 onClick={() => {
                   setTheme("light");
                   onClose();
                 }}
                 className={theme === "light" ? "active" : ""}
                 aria-label={t("navbar.accessibility.lightTheme")}
+                aria-pressed={theme === "light"}
               >
                 <Sun size={14} strokeWidth={2} />
               </button>
               <button
+                type="button"
                 onClick={() => {
                   setTheme("dark");
                   onClose();
                 }}
                 className={theme === "dark" ? "active" : ""}
                 aria-label={t("navbar.accessibility.darkTheme")}
+                aria-pressed={theme === "dark"}
               >
                 <Moon size={14} strokeWidth={2} />
               </button>
@@ -68,22 +72,28 @@ function PrefrencesMenu({ onClose }) {
             <p>{t("navbar.prefMenu.lang")}</p>
             <div className="option__actions">
               <button
+                type="button"
                 onClick={() => {
                   changeLanguage("en");
                   onClose();
                 }}
                 className={currentLanguage === "en" ? "active" : ""}
+                aria-label="English"
+                aria-pressed={currentLanguage === "en"}
               >
-                🇬🇧
+                EN
               </button>
               <button
+                type="button"
                 onClick={() => {
                   changeLanguage("ar");
                   onClose();
                 }}
                 className={currentLanguage === "ar" ? "active" : ""}
+                aria-label="العربية"
+                aria-pressed={currentLanguage === "ar"}
               >
-                🇸🇦
+                ع
               </button>
             </div>
           </div>

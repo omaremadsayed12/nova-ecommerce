@@ -51,16 +51,16 @@ function PaymentSuccessPage() {
   const statusLabel = t(`paymentPage.statuses.${status}`, { defaultValue: status });
   return (
     <div className="mx-auto flex min-h-[65vh] max-w-3xl items-center justify-center px-6 py-12">
-      <div className="w-full rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-        <h1 className="text-4xl font-black text-slate-900">{title}</h1>
-        <p className="mt-4 text-slate-600">{message}</p>
-        {orderId && <p className="mt-4 text-sm text-slate-500">{t("paymentPage.order", { orderId })}</p>}
-        {error && <p role="alert" className="mt-3 text-sm text-amber-700">{error}</p>}
-        {!paid && <p className="mt-3 text-xs text-slate-500">{t("paymentPage.currentState", { status: statusLabel })}</p>}
+      <div className="w-full rounded-3xl border border-(--line) bg-(--base) p-8 text-center shadow-(--shadow-sm)">
+        <h1 className="text-4xl font-black text-(--ink)">{title}</h1>
+        <p className="mt-4 text-(--muted)">{message}</p>
+        {orderId && <p className="mt-4 text-sm text-(--muted)">{t("paymentPage.order", { orderId })}</p>}
+        {error && <p role="alert" className="mt-3 text-sm text-amber-700 dark:text-amber-300">{error}</p>}
+        {!paid && <p className="mt-3 text-xs text-(--muted)">{t("paymentPage.currentState", { status: statusLabel })}</p>}
         <div className="mt-8 flex flex-wrap justify-center gap-4">
-          {terminalFailure && <Link to={cart.length ? "/checkout" : "/shop"} className="rounded-full bg-slate-900 px-5 py-3 font-bold text-white">{cart.length ? t("paymentPage.retryCheckout") : t("paymentPage.returnShop")}</Link>}
-          <Link to="/orders" className="rounded-full border border-slate-300 px-5 py-3 font-bold">{t("paymentPage.orders")}</Link>
-          <Link to="/shop" className="rounded-full border border-slate-300 px-5 py-3 font-bold">{t("paymentPage.shop")}</Link>
+          {terminalFailure && <Link to={cart.length ? "/checkout" : "/shop"} className="rounded-full bg-(--ink) px-5 py-3 font-bold text-(--base)">{cart.length ? t("paymentPage.retryCheckout") : t("paymentPage.returnShop")}</Link>}
+          <Link to="/orders" className="rounded-full border border-(--line) px-5 py-3 font-bold">{t("paymentPage.orders")}</Link>
+          <Link to="/shop" className="rounded-full border border-(--line) px-5 py-3 font-bold">{t("paymentPage.shop")}</Link>
         </div>
       </div>
     </div>

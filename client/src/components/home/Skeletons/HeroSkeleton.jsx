@@ -5,14 +5,14 @@ function HeroSection() {
     <section className="hero-section">
       <div className="hero-shell">
         <div className="hero-grid">
-          <div>
+          <div className="min-w-0">
             <span className="eyebrow mb-4">
               <div className="w-36 h-3.5 skeleton" />
             </span>
-            <div className="w-96 h-14 skeleton mb-2" />
-            <div className="w-72 h-14 skeleton mb-8" />
-            <div className="w-md h-5 skeleton mb-2" />
-            <div className="w-80 h-5 skeleton mb-8" />
+            <div className="w-full max-w-96 h-14 skeleton mb-2" />
+            <div className="w-full max-w-72 h-14 skeleton mb-8" />
+            <div className="w-full max-w-md h-5 skeleton mb-2" />
+            <div className="w-full max-w-80 h-5 skeleton mb-8" />
             <div className="buttons">
               <div className="w-36 h-11 rounded-full skeleton" />
             </div>
@@ -27,10 +27,10 @@ function HeroSection() {
               </div>
             </div>
           </div>
-          <div className="relative">
+          <div className="relative min-w-0">
             <div className="slider-section">
               <div className="h-140 w-auto skeleton rounded-[28px] flex items-center justify-center">
-                <Image className="w-64 h-64 text-slate-100 dark:text-slate-600" />
+                <Image className="w-40 h-40 md:w-64 md:h-64 text-(--line)" />
               </div>
             </div>
             <div className="slider-note">

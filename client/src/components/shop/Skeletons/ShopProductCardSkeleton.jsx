@@ -5,7 +5,7 @@ function ShopProductCardSkeleton() {
     <div className="shop__product-card">
       <div>
         <div className="h-72 w-auto skeleton flex items-center justify-center">
-          <Image className="w-42 h-42 text-slate-100 dark:text-slate-600" />
+          <Image className="w-42 h-42 text-(--line)" />
         </div>
       </div>
       <div className="p-5">

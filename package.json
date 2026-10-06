@@ -1,10 +1,4 @@
 {
-  "dependencies": {
-    "cloudinary": "^2.10.1",
-    "framer-motion": "^13.3.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0"
-  },
   "name": "ecommerce",
   "version": "1.0.0",
   "description": "",
