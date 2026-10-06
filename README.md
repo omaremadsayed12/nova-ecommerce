@@ -18,7 +18,7 @@ This repository is intended for development and staging/demo use. It is not a pr
 
 - **Frontend:** React, Vite, React Router, Tailwind CSS, i18next, Framer Motion, Stripe.js
 - **Backend:** Node.js, Express, Mongoose, MongoDB Atlas, Stripe, Cloudinary
-- **Hosting target:** Vercel Preview for the client and a free Render web service for the API
+- **Hosting target:** One Vercel project for the frontend and Express API, using Vercel's free Hobby plan for staging/demo
 
 ## Architecture
 
@@ -29,6 +29,8 @@ The frontend follows `pages → components → services → API`. React contexts
 ## Repository layout
 
 ```text
+api/
+  [...path].mjs
 client/
   src/
     components/
@@ -36,7 +38,6 @@ client/
     pages/
     services/
     styles/global.css
-  vercel.json
 server/
   src/
     config/
@@ -47,7 +48,7 @@ server/
     services/
     utils/
   .env.example
-render.yaml
+vercel.json
 ```
 
 ## Local setup
@@ -78,7 +79,7 @@ Fill in the local environment files with **demo/staging** values only. Do not co
 | `JWT_REFRESH_SECRET` | A separate local refresh-token signing secret |
 | `STRIPE_SECRET_KEY` | Stripe **test-mode** secret key (`sk_test_...`) |
 | `STRIPE_WEBHOOK_SECRET` | Test webhook signing secret (`whsec_...`) |
-| `CLIENT_URL` | Client origin, normally `http://localhost:5173` |
+| `CLIENT_URL` | Local client origin (`http://localhost:5173`); optional deployment override (Vercel otherwise uses `VERCEL_URL`) |
 
 ### Frontend environment (`client/.env`)
 
@@ -116,12 +117,15 @@ The completion plan records focused Atlas-backed API, authentication, order, inv
 
 ## Staging/demo deployment
 
-- **Frontend:** Create a Vercel project with `client` as its root directory. `client/vercel.json` configures the Vite build and SPA route fallback. Set `VITE_API_URL` to the deployed API's `/api` URL and `VITE_STRIPE_PUBLISHABLE_KEY` to a Stripe test publishable key in the Vercel **Preview** environment.
-- **Backend:** `render.yaml` describes a free Render web service with the API health-check path. Set its unsynchronized environment variables in the Render dashboard. `CLIENT_URL` must be the exact Vercel preview origin used to access the demo; the API uses it for CORS and Stripe return URLs.
-- **Database:** Use only the existing demo MongoDB Atlas database, with access restricted as appropriate for the chosen staging host. Do not put its URI in this repository.
-- **Payments:** Use Stripe test mode only. Configure the test webhook endpoint as `https://<render-service-host>/api/webhook/stripe` for `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, and `checkout.session.expired`; enter its signing secret as `STRIPE_WEBHOOK_SECRET`. Never use a live key for this demo.
+- **Single Vercel project:** Import this repository into Vercel with the repository root as the Project Root Directory (not `client`). The root [vercel.json](./vercel.json) installs the client/server lockfiles, builds Vite from `client`, serves `client/dist`, and leaves `/api/*` to the Express function in `api/[...path].mjs`; other paths use the SPA fallback.
+- **Function setup:** The catch-all function exports the existing Express app without starting a persistent listener. It connects to MongoDB and initializes store settings once per warm function instance. Vercel environment variables supply database/auth/payment secrets. Vercel's deployment, branch, and production URL variables are allowed CORS origins; `VERCEL_URL` is used as the Stripe return origin when `CLIENT_URL` is not explicitly set.
+- **Vercel environment variables:** Set `MONGODB_URI`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `STRIPE_SECRET_KEY` (test key only), `STRIPE_WEBHOOK_SECRET`, and `CLOUDINARY_URL` as server-only variables. Set `VITE_API_URL=/api` and `VITE_STRIPE_PUBLISHABLE_KEY` (test publishable key only) for the Vite build. Keep `VITE_` variables limited to public values; never prefix secrets with `VITE_`. `CLIENT_URL` is optional; set it only when using a specific stable frontend origin instead of Vercel's deployment URL.
+- **Database:** Continue using only the existing demo MongoDB Atlas database. Vercel Hobby does not provide a fixed outbound IP, so Atlas network access may require allowing `0.0.0.0/0`; that exposes the database endpoint publicly, so use a strong unique database password, least-privilege Atlas user, and demo-only data. Do not put its URI in this repository.
+- **Payments:** Use Stripe test mode only. Configure the test webhook endpoint at `https://<deployed-vercel-host>/api/webhook/stripe` for `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, and `checkout.session.expired`. Store its signing secret in the Vercel server environment as `STRIPE_WEBHOOK_SECRET`. Never use a live key for this demo.
 
-Free services may sleep or have resource limits, so a cold start or delayed webhook should be expected. Deployment remains incomplete until the Vercel/Render projects are authorized, their environment variables are entered in the provider dashboards, and the deployed API/frontend smoke checks pass.
+The Express function disables Vercel's automatic body parser so the existing Express raw-body middleware can validate Stripe webhook signatures. File uploads use the function's temporary directory and must be persisted to Cloudinary; Vercel function filesystems are otherwise ephemeral, and uploads must stay within Vercel's request-size limits. Vercel Hobby functions can cold-start and have platform execution/resource limits, so checkout/API work should remain request-bound. No separate backend host or production infrastructure is used.
+
+Deployment remains incomplete until the Vercel project is authorized, environment variables are entered in its dashboard, the deployment succeeds, and deployed health/API/Stripe test-mode smoke checks pass.
 
 ## Security
 

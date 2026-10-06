@@ -1,4 +1,5 @@
 import express from "express";
+import { tmpdir } from "node:os";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
@@ -17,12 +18,15 @@ import reviews_routes from "./routes/reviews.routes.js";
 
 import fileUpload from "express-fileupload";
 import errorHandler from "./middleware/error.middleware.js";
+import { getAllowedClientOrigins } from "./config/clientUrl.js";
 
 const app = express();
 
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: (origin, callback) => {
+    callback(null, !origin || getAllowedClientOrigins().includes(origin));
+  },
   credentials: true,
 }));
 app.use(cookieParser());
@@ -34,7 +38,7 @@ app.use(express.json());
 app.use(
   fileUpload({
     useTempFiles: true,
-    tempFileDir: "../tmp/",
+    tempFileDir: process.env.TMPDIR || tmpdir(),
   })
 );
 

@@ -23,7 +23,7 @@ const login_user = async (req, res) => {
   res
     .cookie("refresh_token", refresh_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL_URL),
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })

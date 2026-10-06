@@ -4,6 +4,7 @@ import User from "../../../models/User.js";
 import Payment from "../../../models/Payment.js";
 import Order from "../../../models/Order.js";
 import AppError from "../../../utils/appError.js";
+import getClientUrl from "../../../config/clientUrl.js";
 import { NotFoundError, ValidationError } from "../../errors.service.js";
 import order_service from "../../order.service.js";
 
@@ -11,8 +12,8 @@ const assert_configured = () => {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new AppError("Stripe payments are not configured", 503, "PAYMENT_PROVIDER_UNAVAILABLE");
   }
-  if (!process.env.CLIENT_URL) {
-    throw new AppError("CLIENT_URL is required for Stripe checkout", 503, "PAYMENT_PROVIDER_UNAVAILABLE");
+  if (!getClientUrl()) {
+    throw new AppError("A client URL is required for Stripe checkout", 503, "PAYMENT_PROVIDER_UNAVAILABLE");
   }
 };
 
@@ -86,7 +87,7 @@ const initiate_payment = async (order, payment) => {
     throw new ValidationError({ order: "Stripe line items do not match the order total" });
   }
 
-  const baseUrl = new URL(process.env.CLIENT_URL);
+  const baseUrl = new URL(getClientUrl());
   const returnUrl = new URL("/payment-success", baseUrl).toString();
   const session = await stripe.checkout.sessions.create(
     {
