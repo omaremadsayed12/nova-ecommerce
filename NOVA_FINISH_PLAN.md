@@ -52,7 +52,8 @@ Completed: User PATCH validates localized names, normalized unique email, passwo
 - [x] Shop API integration
 - [x] Homepage API integration
 - [x] Cart
-- [ ] Wishlist
+- [x] Wishlist
+Completed: Wishlist now loads and mutates through the authenticated existing API, normalizes ObjectId/string IDs, clears account-scoped items on logout or account switch, and exposes loading, retry, and error states. The page shows product details, empty and unavailable products, remove controls, and stock-aware add-to-cart actions. Server comparisons now match Mongoose ObjectIds safely. Client lint/build, backend syntax checks, and a focused service check for duplicate rejection/removal passed. Browser interaction and live HTTP/database wishlist flow were not exercised.
 - [ ] Checkout
 - [ ] Loading/error/empty states
 - [ ] RTL/i18n
