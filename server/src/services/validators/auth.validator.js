@@ -91,7 +91,8 @@ const validate_delete_token = async (token) => {
 };
 
 const owner_or_admin = (user, obj) => {
-  if (user.role !== "ADMIN" && String(obj.user) !== String(user._id)) {
+  const ownerId = obj.user ?? obj._id;
+  if (user.role !== "ADMIN" && String(ownerId) !== String(user._id)) {
     const details = {
       user: "User doesn't have the required access",
     };

@@ -3,12 +3,15 @@ import User from "../models/User.js";
 import jwt_utils from "../utils/jwt.js";
 import users_validator from "./validators/users.validator.js";
 import auth_validator from "./validators/auth.validator.js";
+import { ValidationError } from "./errors.service.js";
 
 const add_user = async (userData) => {
-  const {name} = userData;
-  if(name){
-    const parsedName = JSON.parse(name);
-    userData.name = parsedName;
+  if (typeof userData?.name === "string") {
+    try {
+      userData.name = JSON.parse(userData.name);
+    } catch {
+      throw new ValidationError({ name: "Invalid name data" });
+    }
   }
   // Public registration must never honor a role supplied by the request.
   userData.role = "CUSTOMER";

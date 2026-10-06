@@ -77,13 +77,15 @@ Completed: Cart rows load authoritative product display details by ID, show curr
 - [x] Backend tests
 - [x] Frontend build
 - [x] API smoke tests
-- [ ] Authentication flow
+- [x] Authentication flow
 - [ ] Order lifecycle
 - [ ] Payment lifecycle
 
 Completed: The server package exposes only `dev` and `start`; the repository has no backend test files or test runner. `node --check` passed for all 58 server JavaScript files. No automated backend test suite could be run; focused Atlas-backed service and local HTTP checks from earlier milestones are documented above. Frontend `npm run lint`, `npm run build`, and `git diff --check` passed after responsive changes; the build reports a 594.90 kB minified JavaScript chunk advisory. API smoke and lifecycle verification remain open below.
 
 Completed: With the configured Atlas-backed server running locally, `/api/health`, `/api/stats`, `/api/products`, and `/api/categories` returned 200 success envelopes. Unauthenticated `/api/order`, `/api/users`, and `/api/stats/admin` requests returned 401 error envelopes. API smoke calls passed; authentication, order, and payment lifecycle checks remain open.
+
+Completed: An Atlas-backed HTTP flow registered a disposable customer while ignoring a submitted `ADMIN` role, logged in, fetched `/api/auth/me`, updated the owner's name, denied a self-role change, refreshed access, logged out, rejected refresh-token replay, and deleted the disposable account. Cleanup confirmed no test user or refresh token remained. This flow exposed and fixed registration's object-shaped `name` parsing and owner checks for User documents (`_id`); malformed stringified names now return the existing validation envelope. `node --check` passed for all 58 server files.
 
 ## Phase 8 - Deployment
 - [ ] Production environment variables
