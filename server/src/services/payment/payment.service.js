@@ -1,5 +1,5 @@
 import Payment from "../../models/Payment.js";
-import AppError from "../../utils/appError.js";
+import AppError from "../../utils/AppError.js";
 import stripe_service from "./stripe/stripe.service.js";
 import payment_validator from "./payment.validator.js";
 
