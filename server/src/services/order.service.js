@@ -66,7 +66,7 @@ const get_all_orders = async (user, page, limit) => {
   const skip = (page - 1) * limit;
   if (user.role == "ADMIN") {
     const [orders, total] = await Promise.all([
-      Order.find().skip(skip).limit(limit),
+      Order.find().sort({ createdAt: -1 }).skip(skip).limit(limit),
       Order.countDocuments(),
     ]);
     return {
@@ -80,7 +80,7 @@ const get_all_orders = async (user, page, limit) => {
     };
   } else {
     const [orders, total] = await Promise.all([
-      Order.find({ user: user._id }).skip(skip).limit(limit),
+      Order.find({ user: user._id }).sort({ createdAt: -1 }).skip(skip).limit(limit),
       Order.countDocuments({ user: user._id }),
     ]);
     return {

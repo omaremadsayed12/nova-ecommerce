@@ -26,9 +26,10 @@ Completed: order items use database product snapshots and store settings. Condit
 Completed: checkout creates orders from cart IDs and quantities, initiates Stripe Embedded Checkout using server order totals, and clears the browser cart only after the server reports `PAID`. Payment rows are unique per order; retries reuse the same Stripe session. Signed webhook events verify order/payment metadata and amount/currency, keep order and payment status separate, and make paid/failed/expired transitions idempotent. Failed/expired sessions cancel the unpaid order and restore inventory once. Atlas + Stripe test-mode checks passed for session creation, amount, initiation retry, signed success/expiry/failure payloads, duplicate events, mismatch rejection, and stock restoration. No card charge was made. Frontend lint and backend syntax checks passed. Browser checkout was not exercised because `client/.env` has no `VITE_STRIPE_PUBLISHABLE_KEY`; the frontend build remains blocked by the installed Tailwind native binding and Windows `spawn EPERM`. Webhook events were signed and verified locally with the configured test secret, not delivered by Stripe over HTTP.
 
 ## Phase 4 - User experience
-- [ ] Order history
+- [x] Order history
 - [ ] Admin product management
 - [ ] Admin dashboard
+Order history completed: the existing authenticated endpoint now returns newest-first paginated results, and the page displays item snapshots, date, order/payment states, and totals with sign-in, loading, error, retry, and empty states. Atlas verification confirmed customer scoping and page metadata; client lint and backend syntax checks passed. Browser rendering was not verified because the frontend build is currently blocked by its native Tailwind binding environment issue.
 
 ## Phase 5 - Reviews and validation
 - [ ] Review updates
