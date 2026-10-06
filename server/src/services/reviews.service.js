@@ -33,19 +33,9 @@ const add_review = async (productId, reviewData, user) => {
   return await review.save();
 };
 
-const update_review = async (id, reviewData) => {
-  const review = await reviews_validator.validate_update_review(
-    id,
-    user,
-    reviewData,
-  );
-  const updateData = Object.fromEntries(
-    Object.entries(reviewData).filter(([_, value]) => value !== null),
-  );
-  await review.updateOne({
-    ...updateData,
-  });
-  return review;
+const update_review = async (id, user, reviewData) => {
+  const review = await reviews_validator.validate_update_review(id, user, reviewData);
+  review.set(reviewData);
+  return await review.save();
 };
-
 export default { get_product_reviews, add_review, update_review };

@@ -29,7 +29,16 @@ const add_review = async (req, res) => {
   });
 };
 
-const update_review = async (req, res) => {};
+const update_review = async (req, res) => {
+  const review = await reviews_service.update_review(req.params.id, req.user, req.body);
+  res.status(200).json({
+    success: true,
+    message: "Review updated successfully",
+    data: review,
+    error: null,
+    meta: null,
+  });
+};
 
 export default {
   get_product_reviews,

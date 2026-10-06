@@ -34,8 +34,8 @@ Order history completed: the existing authenticated endpoint now returns newest-
 
 Admin dashboard completed: replaced fabricated revenue/conversion/category/order samples with an admin-only summary of order, product, active-product, and customer counts; paid revenue grouped by currency; and recent orders. The existing public homepage stats route and response remain unchanged. Atlas + local HTTP checks passed for paid-only revenue, metrics, anonymous/customer denials, admin access, and public stats compatibility. Client lint and backend syntax checks passed. Browser rendering was not verified because the frontend build is blocked by the current Tailwind native binding environment issue.
 ## Phase 5 - Reviews and validation
-- [ ] Review updates
-- [ ] Product partial updates
+- [x] Review updates
+Review update API completed: implemented the existing authenticated PUT handler and fixed its service/validator wiring. Only the review owner can change `rating` and `comment`; other fields, out-of-range/non-integer ratings, and comments over 225 characters are rejected. The related add-review duplicate lookup now uses `findOne`, with the same rating/comment validation. Atlas and local HTTP checks passed for create, duplicate prevention, owner update, non-owner/anonymous denial, response format, and invalid input rejection. Client lint and backend syntax checks passed. No review editing UI existed, so browser-level review editing was not verified.- [ ] Product partial updates
 - [ ] User partial updates
 
 ## Phase 6 - Frontend
