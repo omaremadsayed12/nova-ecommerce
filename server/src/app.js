@@ -18,7 +18,9 @@ import reviews_routes from "./routes/reviews.routes.js";
 
 import fileUpload from "express-fileupload";
 import errorHandler from "./middleware/error.middleware.js";
+import AppError from "./utils/appError.js";
 import { getAllowedClientOrigins } from "./config/clientUrl.js";
+import initialize from "./config/initialize.js";
 
 const app = express();
 
@@ -30,6 +32,15 @@ app.use(cors({
   credentials: true,
 }));
 app.use(cookieParser());
+app.use(async (req, res, next) => {
+  try {
+    await initialize();
+    next();
+  } catch {
+    console.error("API initialization failed; request unavailable");
+    next(new AppError("The API is temporarily unavailable", 503, "API_INITIALIZATION_FAILED"));
+  }
+});
 
 app.use("/api/webhook", webhook_routes);
 
