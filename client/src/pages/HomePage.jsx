@@ -48,7 +48,7 @@ function HomePage() {
       setCategories(categoriesResponse.data || []);
     }).catch((error) => {
       if (active && error.name !== "CanceledError") {
-        showError(t("common.loadingError"), error.response?.data?.error?.message);
+        showError(error.response?.data?.error?.message || t("common.loadingError"));
         setLoadingFailed(true);
       }
     }).finally(() => {

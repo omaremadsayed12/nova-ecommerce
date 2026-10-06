@@ -20,22 +20,29 @@ function ProductDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
 
   useEffect(() => {
-    const loadProduct = async () => {
-      try {
-        const productData = await getProductById(id);
-        setProduct(productData.data);
-      } catch (err) {
-        setError("Failed to load product", err);
-      } finally {
-        setLoading(false);
-      }
+    const controller = new AbortController();
+    let active = true;
+    Promise.resolve().then(() => {
+      if (!active) return null;
+      setLoading(true);
+      setError(null);
+      return getProductById(id, { signal: controller.signal });
+    }).then((productData) => {
+      if (active && productData) setProduct(productData.data);
+    }).catch((requestError) => {
+      if (active && requestError.name !== "CanceledError") setError(requestError.response?.data?.error?.message || "Failed to load product.");
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => {
+      active = false;
+      controller.abort();
     };
-
-    loadProduct();
-  }, [id]);
+  }, [id, retryKey]);
 
   const handleAddToCart = () => {
     try {
@@ -55,7 +62,7 @@ function ProductDetailsPage() {
   }
 
   if (error) {
-    return <div className="p-20 text-red-600">{error}</div>;
+    return <div className="p-20 text-red-600"><p role="alert">{error}</p><button type="button" onClick={() => setRetryKey((key) => key + 1)} className="mt-4 font-bold underline">Try again</button></div>;
   }
 
   if (!product) {

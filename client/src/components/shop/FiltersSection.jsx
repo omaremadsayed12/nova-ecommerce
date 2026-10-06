@@ -4,64 +4,55 @@ import { AnimatePresence, motion } from "framer-motion";
 import FiltersMenu from "./FiltersMenu";
 import ShopSearchBar from "./ShopSearchBar";
 import { getCategories } from "../../services/product.service";
-import { useToast } from "../../context/ToastContext";
 import { useTranslation } from "react-i18next";
 
 function FiltersSection({ minPrice, maxPrice }) {
   const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language;
+  const currentLanguage = i18n.language === "ar" ? "ar" : "en";
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingFailed, setLoadingFailed] = useState(false);
+  const [error, setError] = useState("");
+  const [retryKey, setRetryKey] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { showError } = useToast();
+
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const params = {
-          sortBy: `name.${currentLanguage}`,
-          method: "ASC",
-          limit: 0,
-          page: 1,
-        };
-        const response = await getCategories(params);
-        setCategories(response.data);
-      } catch (error) {
-        showError(t("common.loadingFailed"), error.response?.error?.message);
+    const controller = new AbortController();
+    let active = true;
+    Promise.resolve().then(() => {
+      if (!active) return null;
+      setLoading(true);
+      setLoadingFailed(false);
+      setError("");
+      const params = new URLSearchParams({ sortBy: `name.${currentLanguage}`, method: "ASC", limit: "0", page: "1" });
+      return getCategories(params, { signal: controller.signal });
+    }).then((response) => {
+      if (active && response) setCategories(response.data || []);
+    }).catch((requestError) => {
+      if (active && requestError.name !== "CanceledError") {
+        setError(requestError.response?.data?.error?.message || t("common.loadingFailed"));
         setLoadingFailed(true);
-      } finally {
-        setLoading(false);
       }
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => {
+      active = false;
+      controller.abort();
     };
-    loadCategories();
-  }, [currentLanguage, showError, t]);
+  }, [currentLanguage, retryKey, t]);
 
   return (
     <>
       <div className="flex items-end justify-between gap-4">
-        <div>
-          <span className="eyebrow">{t("shop.filtersSection.eyebrow")}</span>
-          <ShopSearchBar />
-        </div>
-        <button onClick={() => setMenuOpen(!menuOpen)} className="btn-secondary gap-1">
-          <motion.div
-            animate={{ rotate: menuOpen ? 90 : 0 }}
-            transition={{ duration: 0.25 }}
-          >
-            <SlidersHorizontal />
-          </motion.div>
+        <div className="min-w-0 flex-1"><span className="eyebrow">{t("shop.filtersSection.eyebrow")}</span><ShopSearchBar /></div>
+        <button type="button" onClick={() => setMenuOpen(!menuOpen)} disabled={loadingFailed} className="btn-secondary gap-1 disabled:cursor-not-allowed disabled:opacity-50">
+          <motion.div animate={{ rotate: menuOpen ? 90 : 0 }} transition={{ duration: 0.25 }}><SlidersHorizontal /></motion.div>
           {t("shop.filtersSection.filtersButton")}
         </button>
       </div>
-      {(menuOpen && !loading && !loadingFailed ) && (
-        <AnimatePresence mode="wait">
-          <FiltersMenu
-            categories={categories}
-            minPrice={minPrice}
-            maxPrice={maxPrice}
-          />
-        </AnimatePresence>
-      )}
+      {loadingFailed && <div role="alert" className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900"><p>{error}</p><button type="button" onClick={() => setRetryKey((key) => key + 1)} className="mt-2 font-bold underline">Try again</button></div>}
+      {(menuOpen && !loading && !loadingFailed) && <AnimatePresence mode="wait"><FiltersMenu categories={categories} minPrice={minPrice} maxPrice={maxPrice} /></AnimatePresence>}
     </>
   );
 }
