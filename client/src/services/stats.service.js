@@ -1,7 +1,7 @@
 import api from "./api";
 
-export const getStats = async () => {
-  const response = await api.get("/stats");
+export const getStats = async (config = {}) => {
+  const response = await api.get("/stats", config);
   return response.data;
 };
 
