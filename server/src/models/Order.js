@@ -25,6 +25,9 @@ const orderSchema = new mongoose.Schema(
             type: String,
           },
         },
+        imageUrl: {
+          type: String,
+        },
         price: {
           type: Number,
           required: [true, "Product price is required"],

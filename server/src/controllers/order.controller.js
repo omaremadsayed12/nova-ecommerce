@@ -2,7 +2,7 @@ import order_service from "../services/order.service.js";
 
 const initiate_order = async (req, res) => {
   const user = req.user;
-  const cart = req.cart;
+  const cart = req.body?.cart ?? req.body;
   const shippingAddress = req.body.shippingAddress;
   const order = await order_service.initiate_order(user, cart, shippingAddress);
   res.status(201).json({

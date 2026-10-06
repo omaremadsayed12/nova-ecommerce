@@ -91,7 +91,7 @@ const validate_delete_token = async (token) => {
 };
 
 const owner_or_admin = (user, obj) => {
-  if (user.role != "ADMIN" && obj.user != user._id) {
+  if (user.role !== "ADMIN" && String(obj.user) !== String(user._id)) {
     const details = {
       user: "User doesn't have the required access",
     };
@@ -100,7 +100,7 @@ const owner_or_admin = (user, obj) => {
 };
 
 const is_owner = (user, obj) => {
-  if (obj.user != user._id) {
+  if (String(obj.user) !== String(user._id)) {
     const details = {
       user: "Only the object owner can update it",
     };

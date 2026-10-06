@@ -10,6 +10,8 @@ const add_user = async (userData) => {
     const parsedName = JSON.parse(name);
     userData.name = parsedName;
   }
+  // Public registration must never honor a role supplied by the request.
+  userData.role = "CUSTOMER";
   await users_validator.validate_user_input(userData);
   const newUser = new User(userData);
   newUser.createdBy = newUser._id;

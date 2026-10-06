@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import users_validator from "./validators/users.validator.js";
 import auth_validator from "./validators/auth.validator.js";
+import { AuthorizationError } from "./errors.service.js";
 
 const get_all_users = async (page, limit) => {
   const skip = (page - 1) * limit;
@@ -39,6 +40,11 @@ const update_user = async (user_id, user_data, updater) => {
   const user = await users_validator.validate_user(user_id);
   await users_validator.validate_user_update_input(user_data);
   await auth_validator.owner_or_admin(updater, user);
+  if (updater.role !== "ADMIN" && Object.hasOwn(user_data, "role")) {
+    throw new AuthorizationError({
+      user: "Only an admin can change a user's role",
+    });
+  }
   const updateData = Object.fromEntries(
     Object.entries(user_data).filter(([_, value]) => value !== null),
   );
