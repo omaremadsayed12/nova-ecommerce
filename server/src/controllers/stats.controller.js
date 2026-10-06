@@ -5,11 +5,21 @@ const get_stats = async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Stats fetched successfully",
-    data: {totalOrders,
-    totalProducts},
+    data: { totalOrders, totalProducts },
     error: null,
-    meta: null
+    meta: null,
   });
 };
 
-export default { get_stats };
+const get_admin_stats = async (req, res) => {
+  const stats = await stats_service.get_admin_stats();
+  res.status(200).json({
+    success: true,
+    message: "Admin stats fetched successfully",
+    data: stats,
+    error: null,
+    meta: null,
+  });
+};
+
+export default { get_stats, get_admin_stats };
