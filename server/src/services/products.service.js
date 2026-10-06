@@ -1,6 +1,7 @@
 import Products from "../models/Product.js";
 import Reviews from "../models/Reviews.js";
 import products_validator from "./validators/products.validator.js";
+import { ValidationError } from "./errors.service.js";
 
 const get_all_products = async (params = {}) => {
   let {
@@ -261,36 +262,49 @@ const add_product = async (productData, creator) => {
 const update_product = async (productId, productData, updater) => {
   productData = parse_input(productData);
   const product = await products_validator.verify_product(productId);
-  products_validator.validate_product_update_input(productData);
-  const updateData = Object.fromEntries(
-    Object.entries(productData).filter(([_, value]) => value !== null),
+  productData = Object.fromEntries(
+    Object.entries(productData).filter(([, value]) => value !== null && value !== undefined),
   );
-  await product.updateOne({ ...updateData, updatedBy: updater._id });
-  return product;
-};
+  products_validator.validate_product_update_input(productData);
 
+  const updateData = {};
+  for (const [field, value] of Object.entries(productData)) {
+    if (["name", "description", "category"].includes(field)) {
+      for (const [language, text] of Object.entries(value)) {
+        updateData[`${field}.${language}`] = text;
+      }
+    } else if (field === "price" || field === "stock") {
+      updateData[field] = Number(value);
+    } else if (field === "isActive") {
+      updateData[field] = value === true || value === "true";
+    } else {
+      updateData[field] = value;
+    }
+  }
+
+  product.set({ ...updateData, updatedBy: updater._id });
+  return await product.save();
+};
 const delete_product = async (productId) => {
   const product = await products_validator.verify_product(productId);
   return await product.deleteOne();
 };
 
 const parse_input = (productData) => {
-  const { name, description, category } = productData;
-  if (name) {
-    const parsedName = JSON.parse(name);
-    productData.name = parsedName;
+  if (!productData || typeof productData !== "object" || Array.isArray(productData)) {
+    throw new ValidationError({ product: "Product data must be an object" });
   }
-  if (description) {
-    const parsedDescription = JSON.parse(description);
-    productData.description = parsedDescription;
+  const parsed = { ...productData };
+  for (const field of ["name", "description", "category"]) {
+    if (typeof parsed[field] !== "string") continue;
+    try {
+      parsed[field] = JSON.parse(parsed[field]);
+    } catch {
+      throw new ValidationError({ [field]: `Invalid ${field} data` });
+    }
   }
-  if (category) {
-    const parsedCategory = JSON.parse(category);
-    productData.category = parsedCategory;
-  }
-  return productData;
+  return parsed;
 };
-
 export default {
   get_all_products,
   get_product_details,
