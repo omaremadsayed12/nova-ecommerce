@@ -1,77 +1,64 @@
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import FlowUpTransition from "../components/common/Transitions/FlowUpTransition";
 import FiltersSection from "../components/shop/FiltersSection";
 import FiltersSectionSkeleton from "../components/shop/Skeletons/FiltersSectionSkeleton";
 import ProductsList from "../components/shop/ProductsList";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import LoadingFailed from "./LoadingFailed";
 import { getProducts } from "../services/product.service";
-import { useToast } from "../context/ToastContext";
 import ProductsListSkeleton from "../components/shop/Skeletons/ProductsListSkeleton";
 
 function ShopPage() {
   const { t } = useTranslation();
   const [products, setProducts] = useState([]);
+  const [meta, setMeta] = useState({ page: 1, totalPages: 1, total: 0 });
   const [loading, setLoading] = useState(true);
-  const [loadingFailed, setLoadingFailed] = useState(false);
-  const [searchParams] = useSearchParams();
-  const query = searchParams.get("query");
-  const { showError } = useToast();
+  const [error, setError] = useState("");
+  const [retryKey, setRetryKey] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchKey = searchParams.toString();
 
   useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const response = await getProducts(searchParams);
-        setProducts(response.data);
-      } catch (error) {
-        showError(t("common.loadingError"), error.response?.error?.message);
-        setLoadingFailed(true);
-      } finally {
-        setLoading(false);
+    const controller = new AbortController();
+    let active = true;
+    Promise.resolve().then(() => {
+      if (!active) return null;
+      setLoading(true);
+      setError("");
+      const params = new URLSearchParams(searchKey);
+      if (!params.has("page")) params.set("page", "1");
+      if (!params.has("limit")) params.set("limit", "12");
+      return getProducts(params, { signal: controller.signal });
+    }).then((response) => {
+      if (active && response) {
+        setProducts(response.data || []);
+        setMeta(response.meta || { page: 1, totalPages: 1, total: 0 });
       }
-    };
-    loadProducts();
-  }, [showError, t,searchParams]);
+    }).catch((requestError) => {
+      if (active && requestError.name !== "CanceledError") {
+        setError(requestError.response?.data?.error?.message || t("common.loadingError"));
+      }
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => { active = false; controller.abort(); };
+  }, [searchKey, retryKey, t]);
 
-  const filteredProducts = products.filter((product) => {
-    return (
-      !query ||
-      [product.name, product.category].some((value) =>
-        Object.keys(value).some((key) =>
-          value[key]?.toLowerCase().includes(query),
-        ),
-      )
-    );
-  });
-
-  const prices = filteredProducts.map((product) => product.price);
-
-  const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
-  const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
-
-  if (loadingFailed) return <LoadingFailed />;
+  const prices = products.map((product) => Number(product.price)).filter(Number.isFinite);
+  const minPrice = prices.length ? Math.min(...prices) : 0;
+  const maxPrice = prices.length ? Math.max(...prices) : 0;
+  const setPage = (nextPage) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", String(nextPage));
+    setSearchParams(params);
+  };
 
   return (
     <div className="shop-page">
-      {loading ? (
-        <FlowUpTransition>
-          <FiltersSectionSkeleton />
-        </FlowUpTransition>
-      ) : (
-        <FlowUpTransition>
-          <FiltersSection minPrice={minPrice} maxPrice={maxPrice} />
-        </FlowUpTransition>
-      )}
-      {loading ? (
-        <FlowUpTransition>
-          <ProductsListSkeleton/>
-        </FlowUpTransition>
-      ) : (
-        <FlowUpTransition>
-          <ProductsList products={filteredProducts} />
-        </FlowUpTransition>
-      )}
+      {loading ? <FlowUpTransition><FiltersSectionSkeleton /></FlowUpTransition> : <FlowUpTransition><FiltersSection minPrice={minPrice} maxPrice={maxPrice} /></FlowUpTransition>}
+      {error && <div role="alert" className="my-6 rounded-2xl border border-red-200 bg-red-50 p-5 text-red-800"><p>{error}</p><button onClick={() => setRetryKey((key) => key + 1)} className="mt-3 font-bold underline">Try again</button></div>}
+      {loading ? <FlowUpTransition><ProductsListSkeleton /></FlowUpTransition> : error ? null : products.length ? <FlowUpTransition><ProductsList products={products} /></FlowUpTransition> : <p className="mt-10 rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-600">No products match these filters.</p>}
+      {!loading && !error && meta.totalPages > 1 && <nav aria-label="Product pages" className="mt-8 flex items-center justify-between"><button disabled={meta.page <= 1} onClick={() => setPage(meta.page - 1)} className="rounded-full border border-slate-300 px-4 py-2 font-semibold disabled:opacity-40">Previous</button><span className="text-sm text-slate-600">Page {meta.page} of {meta.totalPages} ({meta.total} products)</span><button disabled={meta.page >= meta.totalPages} onClick={() => setPage(meta.page + 1)} className="rounded-full border border-slate-300 px-4 py-2 font-semibold disabled:opacity-40">Next</button></nav>}
     </div>
   );
 }

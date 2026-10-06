@@ -1,168 +1,44 @@
-import {
-  ArrowDownNarrowWide,
-  ArrowDownWideNarrow,
-  FunnelX,
-} from "lucide-react";
-import { useState } from "react";
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, FunnelX } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import DropdownTransition from "../common/Transitions/DropdownTransition";
 import { useTranslation } from "react-i18next";
 
 function FiltersMenu({ minPrice, maxPrice, categories }) {
   const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language;
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedSort, setSelectedSort] = useState(searchParams.get("sort"));
-  const [sortMethod, setSortMethod] = useState(searchParams.get("method"));
-  const [filteredMinPrice, setFilteredMinPrice] = useState(
-    searchParams.get("minPrice"),
-  );
-  const [filteredMaxPrice, setFilteredMaxPrice] = useState(
-    searchParams.get("maxPrice"),
-  );
-  const [selectedCategories, setSelectedCategories] = useState(
-    searchParams.getAll("category"),
-  );
-  const handleChange = (event) => {
-    const newSort = event.target.value;
-    setSelectedSort(newSort);
+  const currentLanguage = i18n.language === "ar" ? "ar" : "en";
+  const selectedSort = searchParams.get("sortBy") || "createdAt";
+  const sortMethod = (searchParams.get("method") || "DESC").toUpperCase();
+  const selectedCategories = searchParams.getAll("category");
+
+  const updateParams = (changes) => {
     const params = new URLSearchParams(searchParams);
-    params.delete("sort");
-    params.set("sort", newSort);
+    for (const [key, value] of Object.entries(changes)) {
+      params.delete(key);
+      if (value !== null && value !== "") params.set(key, value);
+    }
     params.delete("page");
     setSearchParams(params);
   };
-  const switchSort = () => {
-    const newMethod = sortMethod === "asc" ? "desc" : "asc";
-    setSortMethod(newMethod);
-    const params = new URLSearchParams(searchParams);
-    params.delete("method");
-    params.set("method", newMethod);
-    params.delete("page");
-    setSearchParams(params);
-  };
-  const handleMinPrice = (event) => {
-    const newMin = event.target.value;
-    setFilteredMinPrice(newMin);
-    const params = new URLSearchParams(searchParams);
-    params.delete("minPrice");
-    if (newMin != minPrice) params.set("minPrice", newMin);
-    params.delete("page");
-    setSearchParams(params);
-  };
-  const handleMaxPrice = (event) => {
-    const newMax = event.target.value;
-    setFilteredMaxPrice(newMax);
-    const params = new URLSearchParams(searchParams);
-    params.delete("maxPrice");
-    if (newMax != maxPrice) params.set("maxPrice", newMax);
-    params.delete("page");
-    setSearchParams(params);
-  };
-  const handleAll = () => {
-    setSelectedCategories([]);
+  const handleSelect = (slug) => {
+    const updated = selectedCategories.includes(slug) ? selectedCategories.filter((category) => category !== slug) : [...selectedCategories, slug];
     const params = new URLSearchParams(searchParams);
     params.delete("category");
-    params.delete("minPrice");
-    params.delete("maxPrice");
+    updated.forEach((category) => params.append("category", category));
     params.delete("page");
     setSearchParams(params);
   };
-  const handleSelect = (newCategory) => {
-    const updatedCategories = selectedCategories.includes(newCategory)
-      ? selectedCategories.filter((category) => category !== newCategory)
-      : [...selectedCategories, newCategory];
-    setSelectedCategories(updatedCategories);
-    const params = new URLSearchParams(searchParams);
-    params.delete("category");
-    updatedCategories.forEach((category) => {
-      params.append("category", category);
-    });
-    params.delete("minPrice");
-    params.delete("maxPrice");
-    params.delete("page");
-    setSearchParams(params);
-  };
-  const handleClear = ()=> {
-    const params = new URLSearchParams();
-    setSearchParams(params);
-  }
+  const clearFilters = () => setSearchParams(new URLSearchParams());
+  const priceChange = (field, value) => updateParams({ [field]: value });
+
   return (
     <DropdownTransition>
-      <div className="mt-4 border-t border-slate-200 dark:border-slate-700 pt-3 px-2 pb-2">
-        <div className="inline-flex justify-between w-full">
-          <h3 className="text-xl font-normal tracking-tight! m-0 p-0">Sort & Filter</h3>
-          <button className="btn-secondary flex gap-1 py-1 px-2 text-base!" onClick={handleClear}>
-            <FunnelX/>
-            Clear Filters
-          </button>
-        </div>
+      <div className="mt-4 border-t border-slate-200 px-2 pb-2 pt-3 dark:border-slate-700">
+        <div className="inline-flex w-full justify-between"><h3 className="m-0 p-0 text-xl font-normal tracking-tight">Sort &amp; Filter</h3><button className="btn-secondary flex gap-1 px-2 py-1 text-base" onClick={clearFilters}><FunnelX /> Clear Filters</button></div>
         <div className="menu">
-          <div className="sort">
-            <label htmlFor="sort">Sort By:</label>
-            <select
-              id="sort"
-              value={selectedSort || "createdAt"}
-              onChange={handleChange}
-            >
-              <option value="createdAt">Creation Date</option>
-              <option value="price">Price</option>
-              <option value="averageRating">Rating</option>
-              <option value="name">Name</option>
-            </select>
-            <button onClick={switchSort}>
-              {sortMethod === "desc" ? (
-                <ArrowDownWideNarrow />
-              ) : (
-                <ArrowDownNarrowWide />
-              )}
-            </button>
-          </div>
-          <div className="price-filter">
-            <label>Price:</label>
-            <form>
-              <input
-                id="min"
-                value={filteredMinPrice || minPrice}
-                type="number"
-                min={minPrice}
-                onChange={handleMinPrice}
-                max={maxPrice}
-              />
-              and
-              <input
-                id="max"
-                value={filteredMaxPrice || maxPrice}
-                type="number"
-                min={minPrice}
-                onChange={handleMaxPrice}
-                max={maxPrice}
-              />{" "}
-            </form>
-          </div>
-          <div className="category-filters">
-            <label>Category:</label>
-            <button
-              key="all"
-              className={selectedCategories.length === 0 ? "active" : ""}
-              onClick={handleAll}
-            >
-              {t("shop.filtersSection.all")}
-            </button>
-            {categories.map((category) => {
-              return (
-                <button
-                  key={category.slug}
-                  className={
-                    selectedCategories.includes(category.slug) ? "active" : ""
-                  }
-                  onClick={() => handleSelect(category.slug)}
-                >
-                  {category.name[currentLanguage]}
-                </button>
-              );
-            })}
-          </div>
+          <div className="sort"><label htmlFor="sortBy">Sort by:</label><select id="sortBy" value={selectedSort} onChange={(event) => updateParams({ sortBy: event.target.value })}><option value="createdAt">Creation date</option><option value="price">Price</option><option value="averageRating">Rating</option><option value={`name.${currentLanguage}`}>Name</option></select><button aria-label="Toggle sort direction" onClick={() => updateParams({ method: sortMethod === "DESC" ? "ASC" : "DESC" })}>{sortMethod === "DESC" ? <ArrowDownWideNarrow /> : <ArrowDownNarrowWide />}</button></div>
+          <div className="price-filter"><label>Price:</label><form onSubmit={(event) => event.preventDefault()}><input id="min" aria-label="Minimum price" value={searchParams.get("minPrice") ?? minPrice} type="number" min={minPrice} max={maxPrice} onChange={(event) => priceChange("minPrice", event.target.value)} /> and <input id="max" aria-label="Maximum price" value={searchParams.get("maxPrice") ?? maxPrice} type="number" min={minPrice} max={maxPrice} onChange={(event) => priceChange("maxPrice", event.target.value)} /></form></div>
+          <div className="category-filters"><span>Category:</span><button className={selectedCategories.length === 0 ? "active" : ""} onClick={() => { const params = new URLSearchParams(searchParams); params.delete("category"); params.delete("page"); setSearchParams(params); }}>{t("shop.filtersSection.all")}</button>{categories.map((category) => <button key={category.slug} className={selectedCategories.includes(category.slug) ? "active" : ""} onClick={() => handleSelect(category.slug)}>{category.name[currentLanguage] || category.name.en}</button>)}</div>
         </div>
       </div>
     </DropdownTransition>
