@@ -1,53 +1,48 @@
 @layer components {
-  .filters-menu {
-    @apply mt-4 border-t border-slate-200 dark:border-slate-700 p-2;
-  }
-  .filters-menu h3{
-    @apply text-xl font-normal tracking-tight! m-0 p-0;
-  }
-  .filters-menu .menu {
+
+.menu {
     @apply inline-flex gap-5 whitespace-normal mt-0 items-center;
   }
-  .filters-menu .menu .sort {
+ .menu .sort {
     @apply inline-flex gap-1 items-center justify-between;
   }
-  .filters-menu .menu .sort select {
+ .menu .sort select {
     @apply border-slate-200 dark:border-slate-700 border text-xs font-light rounded-xl py-1 px-2;
   }
-  .filters-menu .menu .price-filter {
+ .menu .price-filter {
     @apply inline-flex items-center justify-between;
   }
-  .filters-menu .menu .price-filter form {
+.menu .price-filter form {
     @apply inline-flex gap-1 items-center;
   }
-  .filters-menu .menu .price-filter form input {
+   .menu .price-filter form input {
     @apply w-18 border-slate-200 dark:border-slate-700 border text-xs font-light rounded-xl py-1 px-2 text-slate-900 dark:text-slate-100;
   }
 
-  .filters-menu .menu form {
+   .menu form {
     @apply text-sm text-slate-500 dark:text-slate-400;
   }
 
-  .filters-menu .menu label {
+   .menu label {
     @apply m-0 text-sm text-slate-500 dark:text-slate-400 pe-1;
   }
 
-  .filters-menu .menu button {
+   .menu button {
     @apply flex h-7 w-7 items-center justify-center rounded-xl text-slate-700 dark:text-slate-200 transition-colors;
   }
 
-  .filters-menu .menu button:hover {
+   .menu button:hover {
     @apply bg-(--nav-btn-shadow) text-(--nav-btn-txt);
   }
 
-  .filters-menu .menu .category-filters {
+   .menu .category-filters {
     @apply mt-8 flex flex-wrap gap-3;
   }
 
-  .filters-menu .menu .category-filters button {
+   .menu .category-filters button {
     @apply btn-secondary w-fit px-3 transition duration-300 ease-in-out;
   }
-  .filters-menu .menu .category-filters button.active {
+   .menu .category-filters button.active {
     @apply bg-(--panel) border-slate-700 dark:border-slate-200;
   }
 }

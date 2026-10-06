@@ -1,42 +1,19 @@
+import ShopSearchBarSkeleton from "./ShopSearchBarSkeleton";
+
 function FiltersSectionSkeleton() {
   return (
-    <>
-      <div className="filters-section">
+      <div className="flex items-end justify-between gap-4">
         <div>
-          <span className="mb-2">
+          <span className="mb-2 eyebrow">
             <div className="w-24 h-3.5 skeleton" />
           </span>
-          <div className="w-2xl h-12 skeleton" />
+          <ShopSearchBarSkeleton/>
         </div>
-        <button>
+        <div className="btn-secondary gap-1">
           <div className="w-4 h-4 skeleton" />
           <div className="w-20 h-4 skeleton" />
-        </button>
+        </div>
       </div>
-      <div className="category-filters mt-4">
-        <button key="1">
-          <div className="w-14 h-6 skeleton" />
-        </button>
-        <button key="2">
-          <div className="w-14 h-6 skeleton" />
-        </button>
-        <button key="3">
-          <div className="w-14 h-6 skeleton" />
-        </button>
-        <button key="4">
-          <div className="w-14 h-6 skeleton" />
-        </button>
-        <button key="5">
-          <div className="w-14 h-6 skeleton" />
-        </button>
-        <button key="6">
-          <div className="w-14 h-6 skeleton" />
-        </button>
-        <button key="7">
-          <div className="w-14 h-6 skeleton" />
-        </button>
-      </div>
-    </>
   );
 }
 

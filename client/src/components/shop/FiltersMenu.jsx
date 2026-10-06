@@ -1,11 +1,15 @@
-import { ArrowDownNarrowWide, ArrowDownWideNarrow } from "lucide-react";
-import {  useState } from "react";
+import {
+  ArrowDownNarrowWide,
+  ArrowDownWideNarrow,
+  FunnelX,
+} from "lucide-react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import DropdownTransition from "../common/Transitions/DropdownTransition";
 import { useTranslation } from "react-i18next";
 
 function FiltersMenu({ minPrice, maxPrice, categories }) {
-  const { t,i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const currentLanguage = i18n.language;
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedSort, setSelectedSort] = useState(searchParams.get("sort"));
@@ -59,6 +63,8 @@ function FiltersMenu({ minPrice, maxPrice, categories }) {
     setSelectedCategories([]);
     const params = new URLSearchParams(searchParams);
     params.delete("category");
+    params.delete("minPrice");
+    params.delete("maxPrice");
     params.delete("page");
     setSearchParams(params);
   };
@@ -72,13 +78,25 @@ function FiltersMenu({ minPrice, maxPrice, categories }) {
     updatedCategories.forEach((category) => {
       params.append("category", category);
     });
+    params.delete("minPrice");
+    params.delete("maxPrice");
     params.delete("page");
     setSearchParams(params);
   };
+  const handleClear = ()=> {
+    const params = new URLSearchParams();
+    setSearchParams(params);
+  }
   return (
     <DropdownTransition>
-      <div className="filters-menu">
-        <h3>Sort & Filter</h3>
+      <div className="mt-4 border-t border-slate-200 dark:border-slate-700 pt-3 px-2 pb-2">
+        <div className="inline-flex justify-between w-full">
+          <h3 className="text-xl font-normal tracking-tight! m-0 p-0">Sort & Filter</h3>
+          <button className="btn-secondary flex gap-1 py-1 px-2 text-base!" onClick={handleClear}>
+            <FunnelX/>
+            Clear Filters
+          </button>
+        </div>
         <div className="menu">
           <div className="sort">
             <label htmlFor="sort">Sort By:</label>

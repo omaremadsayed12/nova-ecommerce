@@ -32,13 +32,12 @@ function HomePage() {
           limit: 5,
           page: 1
         };
-        const productParams = {
+        const productParams = new URLSearchParams({
           sortBy: "averageRating",
           method: "DESC",
           limit: 4,
           page: 1
-
-        };
+        });
         const categoriesParams ={ 
           sortBy: `name.${currentLanguage}`,
           method: "ASC",

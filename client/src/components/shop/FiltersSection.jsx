@@ -38,12 +38,12 @@ function FiltersSection({ minPrice, maxPrice }) {
 
   return (
     <>
-      <div className="filters-section">
+      <div className="flex items-end justify-between gap-4">
         <div>
-          <span>{t("shop.filtersSection.eyebrow")}</span>
+          <span className="eyebrow">{t("shop.filtersSection.eyebrow")}</span>
           <ShopSearchBar />
         </div>
-        <button onClick={() => setMenuOpen(!menuOpen)}>
+        <button onClick={() => setMenuOpen(!menuOpen)} className="btn-secondary gap-1">
           <motion.div
             animate={{ rotate: menuOpen ? 90 : 0 }}
             transition={{ duration: 0.25 }}

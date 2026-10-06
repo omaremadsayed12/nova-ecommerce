@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import LoadingFailed from "./LoadingFailed";
 import { getProducts } from "../services/product.service";
 import { useToast } from "../context/ToastContext";
+import ProductsListSkeleton from "../components/shop/Skeletons/ProductsListSkeleton";
 
 function ShopPage() {
   const { t } = useTranslation();
@@ -64,7 +65,7 @@ function ShopPage() {
       )}
       {loading ? (
         <FlowUpTransition>
-          <FiltersSectionSkeleton />
+          <ProductsListSkeleton/>
         </FlowUpTransition>
       ) : (
         <FlowUpTransition>
