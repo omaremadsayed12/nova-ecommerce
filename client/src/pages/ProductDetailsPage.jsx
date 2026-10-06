@@ -40,7 +40,7 @@ function ProductDetailsPage() {
   const handleAddToCart = () => {
     try {
       setAddingToCart(true);
-      addToCart(product._id, quantity);
+      addToCart(product._id, quantity, product.stock);
     } catch (err) {
       showError(
           err.response?.data?.error || "Something went wrong"

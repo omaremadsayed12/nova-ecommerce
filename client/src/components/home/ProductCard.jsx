@@ -30,7 +30,7 @@ function ProductCard({  product }) {
     if (newQuantity === 0) {
       removeFromCart(product._id);
     } else {
-      updateCart(product._id, newQuantity);
+      updateCart(product._id, newQuantity, product.stock);
     }
   };
 
@@ -39,7 +39,7 @@ function ProductCard({  product }) {
     if (newQuantity === 0) {
       removeFromCart(product._id);
     } else {
-      updateCart(product._id, newQuantity);
+      updateCart(product._id, newQuantity, product.stock);
     }
   };
 
@@ -81,7 +81,7 @@ function ProductCard({  product }) {
 
                       <div>{quantity(product._id)}</div>
 
-                      <button onClick={() => handlePlus()}>
+                      <button onClick={() => handlePlus()} disabled={quantity(product._id) >= product.stock}>
                         <Plus />
                       </button>
                     </div>
@@ -89,7 +89,7 @@ function ProductCard({  product }) {
                     <button
                       key="cart"
                       type="button"
-                      onClick={() => addToCart(product._id, 1)}
+                      onClick={() => addToCart(product._id, 1, product.stock)}
                     >
                       <ShoppingBag />
                     </button>

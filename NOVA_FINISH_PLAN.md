@@ -4,7 +4,7 @@
 - [x] Prevent role escalation
 - [x] Verify authorization across protected resources
 
-Completed: public registration forces `CUSTOMER`; customers cannot change their role; the admin-only user creation/update path can assign roles. Protected route guards and owner checks were reviewed. Owner comparisons now compare MongoDB ObjectId values, so customers can act on their own records. Database-backed checks confirmed customer/admin user operations and denials. Product/settings/user administration is admin-gated; homepage stats and catalog/review reads are public in the current routes. HTTP middleware denials were reviewed from route setup but not exercised through live HTTP requests. Review update handling remains unfinished for Phase 5.
+Completed: Public registration forces `CUSTOMER`; customers cannot change their role; admin-only user creation/update paths can assign roles. Protected route guards and owner checks were reviewed, and ObjectId ownership comparisons were corrected. Database-backed user-operation checks passed. Some route middleware denials were reviewed from source rather than exercised over HTTP.
 
 ## Phase 2 - Orders
 - [x] Repair order creation
@@ -12,7 +12,7 @@ Completed: public registration forces `CUSTOMER`; customers cannot change their 
 - [x] Cancellation
 - [x] Verify MongoDB transaction support
 
-Completed: order items use database product snapshots and store settings. Conditional stock reservation, order save, cancellation stock restoration, and status transition run in transactions. Atlas topology probe confirmed a replica set with logical sessions. Database-backed checks passed for successful ordering, insufficient stock, injected save failure rollback, concurrent cancellation, and repeated cancellation. Concurrent order-reservation stress testing and the API-level flow were not performed. The backend has no cart model/service, so it accepts submitted cart items and does not clear a persisted server cart.
+Completed: Orders use database product snapshots and settings. Conditional stock reservation, order creation, cancellation restoration, and status transitions run in transactions. Atlas replica-set support was confirmed. Database checks passed for successful orders, insufficient stock, injected save failure rollback, concurrent cancellation, and repeated cancellation. Concurrent order-reservation stress testing and API-level lifecycle testing were not performed. There is no server cart model/service.
 
 ## Phase 3 - Payments
 - [x] Checkout
@@ -23,32 +23,48 @@ Completed: order items use database product snapshots and store settings. Condit
 - [x] Successful payment handling
 - [x] Prevent duplicate payment processing
 
-Completed: checkout creates orders from cart IDs and quantities, initiates Stripe Embedded Checkout using server order totals, and clears the browser cart only after the server reports `PAID`. Payment rows are unique per order; retries reuse the same Stripe session. Signed webhook events verify order/payment metadata and amount/currency, keep order and payment status separate, and make paid/failed/expired transitions idempotent. Failed/expired sessions cancel the unpaid order and restore inventory once. Atlas + Stripe test-mode checks passed for session creation, amount, initiation retry, signed success/expiry/failure payloads, duplicate events, mismatch rejection, and stock restoration. No card charge was made. Frontend lint and backend syntax checks passed. Browser checkout was not exercised because `client/.env` has no `VITE_STRIPE_PUBLISHABLE_KEY`; the frontend build remains blocked by the installed Tailwind native binding and Windows `spawn EPERM`. Webhook events were signed and verified locally with the configured test secret, not delivered by Stripe over HTTP.
+Completed: Checkout creates orders from product IDs and quantities, initiates Stripe Embedded Checkout using server totals, and clears the browser cart only after the server reports `PAID`. Payment rows are unique per order and retries reuse the same Stripe session. Signed webhook transitions validate metadata and totals, keep order/payment states separate, and handle duplicate events idempotently. Atlas + Stripe test-mode checks covered session creation, amount, retry, locally signed success/expiry/failure payloads, duplicate events, mismatch rejection, and stock restoration. No charge was made and Stripe did not deliver an HTTP webhook. Browser checkout was not exercised because `client/.env` lacks `VITE_STRIPE_PUBLISHABLE_KEY`.
 
 ## Phase 4 - User experience
 - [x] Order history
 - [x] Admin product management
 - [x] Admin dashboard
-Admin product management completed: replaced the static inventory sample with an admin-only list and create/edit/delete controls backed by the existing protected product API. The form covers bilingual fields, price, stock, currency, activation, and optional image upload. Atlas service checks passed for product create/update/list/delete, and client lint passed. HTTP multipart image upload and live route authorization were not exercised; the existing route middleware protects these writes.
-Order history completed: the existing authenticated endpoint now returns newest-first paginated results, and the page displays item snapshots, date, order/payment states, and totals with sign-in, loading, error, retry, and empty states. Atlas verification confirmed customer scoping and page metadata; client lint and backend syntax checks passed. Browser rendering was not verified because the frontend build is currently blocked by its native Tailwind binding environment issue.
 
-Admin dashboard completed: replaced fabricated revenue/conversion/category/order samples with an admin-only summary of order, product, active-product, and customer counts; paid revenue grouped by currency; and recent orders. The existing public homepage stats route and response remain unchanged. Atlas + local HTTP checks passed for paid-only revenue, metrics, anonymous/customer denials, admin access, and public stats compatibility. Client lint and backend syntax checks passed. Browser rendering was not verified because the frontend build is blocked by the current Tailwind native binding environment issue.
+Completed: Customer order history uses newest-first pagination and displays saved item snapshots, dates, statuses, and totals. Atlas checks verified customer scoping and page metadata; client lint and backend syntax checks passed. Browser rendering was not checked.
+
+Completed: Admin product management now uses the protected product API for list/create/edit/delete, with bilingual fields, price, stock, currency, activation, and optional image upload. Atlas service checks and client lint passed. Multipart upload and live route authorization were not exercised.
+
+Completed: Admin dashboard reports order/product/customer counts, paid revenue by currency, and recent orders through an admin-only endpoint, preserving the public homepage stats response. Atlas + local HTTP checks passed for metrics, access denial, and public stats compatibility. Client lint/backend syntax passed; browser rendering was not checked at implementation time.
+
 ## Phase 5 - Reviews and validation
 - [x] Review updates
-Review update API completed: implemented the existing authenticated PUT handler and fixed its service/validator wiring. Only the review owner can change `rating` and `comment`; other fields, out-of-range/non-integer ratings, and comments over 225 characters are rejected. The related add-review duplicate lookup now uses `findOne`, with the same rating/comment validation. Atlas and local HTTP checks passed for create, duplicate prevention, owner update, non-owner/anonymous denial, response format, and invalid input rejection. Client lint and backend syntax checks passed. No review editing UI existed, so browser-level review editing was not verified.- [x] Product partial updates
-Product partial updates completed: update validation now accepts only supported product fields, validates supplied scalar/nested values, merges language subfields without replacing omitted translations, rejects mass-assignment fields, and saves/returns the updated document. Atlas + local HTTP checks passed for stock-only and nested-language patches, preserved fields, saved response data, customer authorization, and invalid/unsupported inputs. Backend syntax and diff checks passed.- [x] User partial updates
+- [x] Product partial updates
+- [x] User partial updates
 
-User partial updates completed: PATCH now validates model-shaped localized names, normalized unique email, password, admin-only role, and profile image URL; it merges supplied name languages and returns the saved user while hashing changed passwords. Unsupported fields are rejected and customers remain limited to their own profile. Atlas + local HTTP checks passed for nested-name preservation, duplicate email, protected fields, customer isolation, self-role denial, admin role updates, and trusted admin user creation. Backend syntax checks passed.
+Completed: Review owners can update only rating/comment; validation, duplicate lookup, owner/anonymous denial, and response shape passed Atlas + local HTTP checks. No review-edit UI exists.
+
+Completed: Product PATCH validates supported fields, preserves omitted translations, rejects mass-assignment, and returns the saved document. Atlas + HTTP checks covered patches, preservation, authorization, and invalid fields; backend syntax and diff checks passed.
+
+Completed: User PATCH validates localized names, normalized unique email, password, admin-only role, and image URL; merges fields and returns the saved user. Atlas + HTTP checks covered field preservation, duplicate email, customer isolation, role restrictions, and trusted admin operations. Backend syntax checks passed.
+
 ## Phase 6 - Frontend
 - [x] Repair build environment
-Build environment completed: no dependencies changed. An elevated production build exposed one invalid Windows-1252 middle-dot byte in `AdminDashboardPage.jsx`; converting it to UTF-8 resolved the bundler read error. `npm run build` and `npm run lint` now pass. The earlier in-sandbox native binding/spawn failure was process restriction-related; the actual source encoding defect was fixed and verified by the successful elevated build.- [x] Shop API integration
-Shop API integration completed: shop search, category, price, sort, and page parameters now match the server contract; the page consumes server-filtered results and pagination metadata instead of filtering only the first client-side page. Request changes cancel stale fetches, retry/error/empty states are visible, and product cards display localized names/categories and currency-formatted prices. Atlas + local HTTP checks passed for search/category/price filters, descending sort, and pagination. Client lint and production build passed (with the existing large-bundle advisory).- [x] Homepage API integration
-Homepage API integration completed: carousel requests now use the expected URL query format and five-item limit; featured products, stats, and localized categories consume their API envelopes with stale-request cancellation. Carousel rotation wraps according to the number of returned products, and missing locale fields fall back to English. Category sorting now uses validated Mongo sort keys. Atlas + local HTTP checks passed for stats, carousel, featured products, and localized category ordering. Client lint and production build passed (with the large-bundle advisory).- [ ] Cart
+- [x] Shop API integration
+- [x] Homepage API integration
+- [x] Cart
 - [ ] Wishlist
 - [ ] Checkout
 - [ ] Loading/error/empty states
 - [ ] RTL/i18n
 - [ ] Responsive UI
+
+Completed: The production build issue was traced to one invalid Windows-1252 byte in `AdminDashboardPage.jsx`, corrected to UTF-8. Client lint and production build pass; Vite still reports an existing bundle-size advisory.
+
+Completed: Shop search, category, price, sort, and page parameters now match the API. The UI uses server pagination and filters, cancels stale requests, and displays localized catalog values. Atlas + HTTP checks passed for filters, sorting, and pagination; client lint and build passed.
+
+Completed: Homepage data now consumes the API envelopes with stale-request cancellation and localized fallbacks. Carousel requests use the expected query format and returned item count; category sorting uses validated Mongo sort keys. Atlas + HTTP checks and client lint/build passed.
+
+Completed: Cart rows load authoritative product display details by ID, show current localized names, images, currencies and estimated subtotals, and support remove/quantity controls. Quantity changes are bounded by current stock; unavailable or over-stock items block checkout, and a stale over-stock quantity can still be reduced. Cart persistence tolerates malformed local storage. Prices/tax/shipping/final totals remain server-calculated. Client lint and production build passed. Browser interaction and live cart API behavior were not exercised.
 
 ## Phase 7 - Verification
 - [ ] Backend tests

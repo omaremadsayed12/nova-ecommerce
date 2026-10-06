@@ -1,87 +1,70 @@
 import { useCallback, useEffect, useState, createContext } from "react";
-import {  useToast } from "./ToastContext";
+import { useToast } from "./ToastContext";
 import { useTranslation } from "react-i18next";
 
 export const CartContext = createContext(null);
 
-export default function CartProvider({ children }) {
-  const {t} = useTranslation();
-  const { showSuccess, showError } = useToast();
-
-  const [cart, setCart] = useState(() => {
+function readSavedCart() {
+  try {
     const savedCart = localStorage.getItem("Cart");
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+    if (!savedCart) return [];
+    const parsed = JSON.parse(savedCart);
+    return Array.isArray(parsed)
+      ? parsed.filter((item) => typeof item?.product === "string" && Number.isSafeInteger(item.quantity) && item.quantity > 0)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+export default function CartProvider({ children }) {
+  const { t } = useTranslation();
+  const { showSuccess, showError } = useToast();
+  const [cart, setCart] = useState(readSavedCart);
 
   useEffect(() => {
     localStorage.setItem("Cart", JSON.stringify(cart));
   }, [cart]);
 
-  const viewCartButton = {
-    url: "/cart",
-    text: t('cartContext.viewCart')
-  }
+  const viewCartButton = { url: "/cart", text: t("cartContext.viewCart") };
 
-  const addToCart = (productId, quantity = 1) => {
-    const newItem = {
-      product: productId,
-      quantity,
-    };
-    if (!inCart(productId)) {
-      setCart((Items) => [...Items, newItem]);
-      showSuccess(t('cartContext.addSuccess'),viewCartButton);
-    } else {
-      showError(t('cartContext.alreadyOnCart'));
+  const addToCart = (productId, requestedQuantity = 1, maxQuantity = Infinity) => {
+    if (!Number.isSafeInteger(requestedQuantity) || requestedQuantity < 1 || requestedQuantity > maxQuantity) {
+      showError("Requested quantity is not available.");
+      return false;
     }
+    if (inCart(productId)) {
+      showError(t("cartContext.alreadyOnCart"));
+      return false;
+    }
+    setCart((items) => [...items, { product: String(productId), quantity: requestedQuantity }]);
+    showSuccess(t("cartContext.addSuccess"), viewCartButton);
+    return true;
   };
 
-  const updateCart = (productId, quantity = 1) => {
-    const newItem = {
-      product: productId,
-      quantity,
-    };
+  const updateCart = (productId, requestedQuantity = 1, maxQuantity = Infinity) => {
     if (!inCart(productId)) {
-      showError(t('cartContext.notOnCart'));
-    } else {
-      setCart((Items) =>
-        Items.map((item) => (item.product === productId ? newItem : item)),
-      );
-      showSuccess(t('cartContext.updateSuccess'),viewCartButton);
+      showError(t("cartContext.notOnCart"));
+      return false;
     }
+    const currentQuantity = cart.find((item) => String(item.product) === String(productId))?.quantity || 0;
+    const isReducingQuantity = requestedQuantity < currentQuantity;
+    if (!Number.isSafeInteger(requestedQuantity) || requestedQuantity < 1 || (requestedQuantity > maxQuantity && !isReducingQuantity)) {
+      showError("Requested quantity is not available.");
+      return false;
+    }
+    setCart((items) => items.map((item) => String(item.product) === String(productId) ? { ...item, quantity: requestedQuantity } : item));
+    showSuccess(t("cartContext.updateSuccess"), viewCartButton);
+    return true;
   };
 
   const clearCart = useCallback(() => setCart([]), []);
-
   const removeFromCart = (productId) => {
-    setCart((Items) => Items.filter((item) => item.product != productId));
-    showSuccess(t('cartContext.removeSuccess'),viewCartButton);
+    setCart((items) => items.filter((item) => String(item.product) !== String(productId)));
+    showSuccess(t("cartContext.removeSuccess"), viewCartButton);
   };
+  const inCart = (productId) => cart.some((item) => String(item.product) === String(productId));
+  const quantity = (productId) => cart.find((item) => String(item.product) === String(productId))?.quantity || 0;
 
-  const inCart = (productId) => {
-    return cart.some((item) => item.product === productId);
-  };
-
-  const quantity = (productId) => {
-    if (!inCart(productId)) {
-      return 0;
-    }
-    const item = cart.find((item) => item.product === productId);
-    return item.quantity;
-  };
-
-  return (
-    <CartContext.Provider
-      value={{
-        cart,
-        quantity,
-        addToCart,
-        updateCart,
-        removeFromCart,
-        clearCart,
-        inCart,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext.Provider value={{ cart, quantity, addToCart, updateCart, removeFromCart, clearCart, inCart }}>{children}</CartContext.Provider>;
 }
