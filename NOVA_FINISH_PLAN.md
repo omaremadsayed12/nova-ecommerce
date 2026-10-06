@@ -74,14 +74,14 @@ Completed: Homepage data now consumes the API envelopes with stale-request cance
 Completed: Cart rows load authoritative product display details by ID, show current localized names, images, currencies and estimated subtotals, and support remove/quantity controls. Quantity changes are bounded by current stock; unavailable or over-stock items block checkout, and a stale over-stock quantity can still be reduced. Cart persistence tolerates malformed local storage. Prices/tax/shipping/final totals remain server-calculated. Client lint and production build passed. Browser interaction and live cart API behavior were not exercised.
 
 ## Phase 7 - Verification
-- [ ] Backend tests
+- [x] Backend tests
 - [x] Frontend build
 - [ ] API smoke tests
 - [ ] Authentication flow
 - [ ] Order lifecycle
 - [ ] Payment lifecycle
 
-Completed: After the responsive changes, `npm run lint`, `npm run build`, and `git diff --check` passed. The production build still reports the existing 594.90 kB minified JavaScript chunk advisory. Backend/API lifecycle verification remains open below.
+Completed: The server package exposes only `dev` and `start`; the repository has no backend test files or test runner. `node --check` passed for all 58 server JavaScript files. No automated backend test suite could be run; focused Atlas-backed service and local HTTP checks from earlier milestones are documented above. Frontend `npm run lint`, `npm run build`, and `git diff --check` passed after responsive changes; the build reports a 594.90 kB minified JavaScript chunk advisory. API smoke and lifecycle verification remain open below.
 
 ## Phase 8 - Deployment
 - [ ] Production environment variables
