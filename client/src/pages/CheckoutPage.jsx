@@ -19,27 +19,40 @@ function CheckoutPage() {
   const [searchParams] = useSearchParams();
   const { user, openAuth } = useContext(AuthContext);
   const { cart } = useContext(CartContext);
+  const directProductId = searchParams.get("productId");
+  const directQuantity = Number(searchParams.get("quantity"));
+  const isBuyNow = Boolean(directProductId);
+  const checkoutItems = isBuyNow
+    ? [{ product: directProductId, quantity: directQuantity }]
+    : cart.map(({ product, quantity }) => ({ product, quantity }));
   const [shippingAddress, setShippingAddress] = useState("");
   const [checkout, setCheckout] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [orderId, setOrderId] = useState(() => searchParams.get("orderId") || localStorage.getItem("nova_pending_order") || "");
+  const [orderId, setOrderId] = useState(() => searchParams.get("orderId") || (!isBuyNow ? localStorage.getItem("nova_pending_order") || "" : ""));
 
   const startCheckout = async (event) => {
     event.preventDefault();
     if (!user) { openAuth(); return; }
     if (!stripePromise) { setError(t("checkoutPage.configuredError")); return; }
-    if (!cart.length && !orderId) { setError(t("checkoutPage.emptyCart")); return; }
+    if (isBuyNow && (!Number.isSafeInteger(directQuantity) || directQuantity < 1) && !orderId) {
+      setError(t("checkoutPage.invalidPurchase"));
+      return;
+    }
+    if (!checkoutItems.length && !orderId) {
+      setError(t("checkoutPage.emptyCart"));
+      return;
+    }
     setBusy(true);
     setError("");
     try {
       let activeOrderId = orderId;
       if (!activeOrderId) {
-        const order = await createOrder({ items: cart.map(({ product, quantity }) => ({ product, quantity })) }, shippingAddress);
+        const order = await createOrder({ items: checkoutItems }, shippingAddress);
         activeOrderId = order._id;
         setOrderId(activeOrderId);
         localStorage.setItem("nova_pending_order", activeOrderId);
-        localStorage.setItem("nova_pending_cart", JSON.stringify(cart));
+        localStorage.setItem("nova_pending_cart", JSON.stringify(isBuyNow ? { buyNow: activeOrderId } : cart));
       }
       const payment = await initiatePayment(activeOrderId, {
         locale: i18n.language.startsWith("ar") ? "ar" : "en",

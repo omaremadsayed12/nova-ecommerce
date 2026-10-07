@@ -40,6 +40,13 @@ function Footer() {
       },
       to: "/about",
     },
+    {
+      label: {
+        en: "Wishlist",
+        ar: "قائمة الأمنيات",
+      },
+      to: "/wishlist",
+    },
   ];
 
   useEffect(() => {
@@ -87,26 +94,23 @@ function Footer() {
                 <div>
                   <h3>{t("footer.upperFooter.explore")}</h3>
                   <ul>
-                    {loading || loadingFailed ? (
-                      navItems.map((item) => (
-                        <li key={item.to}>
-                          <Link to={item.to} onClick={() => handleNavClick(item.to)}>
-                            {item.label[currentLanguage]}
-                          </Link>
-                        </li>
-                      ))
-                    ) : (
-                      categories.map((category) => {
+                    {navItems.map((item) => (
+                      <li key={item.to}>
+                        <Link to={item.to} onClick={() => handleNavClick(item.to)}>
+                          {item.label[currentLanguage]}
+                        </Link>
+                      </li>
+                    ))}
+                    {!loading && !loadingFailed && categories.map((category) => {
                         const url = `/shop?category=${category.slug}`;
                         return (
-                          <li key={category.slug}>
+                          <li key={`category-${category.slug}`}>
                             <Link to={url} onClick={() => handleNavClick(url)}>
                               {category.name[currentLanguage]}
                             </Link>
                           </li>
                         );
-                      })
-                    )}
+                    })}
                   </ul>
                 </div>
 

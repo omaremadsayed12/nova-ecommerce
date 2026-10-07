@@ -7,7 +7,7 @@ import {
   Star,
   ShoppingCart,
 } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { getProductById, getRelatedProducts } from "../services/product.service";
 import { addProductReview, getMyProductReview, getProductReviews } from "../services/reviews.service";
 import { CartContext } from "../context/CartContext";
@@ -25,6 +25,7 @@ function localizedValue(value, language, fallback = "") {
 
 function ProductDetailsPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const currentLanguage = i18n.language === "ar" ? "ar" : "en";
   const locale = currentLanguage === "ar" ? "ar-EG-u-nu-latn" : "en-US";
@@ -41,6 +42,7 @@ function ProductDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [buyingNow, setBuyingNow] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
   const [reviews, setReviews] = useState([]);
   const [reviewMeta, setReviewMeta] = useState({ page: 1, totalPages: 0, total: 0, averageRating: 0 });
@@ -186,6 +188,10 @@ function ProductDetailsPage() {
   };
 
   const handleAddToCart = () => {
+    if (product.stock < quantity) {
+      showError(t("productDetailsPage.unavailable"));
+      return;
+    }
     try {
       setAddingToCart(true);
       addToCart(product._id, quantity, product.stock);
@@ -196,6 +202,19 @@ function ProductDetailsPage() {
     } finally {
       setAddingToCart(false);
     }
+  };
+
+  const handleBuyNow = () => {
+    if (!isAuthenticated) {
+      openAuth();
+      return;
+    }
+    if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > product.stock || product.stock < 1) {
+      showError(t("productDetailsPage.unavailable"));
+      return;
+    }
+    setBuyingNow(true);
+    navigate(`/checkout?productId=${encodeURIComponent(product._id)}&quantity=${quantity}`);
   };
 
   if (loading) {
@@ -213,6 +232,40 @@ function ProductDetailsPage() {
   const name = localizedValue(product.name, currentLanguage, t("common.product"));
   const category = localizedValue(product.category, currentLanguage);
   const description = localizedValue(product.description, currentLanguage);
+  const reviewEditor = !isAuthenticated ? (
+    <button type="button" onClick={openAuth} className="mt-4 rounded-full border border-(--line) px-5 py-3 font-bold text-(--ink)">{t("productDetailsPage.signInToReview")}</button>
+  ) : myReviewLoading ? (
+    <p role="status" className="mt-4 rounded-2xl bg-(--base) p-4 text-(--muted)">{t("productDetailsPage.myReviewLoading")}</p>
+  ) : myReviewError ? (
+    <div role="alert" className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
+      <p>{myReviewError}</p>
+      <button type="button" onClick={() => setMyReviewRetry((value) => value + 1)} className="mt-2 font-bold underline">{t("common.tryAgain")}</button>
+    </div>
+  ) : myReview ? (
+    <article className="mt-4 rounded-3xl border border-(--line) bg-(--base) p-4">
+      <h3 className="font-bold text-(--ink)">{t("productDetailsPage.yourReview")}</h3>
+      <p className="mt-2 flex items-center gap-2 text-(--muted)">
+        <span className="flex items-center gap-1 text-amber-500" aria-label={t("productDetailsPage.ratingOption", { count: myReview.rating })}>{Array.from({ length: 5 }, (_, index) => <Star key={index} className={`h-4 w-4 ${index < myReview.rating ? "fill-current" : ""}`} />)}</span>
+        <span>{t("productDetailsPage.reviewedOn", { date: new Date(myReview.createdAt).toLocaleDateString(locale) })}</span>
+      </p>
+      {myReview.comment && <p className="mt-3 whitespace-pre-wrap text-(--ink)">{myReview.comment}</p>}
+    </article>
+  ) : (
+    <form onSubmit={submitReview} className="mt-4 grid gap-4 rounded-3xl border border-(--line) bg-(--base) p-4">
+      <label className="grid gap-2 text-sm font-semibold text-(--ink)">
+        {t("productDetailsPage.ratingLabel")}
+        <select required value={reviewRating} onChange={(event) => setReviewRating(event.target.value)} className="min-h-11 rounded-xl border border-(--line) bg-(--panel) px-3">
+          <option value="">{t("productDetailsPage.chooseRating")}</option>
+          {[5, 4, 3, 2, 1].map((rating) => <option key={rating} value={rating}>{t("productDetailsPage.ratingOption", { count: rating })}</option>)}
+        </select>
+      </label>
+      <label className="grid gap-2 text-sm font-semibold text-(--ink)">
+        {t("productDetailsPage.reviewComment")}
+        <textarea maxLength={225} rows={3} value={reviewComment} onChange={(event) => setReviewComment(event.target.value)} className="rounded-xl border border-(--line) bg-(--panel) p-3" />
+      </label>
+      <button type="submit" disabled={reviewSubmitting || !reviewRating} className="justify-self-start rounded-full bg-(--ink) px-5 py-3 font-bold text-(--base) disabled:opacity-50">{reviewSubmitting ? t("productDetailsPage.reviewSubmitting") : t("productDetailsPage.submitReview")}</button>
+    </form>
+  );
 
   const increaseQuantity = () => {
     if (quantity < product.stock) {
@@ -259,6 +312,14 @@ function ProductDetailsPage() {
             {name}
           </h1>
 
+          <a href="#product-reviews-heading" className="mt-4 inline-flex items-center gap-2 rounded-full border border-(--line) bg-(--base) px-4 py-2 text-sm font-semibold text-(--ink)">
+            <Star aria-hidden="true" className="h-4 w-4 fill-amber-400 text-amber-400" />
+            <span>{reviewMeta.averageRating}</span>
+            <span>{t("productDetailsPage.reviewCount", { count: reviewMeta.total })}</span>
+          </a>
+
+          {reviewEditor}
+          {reviewError && <p role="alert" className="mt-3 text-sm text-red-700 dark:text-red-300">{reviewError}</p>}
 
           <div className="mt-7 text-4xl font-black tracking-[-0.05em] text-(--ink)">
             {new Intl.NumberFormat(locale, {
@@ -308,10 +369,12 @@ function ProductDetailsPage() {
             </button>
 
             <button
-              disabled={product.stock === 0}
+              type="button"
+              onClick={handleBuyNow}
+              disabled={product.stock === 0 || buyingNow}
               className="rounded-full border border-(--line) bg-(--base) px-6 py-3 text-sm font-bold text-(--ink) disabled:opacity-50"
             >
-              {t("productDetailsPage.buyNow")}
+              {buyingNow ? t("checkoutPage.preparing") : t("productDetailsPage.buyNow")}
             </button>
           </div>
 
@@ -336,49 +399,8 @@ function ProductDetailsPage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 id="product-reviews-heading" className="text-3xl font-black text-(--ink)">{t("productDetailsPage.reviewsTitle")}</h2>
-            <p className="mt-2 flex items-center gap-2 text-(--muted)">
-              <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
-              <span className="font-bold text-(--ink)">{reviewMeta.averageRating}</span>
-              <span>{t("productDetailsPage.reviewCount", { count: reviewMeta.total })}</span>
-            </p>
           </div>
         </div>
-
-        {!isAuthenticated ? (
-          <button type="button" onClick={openAuth} className="mt-6 rounded-full border border-(--line) px-5 py-3 font-bold text-(--ink)">{t("productDetailsPage.signInToReview")}</button>
-        ) : myReviewLoading ? (
-          <p role="status" className="mt-6 rounded-2xl bg-(--base) p-5 text-(--muted)">{t("productDetailsPage.myReviewLoading")}</p>
-        ) : myReviewError ? (
-          <div role="alert" className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-5 text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-            <p>{myReviewError}</p>
-            <button type="button" onClick={() => setMyReviewRetry((value) => value + 1)} className="mt-2 font-bold underline">{t("common.tryAgain")}</button>
-          </div>
-        ) : myReview ? (
-          <article className="mt-6 rounded-3xl border border-(--line) bg-(--base) p-5">
-            <h3 className="font-bold text-(--ink)">{t("productDetailsPage.yourReview")}</h3>
-            <p className="mt-2 flex items-center gap-2 text-(--muted)">
-              <span className="flex items-center gap-1 text-amber-500" aria-label={t("productDetailsPage.ratingOption", { count: myReview.rating })}>{Array.from({ length: 5 }, (_, index) => <Star key={index} className={`h-4 w-4 ${index < myReview.rating ? "fill-current" : ""}`} />)}</span>
-              <span>{t("productDetailsPage.reviewedOn", { date: new Date(myReview.createdAt).toLocaleDateString(locale) })}</span>
-            </p>
-            {myReview.comment && <p className="mt-3 whitespace-pre-wrap text-(--ink)">{myReview.comment}</p>}
-          </article>
-        ) : (
-          <form onSubmit={submitReview} className="mt-6 grid gap-4 rounded-3xl border border-(--line) bg-(--base) p-5">
-            <label className="grid gap-2 text-sm font-semibold text-(--ink)">
-              {t("productDetailsPage.ratingLabel")}
-              <select required value={reviewRating} onChange={(event) => setReviewRating(event.target.value)} className="min-h-11 rounded-xl border border-(--line) bg-(--panel) px-3">
-                <option value="">{t("productDetailsPage.chooseRating")}</option>
-                {[5, 4, 3, 2, 1].map((rating) => <option key={rating} value={rating}>{t("productDetailsPage.ratingOption", { count: rating })}</option>)}
-              </select>
-            </label>
-            <label className="grid gap-2 text-sm font-semibold text-(--ink)">
-              {t("productDetailsPage.reviewComment")}
-              <textarea maxLength={225} rows={3} value={reviewComment} onChange={(event) => setReviewComment(event.target.value)} className="rounded-xl border border-(--line) bg-(--panel) p-3" />
-            </label>
-            <button type="submit" disabled={reviewSubmitting || !reviewRating} className="justify-self-start rounded-full bg-(--ink) px-5 py-3 font-bold text-(--base) disabled:opacity-50">{reviewSubmitting ? t("productDetailsPage.reviewSubmitting") : t("productDetailsPage.submitReview")}</button>
-          </form>
-        )}
-        {reviewError && <p role="alert" className="mt-4 text-sm text-red-700 dark:text-red-300">{reviewError}</p>}
         {reviewLoading ? <p role="status" className="mt-6 rounded-2xl bg-(--base) p-5 text-(--muted)">{t("productDetailsPage.reviewsLoading")}</p> : reviews.length === 0 ? (
           <p className="mt-6 rounded-2xl border border-(--line) bg-(--base) p-5 text-(--muted)">{t("productDetailsPage.noReviews")}</p>
         ) : (

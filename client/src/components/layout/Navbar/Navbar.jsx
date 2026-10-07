@@ -32,6 +32,13 @@ const navItems = [
     },
     to: "/about",
   },
+  {
+    label: {
+      en: "Wishlist",
+      ar: "قائمة الأمنيات",
+    },
+    to: "/wishlist",
+  },
 ];
 
 function Navbar() {
@@ -70,6 +77,7 @@ function Navbar() {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  end={item.to === "/"}
                   onClick={() => handleNavClick(item.to)}
                   className={({ isActive }) =>
                     `nav-item ${isActive ? "active" : "inactive"}`

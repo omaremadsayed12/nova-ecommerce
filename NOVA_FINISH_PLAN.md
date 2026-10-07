@@ -177,8 +177,28 @@ Admin retry creates a new server-priced order and displays a checkout link for a
 
 Arabic error follow-up: API error messages are now passed through a shared client helper. English retains useful server-provided detail; Arabic uses the existing translated contextual fallback so backend English text is not surfaced as untranslated UI. Repository search found no remaining direct rendering of API error strings in client UI, and the current client lint/build pass.
 
-Known product decision: there is no internal Arsenal page or route. The obsolete Arsenal reference has been removed and the desktop/mobile/footer destination is the internal Shop route; no page or external Arsenal URL was introduced.
+Navigation note: no team-specific destination is part of the Nova storefront; desktop, mobile, and footer navigation use existing internal application routes only.
 
-Deployment status: the Vercel project root directory, hosted deployment, and deployed staging smoke checks still require dashboard access/configuration. No deployment success is claimed.
+Deployment status: the public Vercel URL and hosted API respond, and both seeded demo accounts logged in successfully against the hosted backend after the final reseed. The current hosted frontend is still the previous build (its primary navigation has only Home, Shop, and About); the changes in this worktree have not been committed or pushed, so no deployment of the final UI is claimed.
 
-Browser verification limitation: the latest local UI recheck used Vite at `127.0.0.1:5173`, but the configured API at `localhost:5000` did not return CORS headers. The page showed the translated data-load failure state, so this run does not count as a clean end-to-end browser or carousel autoplay/rapid-click verification. Repeat those checks with the local API running and its allowed-origin configuration, or against staging.
+Earlier browser verification limitation: an initial Vite run had no CORS-enabled API at `localhost:5000` and displayed the data-load failure state. This was superseded by the final local browser checks below, when the API was available.
+
+## Final staging pass
+
+- [x] Implement Buy Now as a single-product checkout intent using the existing backend order and Stripe session flow
+- [x] Show product rating, review count, and the authenticated user's review state next to product details while retaining the complete review list
+- [x] Improve Orders semantics, labels, status text, focus visibility, and responsive pagination
+- [x] Keep admin order search and status filters URL-backed and server-paginated; return only the user's email
+- [x] Use four internal destinations (Home, Shop, About, Wishlist) in desktop, mobile, and footer navigation
+- [x] Add guarded staging/demo seeding, documented public demo accounts, and a staging-focused README
+- [x] Verify both demo logins against the hosted backend after seeding
+
+Final staging seed, after confirming the configured database name was `Nova` and invoking the seeder with the explicit expected database name and reset flag: 32 users (1 admin, 31 customers), 48 products, 8 categories, 336 reviews, 120 orders, 0 Payment records, 1 StoreSettings record, and 31 wishlist owners. The seed reported 0 orphan reviews, order users, order items, or wishlist products; all intended references use MongoDB ObjectIds. No cart collection exists. Demo password comparisons passed against stored hashes without printing plaintext passwords. The category name "Beauty and Care" avoids ampersands in the footer's category query links.
+
+Final verification: client ESLint and Vite production build passed; `node --check` passed for all 61 server/script JavaScript files; the Express app imported successfully; and `git diff --check` passed. Vite continues to report the existing minified-chunk advisory (645.57 kB). Locally, customer and admin logins succeeded; product details showed a 3.9 average, 7 reviews, and the signed-in user's prior review; admin Orders showed associated customer emails; searching by email returned that customer's four records, and adding `CANCELLED` returned the matching single order while updating the URL. Browser Back restored the preceding search query. The fresh `/checkout` state rendered after clearing only stale browser-local checkout IDs from a pre-reset test.
+
+At a 375px configured viewport (360px CSS viewport), the current local UI had no horizontal document overflow on Shop, product details, Wishlist, Cart, Checkout, About, Privacy Policy, and Admin Users. Product/review details, admin user results, and shared navigation rendered in Arabic RTL and dark mode. The mobile menu exposed all four internal links. Orders filter controls were labeled and showed a visible 2px keyboard focus outline when focused. A hard reload of the Account page did not reproduce the earlier transient WishlistProvider context error.
+
+Buy Now had already been exercised in the browser before the final reseed: selecting quantity 2 created the backend-priced order and Embedded Checkout session with a displayed total of $207.92; the test session was cancelled and stock restored. This confirms order/session initiation only. No successful Stripe card payment, completed refund, or Stripe-delivered webhook was verified. Local HTTP emits Stripe.js's expected warning that live integrations require HTTPS.
+
+Remaining deployment/verification work: commit and deploy this worktree before checking the final UI at the public Vercel URL. The hosted logins above were verified, but the hosted frontend remains on the previous build. A completed Stripe TEST card payment and webhook delivery are still unverified; do not represent the current staging site as having a confirmed charge flow.

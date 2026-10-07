@@ -13,6 +13,7 @@ function MobileMenu({navItems, onClose}) {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  end={item.to === "/"}
                   onClick={onClose}
                   className={({ isActive }) =>
                     `${isActive ? "active" : "text-(--muted)"}`
