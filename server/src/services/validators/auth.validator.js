@@ -22,7 +22,7 @@ const validate_login_input = async (email, password) => {
     throw new ValidationError(details);
   } else {
     email = email.toLowerCase();
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email }).select("+password +tokenVersion");
     if (!user) {
       const details = {
         email: "User not found",
@@ -57,13 +57,16 @@ const validate_refresh_token = async (token) => {
       };
       throw new NotFoundError(details);
     } else {
-      const user = await User.findById(decoded.userId);
+      const user = await User.findById(decoded.userId).select("+tokenVersion");
       if (!user) {
         const details = {
           user: "User not found",
         };
         throw new NotFoundError(details);
       } else {
+        if (Number(decoded.ver ?? 0) !== Number(user.tokenVersion ?? 0)) {
+          throw new ValidationError({ refresh_token: "This refresh token has been revoked" });
+        }
         return user;
       }
     }

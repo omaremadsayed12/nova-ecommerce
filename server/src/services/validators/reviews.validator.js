@@ -3,7 +3,30 @@ import Review from "../../models/Reviews.js";
 import { NotFoundError, ValidationError } from "../errors.service.js";
 import auth_validator from "./auth.validator.js";
 
+const validate_review_list_params = (params = {}) => {
+  const parseInteger = (value, field, fallback, maximum) => {
+    if (value === undefined || value === "") return fallback;
+    if (typeof value !== "string" && typeof value !== "number") {
+      throw new ValidationError({ [field]: "Must be a positive integer" });
+    }
+    const parsed = Number(value);
+    if (!Number.isSafeInteger(parsed) || parsed < 1 || (maximum && parsed > maximum)) {
+      throw new ValidationError({ [field]: `Must be a positive integer${maximum ? ` no greater than ${maximum}` : ""}` });
+    }
+    return parsed;
+  };
+
+  return {
+    page: parseInteger(params.page, "page", 1),
+    limit: parseInteger(params.limit, "limit", 12, 50),
+  };
+};
+
 const validate_add_review = async (productId, reviewData, user) => {
+  if (!reviewData || typeof reviewData !== "object" || Array.isArray(reviewData) ||
+      Object.keys(reviewData).some((key) => !["rating", "comment"].includes(key))) {
+    throw new ValidationError({ review: "Provide a rating and optional comment only" });
+  }
   const existingReview = await Review.findOne({ product: productId, user: user._id });
   if (existingReview) {
     throw new ValidationError({ review: "User already added review on this product" });
@@ -47,4 +70,4 @@ const validate_update_review = async (id, user, reviewData) => {
   return review;
 };
 
-export default { validate_add_review, validate_update_review };
+export default { validate_review_list_params, validate_add_review, validate_update_review };

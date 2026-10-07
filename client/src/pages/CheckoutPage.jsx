@@ -1,25 +1,29 @@
 import { useContext, useState } from "react";
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { CartContext } from "../context/CartContext";
+import { useTheme } from "../context/ThemeContext";
 import { createOrder } from "../services/order.service";
 import { initiatePayment } from "../services/payment.service";
+import { getApiErrorMessage } from "../services/apiError";
 import { useTranslation } from "react-i18next";
 
 const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = publishableKey ? loadStripe(publishableKey) : null;
 
 function CheckoutPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { theme } = useTheme();
+  const [searchParams] = useSearchParams();
   const { user, openAuth } = useContext(AuthContext);
   const { cart } = useContext(CartContext);
   const [shippingAddress, setShippingAddress] = useState("");
   const [checkout, setCheckout] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [orderId, setOrderId] = useState(() => localStorage.getItem("nova_pending_order") || "");
+  const [orderId, setOrderId] = useState(() => searchParams.get("orderId") || localStorage.getItem("nova_pending_order") || "");
 
   const startCheckout = async (event) => {
     event.preventDefault();
@@ -35,11 +39,15 @@ function CheckoutPage() {
         activeOrderId = order._id;
         setOrderId(activeOrderId);
         localStorage.setItem("nova_pending_order", activeOrderId);
+        localStorage.setItem("nova_pending_cart", JSON.stringify(cart));
       }
-      const payment = await initiatePayment(activeOrderId);
+      const payment = await initiatePayment(activeOrderId, {
+        locale: i18n.language.startsWith("ar") ? "ar" : "en",
+        theme,
+      });
       setCheckout({ clientSecret: payment.clientSecret, paymentId: payment.paymentId, orderId: activeOrderId });
     } catch (requestError) {
-      setError(requestError.response?.data?.error?.message || t("checkoutPage.genericError"));
+      setError(getApiErrorMessage(requestError, t, "checkoutPage.genericError"));
     } finally {
       setBusy(false);
     }

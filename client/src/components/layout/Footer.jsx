@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { useToast } from "../../context/ToastContext";
 import { getCategories } from "../../services/product.service";
 import { useTranslation } from "react-i18next";
-import { ARSENAL_URL } from "../../constants/externalLinks";
+import { getApiErrorMessage } from "../../services/apiError";
 
 function Footer() {
   const { t, i18n } = useTranslation();
@@ -35,14 +35,6 @@ function Footer() {
     },
     {
       label: {
-        en: "The Arsenal",
-        ar: "أرسنال",
-      },
-      to: ARSENAL_URL,
-      external: true,
-    },
-    {
-      label: {
         en: "About",
         ar: "تعرف علينا",
       },
@@ -62,7 +54,7 @@ function Footer() {
         const response = await getCategories(params);
         setCategories(response.data);
       } catch (error) {
-        showError(error.response?.data?.error?.message || t("common.loadingFailed"));
+        showError(getApiErrorMessage(error, t, "common.loadingFailed"));
         setLoadingFailed(true);
       } finally {
         setLoading(false);
@@ -96,21 +88,13 @@ function Footer() {
                   <h3>{t("footer.upperFooter.explore")}</h3>
                   <ul>
                     {loading || loadingFailed ? (
-                      navItems.map((item) => {
-                        return(
-                          <li key={item.to}>
-                            {item.external ? (
-                              <a href={item.to} target="_blank" rel="noreferrer">
-                                {item.label[currentLanguage]}
-                              </a>
-                            ) : (
-                              <Link to={item.to} onClick={() => handleNavClick(item.to)}>
-                                {item.label[currentLanguage]}
-                              </Link>
-                            )}
-                          </li>
-                        )
-                      })
+                      navItems.map((item) => (
+                        <li key={item.to}>
+                          <Link to={item.to} onClick={() => handleNavClick(item.to)}>
+                            {item.label[currentLanguage]}
+                          </Link>
+                        </li>
+                      ))
                     ) : (
                       categories.map((category) => {
                         const url = `/shop?category=${category.slug}`;

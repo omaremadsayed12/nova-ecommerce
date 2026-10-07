@@ -16,6 +16,9 @@ import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "./context/AuthContext";
 import AboutPage from "./pages/AboutPage";
 import WishlistPage from "./pages/WishlistPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import AccountPage from "./pages/AccountPage";
+import AdminUsersPage from "./pages/AdminUsersPage";
 import ThemeProvider from "./context/ThemeContext";
 import "./i18n";
 import WishlistProvider from "./context/WishlistContext";
@@ -37,6 +40,8 @@ function App() {
                   <Route element={<MainLayout />}>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/about" element={<AboutPage />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                    <Route path="/account" element={<AccountPage />} />
                     <Route path="/wishlist" element={<WishlistPage />} />
                     <Route path="/shop" element={<ShopPage />} />
                     <Route
@@ -51,6 +56,7 @@ function App() {
                     />
                     <Route path="/orders" element={<MyOrdersPage />} />
                     <Route path="/dashboard" element={<AdminDashboardPage />} />
+                    <Route path="/admin-users" element={<AdminUsersPage />} />
                     <Route
                       path="/admin-products"
                       element={<AdminProductsPage />}

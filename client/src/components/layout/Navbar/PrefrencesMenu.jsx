@@ -26,7 +26,7 @@ function PrefrencesMenu({ onClose }) {
         <div className="pref-menu__content">
           <NavLink
             key="Settings"
-            to="/dashboard"
+            to="/account"
             onClick={(event) => {
               if (!requireAuth()) {
                 event.preventDefault();
@@ -39,6 +39,7 @@ function PrefrencesMenu({ onClose }) {
               {user?.name[currentLanguage] || t("navbar.prefMenu.login")}{" "}
             </h5>
           </NavLink>
+          {user?.role === "ADMIN" && <NavLink to="/admin-users" onClick={onClose}>{t("navbar.prefMenu.usersManagement")}</NavLink>}
           <div className="option">
             <p>{t("navbar.prefMenu.theme")}</p>
             <div className="option__actions">
@@ -78,7 +79,7 @@ function PrefrencesMenu({ onClose }) {
                   onClose();
                 }}
                 className={currentLanguage === "en" ? "active" : ""}
-                aria-label="English"
+                aria-label={t("navbar.accessibility.english")}
                 aria-pressed={currentLanguage === "en"}
               >
                 EN
@@ -90,7 +91,7 @@ function PrefrencesMenu({ onClose }) {
                   onClose();
                 }}
                 className={currentLanguage === "ar" ? "active" : ""}
-                aria-label="العربية"
+                aria-label={t("navbar.accessibility.arabic")}
                 aria-pressed={currentLanguage === "ar"}
               >
                 ع

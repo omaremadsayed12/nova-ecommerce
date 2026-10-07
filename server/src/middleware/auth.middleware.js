@@ -23,12 +23,15 @@ const verify_token = (role) => {
       throw new AuthenticationError(details);
     }
     const decoded = jwt_utils.verify_token(token);
-    const user = await User.findById(decoded.userId);
+    const user = await User.findById(decoded.userId).select("+tokenVersion");
     if (!user) {
       const details = {
         user: "User not found",
       };
       throw new AuthenticationError(details);
+    }
+    if (Number(decoded.ver ?? 0) !== Number(user.tokenVersion ?? 0)) {
+      throw new AuthenticationError({ access_token: "This access token has been revoked" });
     }
     if (role && user.role !== role) {
       const details = {

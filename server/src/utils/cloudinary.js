@@ -1,12 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 
-try {
-  cloudinary.config({
-    cloud_url: process.env.CLOUDINARY_URL
-  });
-} catch (error) {
-  console.error("Cloudinary configuration error:", error.message);
-}
+cloudinary.config();
 
 const uploadImage = async (imagePath) => {
   try {

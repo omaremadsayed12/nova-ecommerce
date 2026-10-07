@@ -16,6 +16,19 @@ const paymentSchema = new mongoose.Schema(
     providerPaymentId: {
       type: String,
     },
+    providerIntentId: {
+      type: String,
+    },
+    refundId: {
+      type: String,
+    },
+    refundStatus: {
+      type: String,
+      enum: ["PENDING", "SUCCEEDED", "FAILED"],
+    },
+    lastStatusCheckAt: {
+      type: Date,
+    },
     amount: {
       type: Number,
       required: [true, "Payment amount is required"],

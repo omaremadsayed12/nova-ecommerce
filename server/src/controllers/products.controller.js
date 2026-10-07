@@ -24,6 +24,17 @@ const get_product_details = async (req, res) => {
   });
 };
 
+const get_related_products = async (req, res) => {
+  const products = await product_service.get_related_products(req.params.id, req.query.limit);
+  res.status(200).json({
+    success: true,
+    message: "Related products fetched successfully",
+    data: products,
+    error: null,
+    meta: null,
+  });
+};
+
 const add_product = async (req, res) => {
   const product_data = req.body;
   const creator = req.user;
@@ -70,6 +81,7 @@ const delete_product = async (req, res) => {
 export default {
   get_all_products,
   get_product_details,
+  get_related_products,
   add_product,
   update_product,
   delete_product,

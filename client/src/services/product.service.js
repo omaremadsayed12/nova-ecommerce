@@ -10,6 +10,11 @@ export const getProductById = async (id, config = {}) => {
   return response.data;
 };
 
+export const getRelatedProducts = async (id, params = {}, config = {}) => {
+  const response = await api.get(`/products/related/${id}`, { ...config, params });
+  return response.data;
+};
+
 export const getCategories = async (params, config = {}) => {
   const response = await api.get("/categories", { ...config, params });
   return response.data;

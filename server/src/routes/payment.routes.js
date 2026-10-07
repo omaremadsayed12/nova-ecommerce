@@ -5,6 +5,7 @@ import payment_controller from "../controllers/payment.controller.js";
 const router = express.Router();
 
 router.post("/initiate",auth_middleware.verify_token(),payment_controller.initiate_payment);
+router.post("/orders/:orderId/refund", auth_middleware.verify_token("ADMIN"), payment_controller.refund_order);
 router.get("/:id/status",auth_middleware.verify_token(),payment_controller.get_payment_status);
 
 export default router;

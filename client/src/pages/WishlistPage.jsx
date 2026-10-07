@@ -6,6 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 import { CartContext } from "../context/CartContext";
 import { WishlistContext } from "../context/WishlistContext";
 import { getProductById } from "../services/product.service";
+import { getApiErrorMessage } from "../services/apiError";
 
 function formatMoney(amount, currency, language) {
   return new Intl.NumberFormat(language, { style: "currency", currency: currency || "USD" }).format(amount || 0);
@@ -43,7 +44,7 @@ function WishlistPage() {
       setLoadedKey(requestKey);
     }).catch((error) => {
       if (active && error.name !== "CanceledError") {
-        setProductErrorState({ key: requestKey, message: error.response?.data?.error?.message || t("wishlistPage.productError") });
+        setProductErrorState({ key: requestKey, message: getApiErrorMessage(error, t, "wishlistPage.productError") });
         setLoadedKey(requestKey);
       }
     });

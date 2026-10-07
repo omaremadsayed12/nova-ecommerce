@@ -250,6 +250,46 @@ const get_product_details = async (productId) => {
   return await products_validator.verify_product(productId);
 };
 
+const get_related_products = async (productId, requestedLimit = 4) => {
+  const product = await products_validator.verify_product(productId);
+  const limit = Number(requestedLimit);
+  if (!Number.isSafeInteger(limit) || limit < 1 || limit > 12) {
+    throw new ValidationError({ limit: "Limit must be an integer between 1 and 12" });
+  }
+  const category = product.category?.en;
+  if (!category) return [];
+  const escapedCategory = category.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return Products.aggregate([
+    {
+      $match: {
+        _id: { $ne: product._id },
+        isActive: true,
+        "category.en": { $regex: `^${escapedCategory}$`, $options: "i" },
+      },
+    },
+    {
+      $lookup: {
+        from: Reviews.collection.name,
+        let: { productId: "$_id" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$product", "$$productId"] } } },
+          { $group: { _id: null, averageRating: { $avg: "$rating" }, reviewCount: { $sum: 1 } } },
+        ],
+        as: "ratingData",
+      },
+    },
+    {
+      $set: {
+        averageRating: { $round: [{ $ifNull: [{ $arrayElemAt: ["$ratingData.averageRating", 0] }, 0] }, 1] },
+        reviewCount: { $ifNull: [{ $arrayElemAt: ["$ratingData.reviewCount", 0] }, 0] },
+      },
+    },
+    { $project: { createdBy: 0, updatedBy: 0, ratingData: 0 } },
+    { $sort: { createdAt: -1, _id: -1 } },
+    { $limit: limit },
+  ]);
+};
+
 const add_product = async (productData, creator) => {
   productData = parse_input(productData);
   products_validator.validate_product_input(productData);
@@ -308,6 +348,7 @@ const parse_input = (productData) => {
 export default {
   get_all_products,
   get_product_details,
+  get_related_products,
   add_product,
   update_product,
   delete_product,

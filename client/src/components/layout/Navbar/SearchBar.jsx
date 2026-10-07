@@ -5,6 +5,7 @@ import { getProducts } from "../../../services/product.service";
 import DropdownTransition from "../../common/Transitions/DropdownTransition";
 import { AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { getApiErrorMessage } from "../../../services/apiError";
 
 function SearchBar({ onClose }) {
   const { i18n, t } = useTranslation();
@@ -41,7 +42,7 @@ function SearchBar({ onClose }) {
         }
       } catch (error) {
         if (active && error.name !== "CanceledError") {
-          setErrorState({ query: normalizedQuery, message: error.response?.data?.error?.message || t("search.unavailable") });
+          setErrorState({ query: normalizedQuery, message: getApiErrorMessage(error, t, "search.unavailable") });
         }
       }
     }, 200);

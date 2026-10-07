@@ -29,7 +29,7 @@ const minor_units = (amount, currency) => {
   return value;
 };
 
-const initiate_payment = async (order, payment) => {
+const initiate_payment = async (order, payment, preferences = {}) => {
   assert_configured();
   const customer = await User.findById(order.user);
   if (!customer) {
@@ -89,10 +89,20 @@ const initiate_payment = async (order, payment) => {
 
   const baseUrl = new URL(getClientUrl());
   const returnUrl = new URL("/payment-success", baseUrl).toString();
+  const locale = preferences.locale === "en" ? "en" : "auto";
+  const isDark = preferences.theme === "dark";
   const session = await stripe.checkout.sessions.create(
     {
       ui_mode: "embedded_page",
       mode: "payment",
+      locale,
+      branding_settings: {
+        background_color: isDark ? "#111a2b" : "#ffffff",
+        border_style: "rounded",
+        button_color: isDark ? "#6f9aff" : "#3e6fe8",
+        display_name: "Nova",
+        font_family: "default",
+      },
       customer_email: customer.email,
       line_items,
       return_url: `${returnUrl}?orderId=${order._id}&paymentId=${payment._id}&session_id={CHECKOUT_SESSION_ID}`,
@@ -111,7 +121,79 @@ const initiate_payment = async (order, payment) => {
   return session;
 };
 
+const expire_checkout_session = async (payment) => {
+  if (!payment.providerPaymentId) return null;
+  const session = await stripe.checkout.sessions.retrieve(payment.providerPaymentId);
+  if (session.status === "open") {
+    return stripe.checkout.sessions.expire(payment.providerPaymentId);
+  }
+  if (session.status !== "expired") {
+    throw new AppError("This checkout session can no longer be cancelled safely", 409, "CHECKOUT_SESSION_NOT_CANCELLABLE");
+  }
+  return session;
+};
+
+const refund_payment = async (payment) => {
+  if (!payment.providerPaymentId) {
+    throw new AppError("The Stripe checkout session is unavailable for refund", 409, "REFUND_SESSION_MISSING");
+  }
+  const session = await stripe.checkout.sessions.retrieve(payment.providerPaymentId, {
+    expand: ["payment_intent"],
+  });
+  if (session.payment_status !== "paid" ||
+      session.amount_total !== minor_units(payment.amount, payment.currency) ||
+      session.currency?.toLowerCase() !== payment.currency.toLowerCase()) {
+    throw new AppError("Stripe does not confirm this payment as refundable", 409, "REFUND_PAYMENT_UNVERIFIED");
+  }
+
+  const paymentIntent = typeof session.payment_intent === "string"
+    ? session.payment_intent
+    : session.payment_intent?.id;
+  if (!paymentIntent) {
+    throw new AppError("Stripe did not provide a payment intent for this order", 409, "REFUND_INTENT_MISSING");
+  }
+  return payment.refundId
+    ? stripe.refunds.retrieve(payment.refundId)
+    : stripe.refunds.create(
+        { payment_intent: paymentIntent },
+        { idempotencyKey: `nova-refund-${payment._id}` },
+      );
+};
+
+const retrieve_checkout_session = async (payment) => {
+  assert_configured();
+  if (!payment.providerPaymentId) {
+    throw new AppError("Stripe checkout session is unavailable", 409, "PAYMENT_SESSION_MISSING");
+  }
+  return stripe.checkout.sessions.retrieve(payment.providerPaymentId);
+};
+
 const handle_webhook = async (event) => {
+  if (event.type === "charge.refunded") {
+    const charge = event.data?.object;
+    const intentId = typeof charge?.payment_intent === "string"
+      ? charge.payment_intent
+      : charge?.payment_intent?.id;
+    if (!intentId) throw new ValidationError({ event: "Refund event is missing its payment intent" });
+
+    const payment = await Payment.findOne({ providerIntentId: intentId });
+    if (!payment) throw new NotFoundError({ payment: "Payment for refund event doesn't exist" });
+    const order = await Order.findById(payment.order);
+    if (!order) throw new NotFoundError({ order: "Order doesn't exist" });
+    if (charge.amount !== minor_units(order.total, order.currency) ||
+        charge.currency?.toLowerCase() !== order.currency.toLowerCase()) {
+      throw new AppError("Stripe refund charge does not match the order", 409, "REFUND_AMOUNT_MISMATCH");
+    }
+    if (charge.amount_refunded === charge.amount) {
+      payment.status = "REFUNDED";
+      payment.refundStatus = "SUCCEEDED";
+      await payment.save();
+      order.paymentStatus = "REFUNDED";
+      await order.save();
+    }
+    return;
+  }
+
   const successfulEvents = new Set([
     "checkout.session.completed",
     "checkout.session.async_payment_succeeded",
@@ -173,6 +255,10 @@ const handle_webhook = async (event) => {
 
         payment.status = "PAID";
         payment.paidAt = new Date();
+        const intentId = typeof checkoutSession.payment_intent === "string"
+          ? checkoutSession.payment_intent
+          : checkoutSession.payment_intent?.id;
+        if (intentId) payment.providerIntentId = intentId;
         order.status = "COMPLETED";
         order.paymentStatus = "PAID";
         await payment.save({ session: dbSession });
@@ -203,4 +289,11 @@ const handle_webhook = async (event) => {
   }
 };
 
-export default { assert_configured, initiate_payment, handle_webhook };
+export default {
+  assert_configured,
+  initiate_payment,
+  expire_checkout_session,
+  refund_payment,
+  retrieve_checkout_session,
+  handle_webhook,
+};

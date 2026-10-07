@@ -3,6 +3,7 @@ import { Activity, CreditCard, Package, ShoppingBag, Users } from "lucide-react"
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { getAdminStats } from "../services/stats.service";
+import { getApiErrorMessage } from "../services/apiError";
 import { useTranslation } from "react-i18next";
 
 function formatMoney(amount, currency, language) {
@@ -25,7 +26,7 @@ function AdminDashboardPage() {
       const response = await getAdminStats();
       setStats(response.data);
     } catch (requestError) {
-      setError(requestError.response?.data?.error?.message || t("common.loadingError"));
+      setError(getApiErrorMessage(requestError, t, "common.loadingError"));
     } finally {
       setLoading(false);
     }

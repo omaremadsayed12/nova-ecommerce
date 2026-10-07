@@ -3,7 +3,10 @@ import payment_service from "../services/payment/payment.service.js";
 const initiate_payment = async (req, res) => {
   const user = req.user;
   const orderId = req.body.orderId;
-  const payment = await payment_service.initiate_payment(user, orderId);
+  const payment = await payment_service.initiate_payment(user, orderId, {
+    locale: req.body.locale,
+    theme: req.body.theme,
+  });
   res.status(201).json({
     success: true,
     message: "Payment initiated successfully",
@@ -26,4 +29,15 @@ const get_payment_status = async (req, res) => {
     });
 };
 
-export default { initiate_payment, get_payment_status };
+const refund_order = async (req, res) => {
+  const result = await payment_service.refund_order(req.user, req.params.orderId);
+  res.status(result.refundStatus === "PENDING" ? 202 : 200).json({
+    success: true,
+    message: result.refundStatus === "PENDING" ? "Refund is processing" : "Order refunded successfully",
+    data: result,
+    error: null,
+    meta: null,
+  });
+};
+
+export default { initiate_payment, get_payment_status, refund_order };

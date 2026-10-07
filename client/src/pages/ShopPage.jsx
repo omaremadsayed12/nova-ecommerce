@@ -7,6 +7,7 @@ import ProductsList from "../components/shop/ProductsList";
 import { useTranslation } from "react-i18next";
 import { getProducts } from "../services/product.service";
 import ProductsListSkeleton from "../components/shop/Skeletons/ProductsListSkeleton";
+import { getApiErrorMessage } from "../services/apiError";
 
 function ShopPage() {
   const { t } = useTranslation();
@@ -36,7 +37,7 @@ function ShopPage() {
       }
     }).catch((requestError) => {
       if (active && requestError.name !== "CanceledError") {
-        setError(requestError.response?.data?.error?.message || t("common.loadingError"));
+        setError(getApiErrorMessage(requestError, t, "common.loadingError"));
       }
     }).finally(() => {
       if (active) setLoading(false);

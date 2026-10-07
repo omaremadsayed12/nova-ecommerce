@@ -124,7 +124,7 @@ Client Vercel install diagnosis and fix: `@vitejs/plugin-react` is declared only
 - [x] Correct Preferences menu sizing and spacing
 - [x] Consolidate frontend styling into `client/src/styles/global.css`
 - [x] Preserve cart until verified paid status
-- [x] Correct Arsenal external navigation behavior
+- [x] Use internal Shop destination in navigation
 - [x] Verify Stripe frontend key wiring and test-mode initialization
 - [x] Create public-facing root README and clean repository ignore/docs
 - [x] Run local build, lint, syntax, and browser checks
@@ -138,3 +138,47 @@ Verified: client ESLint and production build pass, and `node --check` passes for
 Verified cleanup: `client/src/main.jsx` is the only frontend stylesheet import and imports `global.css`; `global.css` is the only remaining frontend CSS file in the working tree. The old component/page CSS files, obsolete Vite template README, and unused Webhint config were removed after reference checks. Root ignore rules cover env files, build output, dependency directories, logs, and hosting/tool caches; package-lock files remain. No tracked `.env` files or recognized Stripe, database, Cloudinary, GitHub-token, or AWS credential markers were detected in Git history. Existing local `.env` files remain ignored and were not displayed or copied into public files.
 
 Still blocked: no Vercel CLI authentication or dashboard authorization is available. A deployed health check, frontend-to-backend connectivity test, hosted Stripe test checkout, and Stripe-delivered webhook test must wait until the manual actions in Phase 8 are complete.
+
+## Phase 10 - Admin Orders and navigation
+- [x] Add validated server-side admin order filters and pagination
+- [x] Return only associated customer email in admin order results
+- [x] Add URL-backed admin filters and customer email to Orders UI
+- [x] Replace external team navigation with internal Shop navigation
+
+Verified: admin filters validate order status, payment status, search length/type, page, and limit at the service boundary; non-admin callers cannot use admin-only filters. Admin results are filtered before count/pagination, search matches escaped email text or order-ID text, and the response includes only the associated email rather than the full User record. Client Orders filters are URL-backed, reset pagination when changed, retain filters on pagination, and expose clear/loading/empty/error states. Both English and Arabic labels were added. The client lint and production build pass; server JavaScript syntax and focused filter-validation checks pass. Repository search found no obsolete external team URL or label in the client. No database-backed Orders API or browser interaction was run in this milestone.
+
+## Phase 11 - Home and product details
+- [x] Make the featured-product carousel wrap smoothly
+- [x] Add product review listing and authenticated review submission
+- [x] Add server-backed same-category related products
+- [x] Hide precise stock counts except for low/out-of-stock products
+
+Verified: the hero slider uses cloned end slides and snaps invisibly after the transition; product details load reviews with product-scoped totals/average and paginated results, permit authenticated ratings/comments through the existing review API, and show no review-author PII. Review reads are capped and validated, and counts/averages are scoped to the requested product. Related products are fetched server-side from the same active English category, excluding the current product and limiting results to 12 (four in the UI). Product-detail stock text is generic above five units and reports only low or empty stock. English/Arabic UI labels were added. Atlas-backed checks confirmed review validation, authenticated ownership, duplicate prevention, and privacy behavior. Browser checks exercised carousel transitions in both directions and RTL layout at 320, 375, 768, and 1440 pixels with no horizontal overflow. Autoplay and rapid-navigation clamping still need explicit browser verification.
+
+## Phase 12 - Remaining storefront, account, and admin backlog
+- [x] Add Stripe Checkout branding for the selected light/dark theme
+- [x] Pass the Arabic preference through Stripe's supported automatic locale fallback (exact Arabic forcing is unsupported)
+- [x] Add URL-backed admin order filters, associated customer email, and paginated results
+- [x] Add admin order cancellation, full refund, and retry-order link actions
+- [x] Add Stripe status polling fallback when webhook delivery is delayed or unavailable
+- [x] Add admin user management and customer account editing
+- [x] Fix multipart image upload handling for product and account photos
+- [x] Add the bilingual Privacy Policy page and About-page bottom spacing
+- [x] Complete English/Arabic translation-key parity and improve Shop card skeleton sizing
+- [x] Remove the obsolete external team destination and use internal Shop navigation
+
+Verification: latest client ESLint and production build pass; `node --check` passes for all 60 server JavaScript modules; and `git diff --check` passes. The build emits Vite's large-chunk advisory (642.70 kB minified JS). Atlas-backed disposable-account checks passed for registration role protection, admin authorization, self-role denial, current-password verification, token/refresh-token revocation, review validation/ownership/duplicate/privacy behavior, admin user search, and admin order filters/customer email/order-ID search. Stripe TEST checks passed for session creation, server-backed pending reconciliation, active-session cancellation, cancellation idempotency, retry idempotency, and admin cancellation. Product image checks passed for invalid-signature rejection, raw-URL rejection, Cloudinary upload persistence, and preserving an existing image when no replacement is supplied; the temporary Cloudinary asset was removed. All disposable account/order/payment records were cleaned.
+
+Browser-mocked payment-success UI checks confirmed that server-reported `PAID` clears only the matching cart, while `FAILED` and `PENDING` retain it; polling stops after 12 pending attempts. The actual Embedded Checkout loaded in the browser, but test-card submission did not complete: the authoritative status remained pending, and the session was cancelled and cleaned up. No successful charge, refund, or Stripe-delivered webhook has been tested.
+
+Provider limitation: Nova uses Stripe Embedded Checkout (Stripe-owned UI rendered in the application), not Nova-styled Elements. Stripe's supported locale values do not include Arabic. The server maps the Arabic preference to Stripe's supported `auto` locale rather than sending unsupported `ar`; Stripe infers the browser locale, so Arabic cannot be guaranteed when the browser itself is not Arabic. The Stripe iframe/form cannot be arbitrarily styled by Nova CSS; supported Checkout branding settings provide light/dark colors.
+
+Admin retry creates a new server-priced order and displays a checkout link for an administrator to share; the project has no email delivery service. Stripe refunding is full-refund only and uses Stripe's server-side refund API with idempotency, but the flow still needs a completed Stripe TEST payment to exercise it end-to-end. The actual card-success path and webhook delivery also remain unverified. Hosted deployment and Stripe webhook delivery remain blocked on the Vercel/Stripe dashboard setup in Phase 8.
+
+Arabic error follow-up: API error messages are now passed through a shared client helper. English retains useful server-provided detail; Arabic uses the existing translated contextual fallback so backend English text is not surfaced as untranslated UI. Repository search found no remaining direct rendering of API error strings in client UI, and the current client lint/build pass.
+
+Known product decision: there is no internal Arsenal page or route. The obsolete Arsenal reference has been removed and the desktop/mobile/footer destination is the internal Shop route; no page or external Arsenal URL was introduced.
+
+Deployment status: the Vercel project root directory, hosted deployment, and deployed staging smoke checks still require dashboard access/configuration. No deployment success is claimed.
+
+Browser verification limitation: the latest local UI recheck used Vite at `127.0.0.1:5173`, but the configured API at `localhost:5000` did not return CORS headers. The page showed the translated data-load failure state, so this run does not count as a clean end-to-end browser or carousel autoplay/rapid-click verification. Repeat those checks with the local API running and its allowed-origin configuration, or against staging.

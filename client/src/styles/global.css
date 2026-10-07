@@ -890,7 +890,7 @@ p {
 /* About page */
 @layer components {
   .about-page {
-    @apply mx-auto w-full max-w-360 px-6 pt-10 md:px-20;
+    @apply mx-auto w-full max-w-360 px-6 pb-20 pt-10 md:px-20;
   }
   .about-page .about-nova {
     @apply border-b border-(--line) pb-12 pt-4 md:pb-16;

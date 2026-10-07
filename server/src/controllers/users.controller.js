@@ -1,9 +1,7 @@
 import users_service from "../services/users.service.js";
 
 const get_all_users = async (req, res) => {
-  const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 12;
-  const {users, meta} = await users_service.get_all_users(page, limit);
+  const { users, meta } = await users_service.get_all_users(req.query);
   res.status(200).json({
     success: true,
     message: "Retrieved all users successfully",

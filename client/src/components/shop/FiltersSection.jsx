@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import FiltersMenu from "./FiltersMenu";
 import ShopSearchBar from "./ShopSearchBar";
 import { getCategories } from "../../services/product.service";
+import { getApiErrorMessage } from "../../services/apiError";
 import { useTranslation } from "react-i18next";
 
 function FiltersSection({ minPrice, maxPrice }) {
@@ -30,7 +31,7 @@ function FiltersSection({ minPrice, maxPrice }) {
       if (active && response) setCategories(response.data || []);
     }).catch((requestError) => {
       if (active && requestError.name !== "CanceledError") {
-        setError(requestError.response?.data?.error?.message || t("common.loadingFailed"));
+        setError(getApiErrorMessage(requestError, t, "common.loadingFailed"));
         setLoadingFailed(true);
       }
     }).finally(() => {

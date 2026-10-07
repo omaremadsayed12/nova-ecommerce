@@ -7,7 +7,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 
 function ProductCard({  product }) {
-  const {i18n} = useTranslation();
+  const {i18n, t} = useTranslation();
   const currentLanguage = i18n.language === "ar" ? "ar" : "en";
   const productName = product.name?.[currentLanguage] || product.name?.en || "Product";
   const categoryName = product.category?.[currentLanguage] || product.category?.en || "";
@@ -59,8 +59,8 @@ function ProductCard({  product }) {
                   type="button"
                   aria-label={
                     inWishlist(product._id)
-                      ? "Remove from wishlist"
-                      : "Add to wishlist"
+                      ? t("common.removeFromWishlist")
+                      : t("common.addToWishlist")
                   }
                   aria-pressed={inWishlist(product._id)}
                   onClick={() => requireAuth(() => handleWishlist())}

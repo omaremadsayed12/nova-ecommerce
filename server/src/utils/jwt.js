@@ -6,6 +6,7 @@ const generate_refresh_token = (user, jwtid) => {
     {
       userId: user._id,
       role: user.role,
+      ver: user.tokenVersion ?? 0,
     },
     process.env.JWT_REFRESH_SECRET,
     {
@@ -20,6 +21,7 @@ const generate_access_token = (user) => {
     {
       userId: user._id,
       role: user.role,
+      ver: user.tokenVersion ?? 0,
     },
     process.env.JWT_ACCESS_SECRET,
     {

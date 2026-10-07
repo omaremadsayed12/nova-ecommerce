@@ -6,6 +6,10 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    retryOf: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+    },
     items: [
       {
         product: {
@@ -65,7 +69,7 @@ const orderSchema = new mongoose.Schema(
     },
     paymentStatus: {
       type: String,
-      enum: ["PAID", "UNPAID"],
+      enum: ["PAID", "UNPAID", "REFUNDED"],
       default: "UNPAID",
     },
     paymentMethod: {
@@ -79,6 +83,18 @@ const orderSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+  },
+);
+
+orderSchema.index(
+  { retryOf: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      retryOf: { $exists: true },
+      status: "PENDING",
+      paymentStatus: "UNPAID",
+    },
   },
 );
 

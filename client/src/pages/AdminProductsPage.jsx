@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import { createProduct, deleteProduct, getProducts, updateProduct } from "../services/product.service";
+import { getApiErrorMessage } from "../services/apiError";
 import { useTranslation } from "react-i18next";
 
 const emptyProduct = { name: { en: "", ar: "" }, description: { en: "", ar: "" }, category: { en: "", ar: "" }, price: "", stock: "0", currency: "USD", isActive: true, image: null };
@@ -27,7 +28,7 @@ function AdminProductsPage() {
       const response = await getProducts(new URLSearchParams({ limit: "0", sortBy: "createdAt", method: "DESC" }));
       setProducts(response.data || []);
     } catch (requestError) {
-      setError(requestError.response?.data?.error?.message || t("adminProducts.loadError"));
+      setError(getApiErrorMessage(requestError, t, "adminProducts.loadError"));
     } finally {
       setLoading(false);
     }
@@ -59,7 +60,7 @@ function AdminProductsPage() {
       setEditing(null); setForm(emptyProduct); setFormOpen(false); setNotice(editing ? t("adminProducts.updated") : t("adminProducts.created"));
       await loadProducts();
     } catch (requestError) {
-      setError(requestError.response?.data?.error?.message || t("adminProducts.saveError"));
+      setError(getApiErrorMessage(requestError, t, "adminProducts.saveError"));
     } finally {
       setSaving(false);
     }
@@ -75,7 +76,7 @@ function AdminProductsPage() {
       setNotice(t("adminProducts.deleted"));
       await loadProducts();
     } catch (requestError) {
-      setError(requestError.response?.data?.error?.message || t("adminProducts.deleteError"));
+      setError(getApiErrorMessage(requestError, t, "adminProducts.deleteError"));
     }
   };
 
@@ -100,7 +101,7 @@ function AdminProductsPage() {
           <label className="text-sm font-semibold">{t("adminProducts.price")}<input required type="number" min="0.01" step="0.01" value={form.price} onChange={(e) => setText("price", e.target.value)} className="mt-1 w-full rounded-xl border p-3" /></label>
           <label className="text-sm font-semibold">{t("adminProducts.stock")}<input required type="number" min="0" step="1" value={form.stock} onChange={(e) => setText("stock", e.target.value)} className="mt-1 w-full rounded-xl border p-3" /></label>
           <label className="text-sm font-semibold">{t("adminProducts.currency")}<input required minLength={3} maxLength={3} value={form.currency} onChange={(e) => setText("currency", e.target.value.toUpperCase())} className="mt-1 w-full rounded-xl border p-3" /></label>
-          <label className="text-sm font-semibold">{t("adminProducts.image")}<input type="file" accept="image/*" onChange={(e) => setText("image", e.target.files?.[0] || null)} className="mt-1 block w-full rounded-xl border p-3" /></label>
+          <label className="text-sm font-semibold">{t("adminProducts.image")}<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={(e) => setText("image", e.target.files?.[0] || null)} className="mt-1 block w-full rounded-xl border p-3" /></label>
           <label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={form.isActive} onChange={(e) => setText("isActive", e.target.checked)} /> {t("adminProducts.active")}</label>
           <div className="flex gap-3 md:col-span-2"><button disabled={saving} className="rounded-full bg-(--ink) px-5 py-3 font-bold text-(--base) disabled:opacity-50">{saving ? t("adminProducts.saving") : t("adminProducts.save")}</button><button type="button" onClick={() => { setEditing(null); setForm(emptyProduct); setFormOpen(false); }} className="rounded-full border px-5 py-3 font-bold">{t("adminProducts.cancel")}</button></div>
         </form>

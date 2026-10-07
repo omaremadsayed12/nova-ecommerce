@@ -39,6 +39,11 @@ const userSchema = new mongoose.Schema(
       minlength: [8, "Password must be at least 8 characters"],
       select: false,
     },
+    tokenVersion: {
+      type: Number,
+      default: 0,
+      select: false,
+    },
     wishlist: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -76,6 +81,7 @@ userSchema.methods.toJSON = function () {
   const user = this.toObject();
 
   delete user.password;
+  delete user.tokenVersion;
 
   return user;
 };

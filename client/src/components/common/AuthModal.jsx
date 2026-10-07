@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import FlowUpTransition from "./Transitions/FlowUpTransition";
 import { AuthContext } from "../../context/AuthContext";
 import { AnimatePresence } from "framer-motion";
+import { getApiErrorMessage } from "../../services/apiError";
 
 function AuthModal({ isOpen, onClose, onLoginSuccess }) {
   const [registerForm, setRegisterForm] = useState(false);
@@ -39,9 +40,7 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
         onLoginSuccess();
       }
     } catch (error) {
-      showError(
-        error.response?.data?.error.message || t("authModal.loginFailure"),
-      );
+      showError(getApiErrorMessage(error, t, "authModal.loginFailure"));
     } finally {
       setLoading(false);
     }
@@ -69,9 +68,7 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
         onLoginSuccess();
       }
     } catch (error) {
-      showError(
-        error.response?.data?.error.message || t("authModal.signUpFailure"),
-      );
+      showError(getApiErrorMessage(error, t, "authModal.signUpFailure"));
     } finally {
       setLoading(false);
     }

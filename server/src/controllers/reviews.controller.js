@@ -1,17 +1,29 @@
 import reviews_service from "../services/reviews.service.js";
 
 const get_product_reviews = async (req, res) => {
-  const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 12;
   const productId = req.params.productId;
   const { reviews, meta } =
-    await reviews_service.get_product_reviews(productId,page,limit);
+    await reviews_service.get_product_reviews(productId, req.query);
   res.status(200).json({
     success: true,
     message: "All product reviews fetched successfully",
     data: reviews,
     error: null,
     meta,
+  });
+};
+
+const get_user_product_review = async (req, res) => {
+  const review = await reviews_service.get_user_product_review(
+    req.params.productId,
+    req.user,
+  );
+  res.status(200).json({
+    success: true,
+    message: "Your product review fetched successfully",
+    data: review,
+    error: null,
+    meta: null,
   });
 };
 
@@ -42,6 +54,7 @@ const update_review = async (req, res) => {
 
 export default {
   get_product_reviews,
+  get_user_product_review,
   add_review,
   update_review,
 };

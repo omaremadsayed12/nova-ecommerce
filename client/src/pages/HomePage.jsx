@@ -11,6 +11,7 @@ import LoadingFailed from "./LoadingFailed";
 import CategoriesSection from "../components/home/CategoriesSection";
 import { useTranslation } from "react-i18next";
 import { getCategories, getProducts } from "../services/product.service";
+import { getApiErrorMessage } from "../services/apiError";
 
 function HomePage() {
   const { t, i18n } = useTranslation();
@@ -48,7 +49,7 @@ function HomePage() {
       setCategories(categoriesResponse.data || []);
     }).catch((error) => {
       if (active && error.name !== "CanceledError") {
-        showError(error.response?.data?.error?.message || t("common.loadingError"));
+        showError(getApiErrorMessage(error, t, "common.loadingError"));
         setLoadingFailed(true);
       }
     }).finally(() => {

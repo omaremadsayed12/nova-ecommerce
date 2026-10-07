@@ -3,6 +3,7 @@ import { addToWishlist, getWishlist, removeFromWishlist } from "../services/wish
 import { useToast } from "./ToastContext";
 import { AuthContext } from "./AuthContext";
 import { useTranslation } from "react-i18next";
+import { getApiErrorMessage } from "../services/apiError";
 
 export const WishlistContext = createContext(null);
 
@@ -36,7 +37,7 @@ export default function WishlistProvider({ children }) {
     }).catch((error) => {
       if (active && error.name !== "CanceledError") {
         setSavedWishlist([]);
-        setLoadErrorState({ scope, message: error.response?.data?.error?.message || t("wishlistContext.loadError") });
+        setLoadErrorState({ scope, message: getApiErrorMessage(error, t, "wishlistContext.loadError") });
         setLoadedScope(scope);
         setLoadedRequestKey(requestKey);
       }
@@ -63,7 +64,7 @@ export default function WishlistProvider({ children }) {
       showSuccess(t("wishlistContext.addSuccess"), { url: "/wishlist", text: t("wishlistContext.openWishlist") });
       return true;
     } catch (error) {
-      showError(error.response?.data?.error?.message || t("wishlistContext.addError"));
+      showError(getApiErrorMessage(error, t, "wishlistContext.addError"));
       return false;
     }
   };
@@ -77,7 +78,7 @@ export default function WishlistProvider({ children }) {
       showSuccess(t("wishlistContext.removeSuccess"), { url: "/wishlist", text: t("wishlistContext.openWishlist") });
       return true;
     } catch (error) {
-      showError(error.response?.data?.error?.message || t("wishlistContext.removeError"));
+      showError(getApiErrorMessage(error, t, "wishlistContext.removeError"));
       return false;
     }
   };

@@ -2,6 +2,38 @@ import mongoose from "mongoose";
 import User from "../../models/User.js";
 import { NotFoundError, ValidationError } from "../errors.service.js";
 
+const validate_user_list_params = (params = {}) => {
+  const parseInteger = (value, field, fallback, maximum) => {
+    if (value === undefined || value === "") return fallback;
+    if (typeof value !== "string" && typeof value !== "number") {
+      throw new ValidationError({ [field]: "Must be a positive integer" });
+    }
+    const parsed = Number(value);
+    if (!Number.isSafeInteger(parsed) || parsed < 1 || (maximum && parsed > maximum)) {
+      throw new ValidationError({ [field]: `Must be a positive integer${maximum ? ` no greater than ${maximum}` : ""}` });
+    }
+    return parsed;
+  };
+
+  const filters = {
+    page: parseInteger(params.page, "page", 1),
+    limit: parseInteger(params.limit, "limit", 12, 100),
+  };
+  if (params.role) {
+    if (!["ADMIN", "CUSTOMER"].includes(params.role)) {
+      throw new ValidationError({ role: "Invalid user role" });
+    }
+    filters.role = params.role;
+  }
+  if (params.search !== undefined) {
+    if (typeof params.search !== "string" || params.search.length > 100) {
+      throw new ValidationError({ search: "Search must be text no longer than 100 characters" });
+    }
+    filters.search = params.search.trim();
+  }
+  return filters;
+};
+
 const validate_user_input = async (userData) => {
   if (!userData || typeof userData !== "object" || Array.isArray(userData)) {
     throw new ValidationError({ user: "User data must be an object" });
@@ -31,7 +63,7 @@ const validate_user_update_input = async (userData, userId) => {
   if (!userData || typeof userData !== "object" || Array.isArray(userData)) {
     throw new ValidationError({ user: "User update must be an object" });
   }
-  const allowedFields = new Set(["name", "email", "password", "role", "imageUrl"]);
+  const allowedFields = new Set(["name", "email", "password", "currentPassword", "role", "imageUrl"]);
   const fields = Object.keys(userData);
   if (fields.length === 0 || fields.some((field) => !allowedFields.has(field))) {
     throw new ValidationError({ user: "Provide at least one supported user field" });
@@ -62,6 +94,12 @@ const validate_user_update_input = async (userData, userId) => {
   if (Object.hasOwn(userData, "password") && (typeof userData.password !== "string" || userData.password.length < 8)) {
     throw new ValidationError({ password: "Password must be at least 8 characters long" });
   }
+  if (Object.hasOwn(userData, "password") && (typeof userData.currentPassword !== "string" || userData.currentPassword.length < 8)) {
+    throw new ValidationError({ currentPassword: "Enter your current password to change it" });
+  }
+  if (Object.hasOwn(userData, "currentPassword") && !Object.hasOwn(userData, "password")) {
+    throw new ValidationError({ currentPassword: "A new password is required" });
+  }
   if (Object.hasOwn(userData, "role") && !["ADMIN", "CUSTOMER"].includes(userData.role)) {
     throw new ValidationError({ role: "Role must be Admin or Customer" });
   }
@@ -79,4 +117,4 @@ const validate_user = async (userId) => {
   return user;
 };
 
-export default { validate_user_input, validate_user_update_input, validate_user };
+export default { validate_user_list_params, validate_user_input, validate_user_update_input, validate_user };
