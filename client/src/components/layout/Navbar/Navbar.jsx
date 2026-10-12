@@ -27,22 +27,22 @@ const navItems = [
   },
   {
     label: {
+      en: "Orders",
+      ar: "الطلبات",
+    },
+    to: "/orders",
+  },
+  {
+    label: {
       en: "About",
       ar: "تعرف علينا",
     },
     to: "/about",
   },
-  {
-    label: {
-      en: "Wishlist",
-      ar: "قائمة الأمنيات",
-    },
-    to: "/wishlist",
-  },
 ];
 
 function Navbar() {
-  const {i18n, t} = useTranslation();
+  const { i18n, t } = useTranslation();
   const currentLanguage = i18n.language;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
@@ -91,14 +91,22 @@ function Navbar() {
             <button
               type="button"
               className="mobile-menu-button"
-              aria-label={mobileMenuOpen ? t("navbar.accessibility.closeMenu") : t("navbar.accessibility.openMenu")}
+              aria-label={
+                mobileMenuOpen
+                  ? t("navbar.accessibility.closeMenu")
+                  : t("navbar.accessibility.openMenu")
+              }
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
 
             <div className="logo-positioner">
-              <NavLink to="/" onClick={()=> handleNavClick("/")} className="logo">
+              <NavLink
+                to="/"
+                onClick={() => handleNavClick("/")}
+                className="logo"
+              >
                 NOVA
               </NavLink>
             </div>
@@ -107,7 +115,7 @@ function Navbar() {
               <button
                 type="button"
                 aria-label={t("navbar.accessibility.search")}
-                className="hidden nav-icon md:flex"
+                className="nav-icon md:flex"
                 onClick={() => setSearchOpen(!searchOpen)}
               >
                 <Search size={18} strokeWidth={2.1} />
@@ -115,7 +123,7 @@ function Navbar() {
               <NavLink
                 to="/wishlist"
                 aria-label={t("navbar.accessibility.wishlist")}
-                onClick={()=>handleNavClick("/wishlist")}
+                onClick={() => handleNavClick("/wishlist")}
                 className="hidden nav-icon sm:flex"
               >
                 <Heart size={18} strokeWidth={2.1} />
@@ -123,19 +131,19 @@ function Navbar() {
               <NavLink
                 to="/cart"
                 aria-label={t("navbar.accessibility.shoppingBag")}
-                onClick={()=>handleNavClick("/cart")}
+                onClick={() => handleNavClick("/cart")}
                 className="relative nav-icon"
               >
                 <ShoppingBag size={18} strokeWidth={2.1} />
-                {cart.length > 0 && (
-                  <span>{cart.length}</span>
-                )}
+                {cart.length > 0 && <span>{cart.length}</span>}
               </NavLink>
               <button
                 type="button"
                 aria-label={t("navbar.accessibility.preferences")}
                 aria-expanded={settingsMenuOpen}
-                aria-controls={settingsMenuOpen ? "preferences-menu" : undefined}
+                aria-controls={
+                  settingsMenuOpen ? "preferences-menu" : undefined
+                }
                 className="nav-icon"
                 onClick={() => {
                   setSettingsMenuOpen(!settingsMenuOpen);
@@ -152,13 +160,14 @@ function Navbar() {
           </div>
         </Container>
       </header>
-
-      {mobileMenuOpen && (
-        <MobileMenu
-          navItems={navItems}
-          onClose={() => setMobileMenuOpen(false)}
-        />
-      )}
+      <AnimatePresence mode="wait">
+        {mobileMenuOpen && (
+          <MobileMenu
+            navItems={navItems}
+            onClose={() => setMobileMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
       <AnimatePresence mode="wait">
         {searchOpen && <SearchBar onClose={() => setSearchOpen(false)} />}
       </AnimatePresence>

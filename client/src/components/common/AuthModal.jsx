@@ -10,7 +10,7 @@ import { AnimatePresence } from "framer-motion";
 import { getApiErrorMessage } from "../../services/apiError";
 
 function AuthModal({ isOpen, onClose, onLoginSuccess }) {
-  const [registerForm, setRegisterForm] = useState(false);
+  const [activeForm, setActiveForm] = useState("loginForm");
   const [englishName, setEnglishName] = useState("");
   const [arabicName, setArabicName] = useState("");
   const [email, setEmail] = useState("");
@@ -62,7 +62,6 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
       showSuccess(
         `${t("authModal.signUpSuccess")} ${user.data.name[currentLanguage]}`,
       );
-      setRegisterForm(false);
       onClose();
       if (onLoginSuccess) {
         onLoginSuccess();
@@ -76,15 +75,15 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
 
   return (
     <AnimatePresence mode="wait">
-      <div className="auth-modal">
+      <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/40 p-6">
         <FlowUpTransition>
-          {!registerForm && (
-            <div className="auth-modal-container">
-              <button onClick={onClose} className="close-btn">
-                <X />
+            <div className="relative w-xl rounded-xl bg-(--base) p-8 shadow-(--shadow-xl)">
+              <button onClick={onClose} className="absolute inset-e-5 top-5 rounded-full p-2 hover:bg-(--panel)">
+                <X className="h-5 w-5"/>
               </button>
-              <h2>{t("authModal.loginForm.header")}</h2>
-              <p>{t("authModal.loginForm.paragraph")}</p>
+              <h2 className="text-3xl font-black tracking-tighter text-(--ink)">{t(`authModal.${activeForm}.header`)}</h2>
+              <p className="mt-2 text-(--muted)">{t(`authModal.${activeForm}.paragraph`)}</p>
+              { activeForm === "loginForm" ? (
               <form onSubmit={handleLoginSubmit} className="auth-form">
                 <div>
                   <label>{t("authModal.loginForm.email.label")}</label>
@@ -115,32 +114,7 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                     ? t("authModal.loginForm.button.loading")
                     : t("authModal.loginForm.button.text")}
                 </button>
-              </form>
-              <div className="switch-caption">
-                <p>{t("authModal.loginForm.switch.paragraph")}</p>
-                <button onClick={() => setRegisterForm(true)}>
-                  {t("authModal.loginForm.switch.button")}
-                </button>
-              </div>
-            </div>
-          )}
-        </FlowUpTransition>
-
-        <FlowUpTransition>
-          {registerForm && (
-            <div className="auth-modal-container">
-              <button
-                onClick={() => {
-                  setRegisterForm(false);
-                  onClose();
-                }}
-                className="close-btn"
-              >
-                <X />
-              </button>
-              <h2>{t("authModal.signUpForm.header")}</h2>
-              <p>{t("authModal.signUpForm.paragraph")}</p>
-              <form onSubmit={handleRegisterSubmit} className="auth-form">
+              </form>) : (<form onSubmit={handleRegisterSubmit} className="auth-form">
                 <div className="flex gap-4">
                   <div className="flex flex-col gap-1">
                     <label>{t("authModal.signUpForm.englishName.label")}</label>
@@ -195,15 +169,14 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                     ? t("authModal.signUpForm.button.loading")
                     : t("authModal.signUpForm.button.text")}
                 </button>
-              </form>
+              </form>)}
               <div className="switch-caption">
-                <p>{t("authModal.signUpForm.switch.paragraph")}</p>
-                <button onClick={() => setRegisterForm(false)}>
-                  {t("authModal.signUpForm.switch.button")}
+                <p>{t(`authModal.${activeForm}.switch.paragraph`)}</p>
+                <button onClick={() => setActiveForm(activeForm ==="loginForm" ? "signUpForm" : "loginForm")}>
+                  {t(`authModal.${activeForm}.switch.button`)}
                 </button>
               </div>
             </div>
-          )}
         </FlowUpTransition>
       </div>
     </AnimatePresence>

@@ -94,7 +94,7 @@ function Footer() {
                 <div>
                   <h3>{t("footer.upperFooter.explore")}</h3>
                   <ul>
-                    {navItems.map((item) => (
+                    {(loading || loadingFailed) && navItems.map((item) => (
                       <li key={item.to}>
                         <Link to={item.to} onClick={() => handleNavClick(item.to)}>
                           {item.label[currentLanguage]}
