@@ -28,7 +28,7 @@ export default function CartProvider({ children }) {
 
   const viewCartButton = { url: "/cart", text: t("cartContext.viewCart") };
 
-  const addToCart = (productId, requestedQuantity = 1, maxQuantity = Infinity) => {
+  const addToCart = (productId, requestedQuantity = 1, maxQuantity = Infinity, showButton = true) => {
     if (!Number.isSafeInteger(requestedQuantity) || requestedQuantity < 1 || requestedQuantity > maxQuantity) {
       showError(t("cartContext.quantityUnavailable"));
       return false;
@@ -38,11 +38,11 @@ export default function CartProvider({ children }) {
       return false;
     }
     setCart((items) => [...items, { product: String(productId), quantity: requestedQuantity }]);
-    showSuccess(t("cartContext.addSuccess"), viewCartButton);
+    showSuccess(t("cartContext.addSuccess"), showButton ? viewCartButton : null);
     return true;
   };
 
-  const updateCart = (productId, requestedQuantity = 1, maxQuantity = Infinity) => {
+  const updateCart = (productId, requestedQuantity = 1, maxQuantity = Infinity, showButton=true) => {
     if (!inCart(productId)) {
       showError(t("cartContext.notOnCart"));
       return false;
@@ -54,7 +54,7 @@ export default function CartProvider({ children }) {
       return false;
     }
     setCart((items) => items.map((item) => String(item.product) === String(productId) ? { ...item, quantity: requestedQuantity } : item));
-    showSuccess(t("cartContext.updateSuccess"), viewCartButton);
+    showSuccess(t("cartContext.updateSuccess"), showButton ? viewCartButton : null);
     return true;
   };
 
